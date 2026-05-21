@@ -1,4 +1,5 @@
 import json
+import logging
 from io import BytesIO
 
 from django.contrib.auth import authenticate, login, logout
@@ -14,6 +15,7 @@ from .models import BuilderRun
 from .ai_engine import chat_with_ai, generate_greeting
 
 FREE_LIMIT = getattr(settings, 'FREE_RUN_LIMIT', 3)
+logger = logging.getLogger(__name__)
 
 
 # ── Auth views ────────────────────────────────────────────────────────────────
@@ -69,6 +71,9 @@ def index(request):
     threads = BuilderRun.objects.filter(user=request.user).order_by('-updated_at')[:20]
     runs_used = BuilderRun.objects.filter(user=request.user).count()
     current_run_id = request.session.get('run_id')
+    if current_run_id and not BuilderRun.objects.filter(id=current_run_id, user=request.user).exists():
+        request.session.pop('run_id', None)
+        current_run_id = None
     return render(request, 'builder/index.html', {
         'threads': threads,
         'runs_used': runs_used,
@@ -95,7 +100,7 @@ def start_chat(request):
                     'run_id': run.id,
                 })
         except BuilderRun.DoesNotExist:
-            pass
+            request.session.pop('run_id', None)
 
     runs_used = BuilderRun.objects.filter(user=request.user).count()
     return JsonResponse({
@@ -159,7 +164,15 @@ def chat(request):
         if not run_id:
             return JsonResponse({'error': 'Run ID is required.'}, status=400)
 
-        run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+        try:
+            run = BuilderRun.objects.get(id=run_id, user=request.user)
+        except BuilderRun.DoesNotExist:
+            request.session.pop('run_id', None)
+            return JsonResponse({
+                'error': 'This conversation expired. Please start a new training plan.',
+                'reset': True,
+            }, status=404)
+
         ai_reply, suggestions = chat_with_ai(run, message)
 
         return JsonResponse({
@@ -169,8 +182,20 @@ def chat(request):
             'status': run.status,
             'run_id': run.id,
         })
-    except Exception:
-        return JsonResponse({'error': 'Something went wrong. Please try again.'}, status=500)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid request.'}, status=400)
+    except Exception as exc:
+        logger.exception("Chat request failed: %s", exc)
+        return JsonResponse({
+            'message': (
+                "I'm having trouble connecting to the AI service right now. "
+                "Please try sending that once more."
+            ),
+            'suggestions': ["Try again", "Start a new plan", "Upload context first"],
+            'stage': None,
+            'status': 'in_progress',
+            'run_id': request.session.get('run_id'),
+        })
 
 
 @login_required

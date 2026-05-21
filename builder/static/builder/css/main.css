@@ -490,6 +490,7 @@ html, body {
 .message.user .msg-bubble { background: var(--green); border-bottom-right-radius: 4px; color: var(--white); }
 
 /* Markdown inside AI bubble */
+.message.ai .msg-bubble h1  { font-size: 20px; font-weight: 800; margin: 2px 0 10px; color: var(--dark); line-height: 1.25; }
 .message.ai .msg-bubble h2  { font-size: 16px; font-weight: 800; margin: 12px 0 7px; color: var(--dark); line-height: 1.3; }
 .message.ai .msg-bubble h3  { font-size: 13px; font-weight: 700; margin: 10px 0 5px; color: var(--green); }
 .message.ai .msg-bubble strong { font-weight: 700; }
@@ -500,6 +501,17 @@ html, body {
 .message.ai .msg-bubble p   { margin-bottom: 7px; }
 .message.ai .msg-bubble p:last-child { margin-bottom: 0; }
 .message.ai .msg-bubble code { background: var(--gray-light); padding: 2px 5px; border-radius: 4px; font-size: 12px; font-family: monospace; }
+.message.ai .msg-bubble.generated-doc { max-width: min(920px, 86%); padding: 22px 26px; line-height: 1.7; }
+.message.ai .msg-bubble.generated-doc h2 { margin-top: 20px; padding-top: 6px; border-top: 1px solid var(--gray-border); }
+.message.ai .msg-bubble.generated-doc h3 { margin-top: 16px; color: var(--dark); }
+.message.ai .msg-bubble.generated-doc hr { margin: 18px 0; }
+.md-table-wrap { overflow-x: auto; margin: 12px 0 16px; border: 1px solid var(--gray-border); border-radius: 8px; }
+.md-table-wrap table { width: 100%; border-collapse: collapse; min-width: 640px; background: var(--white); }
+.md-table-wrap th,
+.md-table-wrap td { padding: 10px 12px; border-bottom: 1px solid var(--gray-border); text-align: left; vertical-align: top; }
+.md-table-wrap th { background: var(--gray-light); font-size: 12px; font-weight: 800; color: var(--dark); }
+.md-table-wrap td { font-size: 13px; line-height: 1.55; }
+.md-table-wrap tbody tr:last-child td { border-bottom: none; }
 
 /* System / file message */
 .message.system .msg-bubble {
@@ -731,6 +743,7 @@ html, body {
   .header-center { display: none; }
   .header-title  { display: none; }
   .messages-scroll { padding: 14px; }
+  .message.ai .msg-bubble.generated-doc { max-width: 100%; padding: 18px; }
   .booking-form-wrap { padding: 10px 12px; }
   .input-area    { padding: 6px 12px 10px; }
   .suggestions-bar { padding: 6px 12px; }
