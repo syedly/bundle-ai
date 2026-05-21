@@ -17,10 +17,28 @@ function renderMarkdown(text) {
   const out = [];
   let inList = false;
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (isTableHeader(lines, i)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      const headers = tableCells(line);
+      const rows = [];
+      i += 2;
+      while (i < lines.length && /\|/.test(lines[i]) && lines[i].trim() !== '') {
+        rows.push(tableCells(lines[i]));
+        i++;
+      }
+      i--;
+      out.push(renderTable(headers, rows));
+      continue;
+    }
     if (/^-{3,}$/.test(line.trim())) {
       if (inList) { out.push('</ul>'); inList = false; }
       out.push('<hr>'); continue;
+    }
+    if (/^# /.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<h1>${inl(line.slice(2))}</h1>`); continue;
     }
     if (/^## /.test(line)) {
       if (inList) { out.push('</ul>'); inList = false; }
@@ -43,6 +61,20 @@ function renderMarkdown(text) {
   }
   if (inList) out.push('</ul>');
   return out.join('');
+}
+
+function isTableHeader(lines, i) {
+  return i + 1 < lines.length && /\|/.test(lines[i]) && /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(lines[i + 1]);
+}
+
+function tableCells(line) {
+  return line.replace(/^\s*\|/, '').replace(/\|\s*$/, '').split('|').map(c => c.trim());
+}
+
+function renderTable(headers, rows) {
+  const head = headers.map(h => `<th>${inl(h)}</th>`).join('');
+  const body = rows.map(row => `<tr>${row.map(c => `<td>${inl(c)}</td>`).join('')}</tr>`).join('');
+  return `<div class="md-table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
 function inl(t) {
@@ -95,6 +127,9 @@ function appendMessage(role, content, animate = true) {
 
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
+  if (role === 'ai' && /^#\s/m.test(content || '')) {
+    bubble.classList.add('generated-doc');
+  }
   if (role === 'ai') {
     bubble.innerHTML = renderMarkdown(content);
   } else {
@@ -304,6 +339,10 @@ async function sendMessage(overrideText) {
 
     if (!res.ok) {
       removeTyping();
+      if (data.reset) {
+        sessionStorage.removeItem('run_id');
+        currentRunId = null;
+      }
       appendMessage('ai', data.error || 'Something went wrong. Please try again.');
       return;
     }

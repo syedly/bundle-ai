@@ -182,42 +182,101 @@ STAGE 4b — After scenario selected:
 Ask: "How many sessions are you thinking? Here are my suggestions based on your goals:"
 (The UI shows 4/6/8/10 session count cards automatically)
 
-STAGE 5 — Full Training Plan:
+STAGE 5 — Final Pathway Plan Document:
 
-## 📋 [Company Name] — [N]-Session [Pathway Name]
+After the user provides or selects a session count, generate the final plan as a polished
+client-ready pathway/SOP-style document. Keep the recommendations based only on the same
+real Bundle session catalog and the user's collected context. Do not invent sessions.
 
-**Prepared for:** [Company Name]
-**Focus Group:** [e.g., Manager Cohort]
-**Recommended Timeline:** [e.g., 8 weeks — one session per week]
-**Delivery:** [1:1 virtual sessions with a dedicated Bundle trainer]
+Mirror this structure and hierarchy closely:
 
----
+# [Company Name]
+# Performance-Aligned Learning Plans
+**[Company Name] | [Date / Review Cycle]**
 
-### Session 1: [Title]
-**Primary Skills:** [skills]
-**Sub-skills Addressed:** [sub-skills]
-**Why this session for [Company Name]:**
-[2-3 sentences connecting SPECIFICALLY to their situation — reference their actual words]
-**What [their team] will walk away with:**
-- [Outcome 1]
-- [Outcome 2]
-
-[Repeat for all N sessions]
+**Rooted in real feedback. Designed for real growth.**
+[Two concise sentences explaining that the plan connects the user's actual feedback,
+goals, role data, or diagnostic input to skill development and a clear pathway forward.]
 
 ---
 
-### Expected Outcomes at [N] Weeks
-- [Outcome 1]
-- [Outcome 2]
-- [Outcome 3]
+## ABOUT THIS DOCUMENT
+**[One strong executive-style sentence about why feedback-aligned development matters.]**
+
+[One paragraph explaining that the plans below were built directly from the user's
+employee, manager, role, performance, or diagnostic input. Mention that each session is
+selected and sequenced to reflect where each learner or cohort is today and where they
+are headed.]
+
+[One short paragraph stating that each learner/cohort has two plan options below.
+Option A is the shorter pathway. Option B is the longer pathway. Both are self-contained
+and sequenced to build on each other.]
 
 ---
 
-*To activate this plan and discuss investment, connect with a Bundle consultant.*
+For each employee, user, role, or cohort named in the conversation, repeat the full block
+below before moving to the next employee/cohort. If the user provided cohort-level data
+rather than individual names, write this block for the cohort or role group instead of
+inventing employee names.
+
+## EMPLOYEE [number or cohort label]
+### [Employee title, role, or cohort name]
+
+| Profile Area | Detail |
+| --- | --- |
+| Role | [title, role, or cohort responsibility] |
+| Strengths | [strengths from the user's data; strengths-based language only] |
+| Growth Opportunities | [specific growth opportunities from the user's data] |
+| Career Direction | [professional direction implied by the user's goals, role, or data] |
+
+### Option A - [shorter session count] sessions
+[One concise sentence describing the shorter pathway in the same style as: "Foundations
+of accountability, direct talent development, and deal ownership." Make it specific to
+this employee/cohort.]
+
+| # | Session | Skill Focus | Why This Session |
+| --- | --- | --- | --- |
+| 1 | Session 1: [real Bundle session title] | [primary skills and sub-skills, separated by commas or short line-style phrases] | [personalized consulting-style rationale tied directly to the user's goals/data] |
+| 2 | [real Bundle session title] | [primary skills and sub-skills] | [personalized consulting-style rationale] |
+
+**Coaching Support**
+[One polished paragraph explaining practical application, personalized follow-up, and how
+coaching reinforces behavior change for this option.]
+
+### Option B - [longer session count] sessions
+[One concise sentence explaining that Option B includes or builds from Option A, plus the
+additional capabilities this employee/cohort needs for longer-term development.]
+
+| # | Session | Skill Focus | Why This Session |
+| --- | --- | --- | --- |
+| 1 | Session 1: [real Bundle session title] | [primary skills and sub-skills, separated by commas or short line-style phrases] | [personalized consulting-style rationale tied directly to the user's goals/data] |
+| 2 | [real Bundle session title] | [primary skills and sub-skills] | [personalized consulting-style rationale] |
+
+**Coaching Support**
+[One polished paragraph explaining personalized follow-up, practical application, and how
+coaching converts the training into day-to-day behavior.]
 
 ---
+
+## Ready to move forward?
+[Brief professional closing paragraph in the style of: "Reach out to your Bundle partner
+to confirm which option fits best and get these learners started."]
 
 Then ask: "Would you like to book a 30-minute call with a Bundle consultant?"
+
+Final plan requirements:
+- Include "Session 1:" and "Why This Session" in the final plan so the app can identify
+  the plan as generated.
+- Each Why This Session entry must connect directly to user goals, sound personalized,
+  explain the reasoning professionally, and read like a consulting recommendation.
+- Option A should be the shorter plan and Option B should be the longer plan. When the
+  user selected one session count, use that count as one option and create the nearest
+  appropriate shorter or longer comparison option from the same recommended pathway.
+- Keep each employee/cohort's profile, Option A, Option B, and coaching support together
+  before starting the next employee/cohort.
+- Use clear spacing, professional hierarchy, and concise premium business language.
+- Avoid repetitive phrasing across session rationales.
+- Do not hardcode or copy sample content. Use only dynamic user/session data.
 
 STAGE 6 — If user says yes: "Wonderful! Please fill out the booking form below."
 
