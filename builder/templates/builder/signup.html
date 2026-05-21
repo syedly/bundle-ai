@@ -1,0 +1,85 @@
+{% extends 'builder/base.html' %}
+{% load static %}
+
+{% block title %}Create Account — Bundle AI Training Builder{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img
+        src="{% static 'builder/images/bundle.png' %}"
+        alt="Bundle"
+        class="auth-logo-img"
+        onerror="this.style.display='none';document.getElementById('authLogoText').style.display='block';"
+      >
+      <span id="authLogoText" class="auth-logo-text" style="display:none">BUNDLE</span>
+    </div>
+
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Get 3 free AI-powered training plans — no credit card needed.</p>
+
+    {% if error %}
+    <div class="auth-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div class="auth-field">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="yourname"
+          autocomplete="username"
+          required
+          autofocus
+        >
+      </div>
+      <div class="auth-field">
+        <label for="email">Work Email <span class="field-optional">(optional)</span></label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@company.com"
+          autocomplete="email"
+        >
+      </div>
+      <div class="auth-field">
+        <label for="password1">Password</label>
+        <input
+          type="password"
+          id="password1"
+          name="password1"
+          placeholder="At least 8 characters"
+          autocomplete="new-password"
+          required
+        >
+      </div>
+      <div class="auth-field">
+        <label for="password2">Confirm Password</label>
+        <input
+          type="password"
+          id="password2"
+          name="password2"
+          placeholder="Repeat your password"
+          autocomplete="new-password"
+          required
+        >
+      </div>
+
+      <div class="auth-free-badge">
+        🎯 3 free training plans included
+      </div>
+
+      <button type="submit" class="auth-btn">Create Account →</button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account? <a href="/login/">Sign in</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

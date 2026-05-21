@@ -1,0 +1,59 @@
+{% extends 'builder/base.html' %}
+{% load static %}
+
+{% block title %}Sign In — Bundle AI Training Builder{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img
+        src="{% static 'builder/images/bundle.png' %}"
+        alt="Bundle"
+        class="auth-logo-img"
+        onerror="this.style.display='none';document.getElementById('authLogoText').style.display='block';"
+      >
+      <span id="authLogoText" class="auth-logo-text" style="display:none">BUNDLE</span>
+    </div>
+
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-subtitle">Sign in to your Bundle AI Training Builder account.</p>
+
+    {% if error %}
+    <div class="auth-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <div class="auth-field">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="yourname"
+          autocomplete="username"
+          required
+          autofocus
+        >
+      </div>
+      <div class="auth-field">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+      <button type="submit" class="auth-btn">Sign In →</button>
+    </form>
+
+    <p class="auth-switch">
+      Don't have an account? <a href="/signup/">Create one free</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'builder/base.html' %}
+{% load static %}
+
+{% block title %}Consultation Booked — Bundle{% endblock %}
+
+{% block content %}
+<div class="confirm-page">
+  <div class="confirm-card">
+    <div class="confirm-icon">✅</div>
+    <h1 class="confirm-title">Your consultation is booked!</h1>
+    <p class="confirm-subtitle">
+      A Bundle consultant will be in touch to confirm your appointment and discuss next steps.
+    </p>
+
+    <div class="confirm-details">
+      {% if run.contact_name %}
+      <div class="confirm-row">
+        <span class="confirm-label">Name</span>
+        <span class="confirm-value">{{ run.contact_name }}</span>
+      </div>
+      {% endif %}
+      {% if run.contact_email %}
+      <div class="confirm-row">
+        <span class="confirm-label">Email</span>
+        <span class="confirm-value">{{ run.contact_email }}</span>
+      </div>
+      {% endif %}
+      {% if run.contact_phone %}
+      <div class="confirm-row">
+        <span class="confirm-label">Phone</span>
+        <span class="confirm-value">{{ run.contact_phone }}</span>
+      </div>
+      {% endif %}
+      {% if run.company_name %}
+      <div class="confirm-row">
+        <span class="confirm-label">Company</span>
+        <span class="confirm-value">{{ run.company_name }}</span>
+      </div>
+      {% endif %}
+      {% if run.booked_date %}
+      <div class="confirm-row">
+        <span class="confirm-label">Date</span>
+        <span class="confirm-value">{{ run.booked_date }}</span>
+      </div>
+      {% endif %}
+      {% if run.booked_time %}
+      <div class="confirm-row">
+        <span class="confirm-label">Time</span>
+        <span class="confirm-value">{{ run.booked_time }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <a href="/" class="btn-back">← Back to Training Builder</a>
+  </div>
+</div>
+{% endblock %}

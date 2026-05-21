@@ -1,0 +1,212 @@
+{% extends 'builder/base.html' %}
+{% load static %}
+
+{% block title %}Bundle AI Training Builder{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <img src="{% static 'builder/images/bundle.png' %}" alt="Bundle" class="logo"
+           onerror="this.style.display='none';document.getElementById('logoText').style.display='inline';">
+      <span id="logoText" class="logo-text" style="display:none">BUNDLE</span>
+      <span class="header-title">AI Training Builder</span>
+    </div>
+    <div class="header-center">
+      <div class="stage-dots" id="stageDots">
+        <span class="stage-dot active" data-stage="1" title="Context"></span>
+        <span class="stage-dot" data-stage="2" title="Data Input"></span>
+        <span class="stage-dot" data-stage="3" title="Analysis"></span>
+        <span class="stage-dot" data-stage="4" title="Recommend"></span>
+        <span class="stage-dot" data-stage="5" title="Plan"></span>
+        <span class="stage-dot" data-stage="6" title="Book"></span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="header-user">{{ request.user.username }}</span>
+      <button class="btn-new-run" id="newRunBtn" onclick="confirmNewRun()">+ New</button>
+      <a href="/logout/" class="btn-logout">Sign out</a>
+    </div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Progress -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Your Progress</h3>
+        <ul class="progress-list" id="progressList">
+          <li class="progress-item active" data-stage="1"><span class="progress-dot"></span><span class="progress-label">1. Context</span></li>
+          <li class="progress-item" data-stage="2"><span class="progress-dot"></span><span class="progress-label">2. Data Input</span></li>
+          <li class="progress-item" data-stage="3"><span class="progress-dot"></span><span class="progress-label">3. Analysis</span></li>
+          <li class="progress-item" data-stage="4"><span class="progress-dot"></span><span class="progress-label">4. Recommend</span></li>
+          <li class="progress-item" data-stage="5"><span class="progress-dot"></span><span class="progress-label">5. Plan</span></li>
+          <li class="progress-item" data-stage="6"><span class="progress-dot"></span><span class="progress-label">6. Book</span></li>
+        </ul>
+      </div>
+
+      <!-- Free tier meter -->
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Free Plans</h3>
+        <div class="free-meter">
+          <div class="free-meter-track">
+            <div class="free-meter-fill" id="freeMeterFill"
+                 style="width: {% widthratio runs_used free_limit 100 %}%"></div>
+          </div>
+          <span class="free-meter-label" id="freeMeterLabel">{{ runs_used }}/{{ free_limit }} used</span>
+        </div>
+        {% if is_locked %}
+        <p class="free-locked-note">You've used all free plans. <a href="mailto:hello@bundle.com">Contact Bundle</a> to continue.</p>
+        {% endif %}
+      </div>
+
+      <!-- Past Threads -->
+      {% if threads %}
+      <div class="sidebar-section sidebar-threads">
+        <h3 class="sidebar-title">Past Conversations</h3>
+        <ul class="thread-list" id="threadList">
+          {% for run in threads %}
+          <li class="thread-item {% if current_run_id == run.id %}active{% endif %}"
+              onclick="loadThread({{ run.id }})"
+              data-run-id="{{ run.id }}">
+            <span class="thread-title">{{ run.display_title }}</span>
+            <span class="thread-meta">
+              <span class="thread-status thread-status--{{ run.status }}">{{ run.get_status_display }}</span>
+              <span class="thread-date">{{ run.updated_at|date:"M j" }}</span>
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+    </aside>
+
+    <!-- Chat Area -->
+    <main class="chat-area">
+
+      <!-- Welcome / Paywall -->
+      <div class="welcome-screen" id="welcomeScreen">
+        {% if is_locked %}
+        <div class="paywall">
+          <div class="paywall-icon">🔒</div>
+          <h2 class="paywall-title">You've used all {{ free_limit }} free plans</h2>
+          <p class="paywall-desc">
+            You've already built {{ runs_used }} training plans with Bundle AI.
+            To create more, get in touch with the Bundle team.
+          </p>
+          <a href="mailto:hello@bundle.com" class="btn-get-started">Contact Bundle →</a>
+          <p class="paywall-hint">Or review one of your past conversations in the sidebar.</p>
+        </div>
+        {% else %}
+        <div class="welcome-icon">🎯</div>
+        <h1 class="welcome-title">Build Your Training Plan</h1>
+        <p class="welcome-desc">
+          Tell Bundle about your people, your goals, and your budget —
+          get a specific role-by-role training plan in minutes.
+        </p>
+        <p class="welcome-free-note">{{ free_limit|add:"-1"|add:"1" }} free plans · No credit card</p>
+        <button class="btn-get-started" id="getStartedBtn" onclick="startChat()">Get Started →</button>
+        {% endif %}
+      </div>
+
+      <!-- Messages -->
+      <div class="messages-container" id="messagesContainer" style="display:none">
+        <div class="messages-scroll" id="messagesScroll"></div>
+      </div>
+
+      <!-- Suggestions bar (AI-driven) -->
+      <div class="suggestions-bar" id="suggestionsBar" style="display:none"></div>
+
+      <!-- Booking Form -->
+      <div class="booking-form-wrap" id="bookingFormWrap" style="display:none">
+        <div class="booking-form">
+          <h3 class="booking-title">📅 Schedule Your Consultation</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookName">Full Name</label>
+              <input type="text" id="bookName" placeholder="Jane Smith" oninput="checkBookingForm()">
+            </div>
+            <div class="form-group">
+              <label for="bookEmail">Work Email</label>
+              <input type="email" id="bookEmail" placeholder="jane@company.com" oninput="checkBookingForm()">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookPhone">Phone Number</label>
+              <input type="tel" id="bookPhone" placeholder="+1 (555) 000-0000" oninput="checkBookingForm()">
+            </div>
+            <div class="form-group">
+              <label for="bookDate">Preferred Date</label>
+              <input type="date" id="bookDate" oninput="checkBookingForm()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Preferred Time</label>
+            <div class="time-slots">
+              <button class="time-slot" onclick="selectTime(this,'9:00 AM')">9:00 AM</button>
+              <button class="time-slot" onclick="selectTime(this,'10:00 AM')">10:00 AM</button>
+              <button class="time-slot" onclick="selectTime(this,'11:00 AM')">11:00 AM</button>
+              <button class="time-slot" onclick="selectTime(this,'1:00 PM')">1:00 PM</button>
+              <button class="time-slot" onclick="selectTime(this,'2:00 PM')">2:00 PM</button>
+              <button class="time-slot" onclick="selectTime(this,'3:00 PM')">3:00 PM</button>
+              <button class="time-slot" onclick="selectTime(this,'4:00 PM')">4:00 PM</button>
+            </div>
+          </div>
+          <button class="btn-book" id="bookBtn" onclick="submitBooking()" disabled>Book My Consultation</button>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area" id="inputArea" style="display:none">
+        <div class="input-wrapper">
+          <!-- File upload -->
+          <label class="btn-attach" for="fileInput" title="Attach a file (PDF, DOCX, TXT, CSV, XLSX)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"></path>
+            </svg>
+            <input type="file" id="fileInput" accept=".txt,.csv,.pdf,.docx,.xlsx"
+                   style="display:none" onchange="uploadFile(this)">
+          </label>
+          <textarea
+            id="messageInput"
+            placeholder="Type your message…"
+            rows="1"
+            oninput="autoResize(this)"
+            onkeydown="handleKeyDown(event)"
+          ></textarea>
+          <button class="btn-send" id="sendBtn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <div class="input-hint" id="fileUploadHint" style="display:none">
+          <span id="fileUploadHintText"></span>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Pass server data to JS -->
+<script>
+  window.BUNDLE = {
+    runsUsed: {{ runs_used }},
+    freeLimit: {{ free_limit }},
+    isLocked: {{ is_locked|yesno:"true,false" }},
+    currentRunId: {{ current_run_id|default:"null" }},
+  };
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'builder/js/chat.js' %}"></script>
+{% endblock %}
