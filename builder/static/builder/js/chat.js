@@ -48,6 +48,10 @@ function renderMarkdown(text) {
       if (inList) { out.push('</ul>'); inList = false; }
       out.push(`<h3>${inl(line.slice(4))}</h3>`); continue;
     }
+    if (/^#### /.test(line)) {
+      if (inList) { out.push('</ul>'); inList = false; }
+      out.push(`<h4>${inl(line.slice(5))}</h4>`); continue;
+    }
     if (/^[-*] /.test(line)) {
       if (!inList) { out.push('<ul>'); inList = true; }
       out.push(`<li>${inl(line.slice(2))}</li>`); continue;
@@ -81,7 +85,8 @@ function inl(t) {
   return t
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g,     '<em>$1</em>')
-    .replace(/`(.+?)`/g,       '<code>$1</code>');
+    .replace(/`(.+?)`/g,       '<code>$1</code>')
+    .replace(/&lt;br\s*\/?&gt;/gi, '<br>');
 }
 
 // ── CSRF ───────────────────────────────────────────────────────────────────
@@ -232,11 +237,59 @@ function removeSessionCards() {
   document.getElementById('sessionCardsWrap')?.remove();
 }
 
+// ── Plan Action Buttons ────────────────────────────────────────────────────
+function showPlanActions() {
+  if (document.getElementById('planActionsWrap')) return; // already shown
+  const scroll = document.getElementById('messagesScroll');
+  if (!scroll || !currentRunId) return;
+
+  const wrap = document.createElement('div');
+  wrap.id = 'planActionsWrap';
+  wrap.className = 'plan-actions';
+
+  const dlBtn = document.createElement('a');
+  dlBtn.href = `/api/pdf/${currentRunId}/`;
+  dlBtn.className = 'btn-plan-action btn-download-pdf';
+  dlBtn.innerHTML = '⬇&nbsp; Download Training Plan (PDF)';
+  dlBtn.target = '_blank';
+  dlBtn.rel = 'noopener';
+
+  const bookBtn = document.createElement('button');
+  bookBtn.className = 'btn-plan-action btn-book-consultation';
+  bookBtn.innerHTML = '📅&nbsp; Book a Consultation';
+  bookBtn.onclick = () => {
+    const wrap = document.getElementById('bookingFormWrap');
+    if (wrap) {
+      wrap.style.display = '';
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const di = document.getElementById('bookDate');
+      if (di && !di.min) di.min = new Date().toISOString().split('T')[0];
+    }
+  };
+
+  wrap.appendChild(dlBtn);
+  wrap.appendChild(bookBtn);
+  scroll.appendChild(wrap);
+  scrollToBottom();
+}
+
+function removePlanActions() {
+  document.getElementById('planActionsWrap')?.remove();
+}
+
 // ── Handle AI response (suggestions + stage-specific UI) ──────────────────
 function handleAiResponse(data) {
   removeTyping();
   appendMessage('ai', data.message);
   updateStageUI(data.stage);
+
+  // Show plan action buttons when plan is generated
+  if (data.status === 'plan_generated') {
+    removePlanActions();
+    showPlanActions();
+    hideSuggestions();
+    removeSessionCards();
+  }
 
   // Show booking form when stage 6
   if (data.stage === 6) {
@@ -248,16 +301,18 @@ function handleAiResponse(data) {
     }
   }
 
-  // Decide what to show below the message
-  const aiLower = (data.message || '').toLowerCase();
+  // Decide what to show below the message (skip if plan actions shown)
+  if (data.status !== 'plan_generated') {
+    const aiLower = (data.message || '').toLowerCase();
 
-  if (/how many sessions|number of sessions/.test(aiLower)) {
-    showSessionCards();
-    hideSuggestions();
-  } else if (data.suggestions && data.suggestions.length > 0) {
-    showSuggestions(data.suggestions);
-  } else {
-    hideSuggestions();
+    if (/how many sessions|number of sessions/.test(aiLower)) {
+      showSessionCards();
+      hideSuggestions();
+    } else if (data.suggestions && data.suggestions.length > 0) {
+      showSuggestions(data.suggestions);
+    } else {
+      hideSuggestions();
+    }
   }
 
   // Update thread title in sidebar if we have it
@@ -455,13 +510,16 @@ async function loadThread(runId) {
       }
     }
 
+    // Show plan action buttons if plan was already generated
+    removePlanActions();
+    if (data.status === 'plan_generated' || data.status === 'cta_clicked') {
+      showPlanActions();
+    }
+
     // Highlight active thread in sidebar
     document.querySelectorAll('.thread-item').forEach(el => el.classList.remove('active'));
     const el = document.querySelector(`.thread-item[data-run-id="${runId}"]`);
     if (el) el.classList.add('active');
-
-    // Show last suggestions (just restore from AI message)
-    // We can't recover AI-provided suggestions, so leave empty after load
 
   } catch (err) {
     console.error('loadThread error:', err);
@@ -577,6 +635,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           const di = document.getElementById('bookDate');
           if (di) di.min = new Date().toISOString().split('T')[0];
         }
+      }
+
+      // Show plan action buttons if plan was already generated
+      if (data.status === 'plan_generated' || data.status === 'cta_clicked') {
+        showPlanActions();
       }
 
       // Highlight active thread
