@@ -39,49 +39,120 @@ def extract_data_tag(text):
 # ── Fixed per-question suggestion sets ────────────────────────────────────────
 
 STAGE_SUGGESTIONS = {
+    # Stage 1 – company intro
     'q_company': [
         "Tech startup, ~50 employees",
-        "Mid-size retail, 200+ employees",
-        "Professional services, 80 staff",
+        "Mid-size fintech, 200+ employees",
+        "Professional services firm, 80 staff",
         "Healthcare org, ~500 people",
     ],
-    'q_goal': [
-        "Improve manager effectiveness",
-        "Build a leadership pipeline",
-        "Reduce team turnover",
-        "Scale a skill across the team",
+    # Stage 1 – team size follow-up
+    'q_team_size': [
+        "Under 50 people",
+        "50–200 people",
+        "200–500 people",
+        "Over 500 people",
     ],
+    # Stage 1 – who is the training for
     'q_focus': [
-        "One specific individual",
+        "One specific person",
         "A cohort of managers",
         "The whole team",
     ],
+    # Stage 1 – role and seniority
+    'q_role': [
+        "A mid-level operations manager",
+        "A senior individual contributor",
+        "A new first-line manager",
+        "A director or VP",
+    ],
+    # Stage 1 – training goal
+    'q_goal': [
+        "Strengthen executive communication",
+        "Build direct feedback habits",
+        "Improve leadership presence",
+        "Drive better team accountability",
+    ],
+    # Stage 1 – specific challenges
+    'q_challenges': [
+        "Struggles to frame updates for leadership",
+        "Doesn't give direct feedback to the team",
+        "Gets lost in detail during senior meetings",
+        "Struggles to prioritise under pressure",
+    ],
+    # Stage 1 – day-to-day observations
+    'q_daytoday': [
+        "Mainly in meetings and presentations",
+        "In written updates and reports",
+        "In 1:1s with their direct reports",
+        "Both in meetings and written work",
+    ],
+    # Stage 2 – what data is available
     'q_data': [
-        "Yes, I have performance reviews",
+        "I have a performance review to share",
+        "I have a job description to paste",
         "I have informal notes only",
-        "No data — just a goal and budget",
+        "No data — let's use your questions",
     ],
-    'q_budget': [
-        "Start Here — entry level",
-        "Build Momentum — structured program",
-        "Full Impact — comprehensive",
-    ],
-    'q_timeline': [
-        "New cohort starting in Q3",
-        "Upcoming leadership transition",
-        "No specific timeline",
-        "End of year deadline",
-    ],
+    # Stage 2 – upload/paste prompt
     'q_data_upload': [
-        "I'll paste the data now",
+        "I'll paste the review now",
         "I'll use the upload button",
         "Let me describe the key findings",
     ],
+    # Stage 2 – JD paste prompt
     'q_data_jd': [
-        "I'll paste a job description now",
+        "I'll paste the job description now",
         "I have multiple roles to add",
         "Let me describe the roles instead",
     ],
+    # Stage 2 – AI summary confirmation
+    'q_confirm_data': [
+        "Yes, that's accurate",
+        "Close — let me clarify one thing",
+        "Not quite — here's what's different",
+    ],
+    # Stage 1 – strengths question
+    'q_strengths': [
+        "Strong relationship management",
+        "Excellent technical depth",
+        "Great with external stakeholders",
+        "Strong execution and follow-through",
+    ],
+    # Stage 1 – success metrics
+    'q_success': [
+        "They run leadership meetings confidently",
+        "Measurable improvement in 360 feedback",
+        "Fewer escalations to me",
+        "Their team performs more independently",
+    ],
+    # Stage 1 – budget / program size
+    'q_budget': [
+        "Start small — 4 sessions to test",
+        "A structured program — 6 sessions",
+        "Full programme — 8 sessions",
+    ],
+    # Stage 1 – timeline
+    'q_timeline': [
+        "Within the next 30 days",
+        "Next quarter",
+        "No specific deadline",
+        "Before end of year",
+    ],
+    # Stage 1 – constraints / off-limits
+    'q_constraints': [
+        "We've already done communication training",
+        "Nothing is off the table",
+        "Keep it practical — no theory-heavy content",
+        "Limited to 1 session per month",
+    ],
+    # Stage 1 – ready to generate
+    'q_ready': [
+        "Go ahead — generate the recommendation",
+        "Generate it now",
+        "Let me add one more thing first",
+    ],
+    # Diagnostic questions
     'q_diag_challenge': [
         "Communication and alignment gaps",
         "Leadership and management gaps",
@@ -126,20 +197,23 @@ STAGE_SUGGESTIONS = {
         "Stronger communication and trust",
         "Improved accountability and performance",
     ],
+    # Stage 4 – delivery method
     'q_scenario': [
         "1:1 Training + Coaching",
         "1:1 Training Only",
         "Coaching Only",
     ],
+    # Stage 4b – session count
     'q_sessions': [
         "Start Here — 4 sessions",
         "Build Momentum — 6 sessions",
         "Full Impact — 8 sessions",
     ],
+    # Stage 6 – booking
     'q_book': [
-        "Yes, let's book a call",
-        "Download the plan first",
-        "I have a few more questions",
+        "Yes, let's talk",
+        "Open the plan first",
+        "I'll review and come back",
     ],
 }
 
@@ -147,18 +221,11 @@ STAGE_SUGGESTIONS = {
 def detect_question_type(ai_message):
     """
     Detect which question the AI just asked and return the matching suggestion key.
-    Patterns are intentionally broad to catch all natural AI phrasings of each question.
+    Patterns are broad to catch all natural AI phrasings. Most-specific checks first.
     """
     msg = ai_message.lower()
 
-    # ── Most-specific checks first to avoid false matches ──────────────────────
-
-    # Budget (needs BOTH a budget word AND a tier label)
-    if any(p in msg for p in ['budget', 'investment', 'training spend', 'approximate budget']) and \
-       any(p in msg for p in ['start here', 'build momentum', 'full impact']):
-        return 'q_budget'
-
-    # Scenario / delivery method selection
+    # ── Delivery / scenario ───────────────────────────────────────────────────
     if all(p in msg for p in ['scenario a', 'scenario b', 'scenario c']):
         return 'q_scenario'
     if any(p in msg for p in [
@@ -168,31 +235,58 @@ def detect_question_type(ai_message):
     ]):
         return 'q_scenario'
 
-    # Session count
+    # ── Session count ─────────────────────────────────────────────────────────
     if any(p in msg for p in [
         'how many sessions', 'number of sessions', 'session count',
-        'many sessions are you', 'how many session',
+        'many sessions are you', 'how many session', 'how big a program',
+        'how big of a program', 'how large a program',
     ]):
         return 'q_sessions'
 
-    # Booking CTA
+    # ── Budget (needs BOTH a budget word AND a tier label) ────────────────────
+    if any(p in msg for p in ['budget', 'investment', 'training spend']) and \
+       any(p in msg for p in ['start here', 'build momentum', 'full impact',
+                               'start small', 'structured program', 'full programme']):
+        return 'q_budget'
+
+    # ── Booking CTA ───────────────────────────────────────────────────────────
     if any(p in msg for p in [
         'book a', 'schedule a', 'consultation call', '30-minute',
         'talk to a bundle', 'book a call', 'get you scheduled',
-        'download this plan', 'download as a pdf',
+        'download this plan', 'download as a pdf', "set up a quick call",
+        'quick call with a bundle',
     ]):
         return 'q_book'
 
-    # Data upload request (path A — asking them to paste/upload data)
+    # ── Ready to generate recommendation ────────────────────────────────────
+    if any(p in msg for p in [
+        "want to add anything", "anything else before", "want me to factor",
+        "before i put your recommendation", "ready to generate",
+        "shall i put together", "ready to proceed", "anything you'd like to add",
+        "anything else you want me to", "before i draft",
+    ]):
+        return 'q_ready'
+
+    # ── AI summary confirmation (after doc upload) ───────────────────────────
+    if any(p in msg for p in [
+        "that right?", "is that right?", "does that sound right",
+        "that accurate?", "is that accurate", "sound about right",
+        "have i got that right", "is that a fair summary", "confirm that",
+        "looks like this is", "looks like we have",
+    ]):
+        return 'q_confirm_data'
+
+    # ── Data upload request (path A) ──────────────────────────────────────────
     if any(p in msg for p in [
         'paste or upload', 'paste the data', 'paste your data', 'paste your performance',
         'upload your data', 'upload your performance', 'upload button',
         'paste it directly', 'share your performance', 'share the data',
         'go ahead and paste', 'can you paste', 'please paste', 'feel free to paste',
+        'drop the file', 'drop a file', 'paperclip',
     ]):
         return 'q_data_upload'
 
-    # JD request (path B)
+    # ── JD request (path B) ──────────────────────────────────────────────────
     if any(p in msg for p in [
         'paste your job', 'paste the job', 'paste one or more job',
         'job description', 'paste the jd', 'share the jd', 'paste a job',
@@ -200,8 +294,68 @@ def detect_question_type(ai_message):
     ]):
         return 'q_data_jd'
 
-    # ── Diagnostic questions ────────────────────────────────────────────────────
+    # ── Constraints / off-table ───────────────────────────────────────────────
+    if any(p in msg for p in [
+        "off the table", "wouldn't land", "approaches that", "topics that",
+        "anything we should avoid", "any topics to avoid", "off limits",
+        "already covered", "already done", "not a good fit",
+    ]):
+        return 'q_constraints'
 
+    # ── Success metrics ───────────────────────────────────────────────────────
+    if any(p in msg for p in [
+        'how would you know this worked', 'how will you know', 'define success',
+        'what changes for you', 'what would success look like for this person',
+        'what would tell you', 'measure success', 'how does success look',
+        'what does good look like', 'what changes for the business',
+    ]):
+        return 'q_success'
+
+    # ── Strengths / build on ─────────────────────────────────────────────────
+    if any(p in msg for p in [
+        'what does this person do well', 'what are their strengths',
+        "build on rather than replace", 'already doing well',
+        'what should we build on', "what's working", 'what are they good at',
+        'existing strengths', 'talent they already have',
+    ]):
+        return 'q_strengths'
+
+    # ── Day-to-day observations ───────────────────────────────────────────────
+    if any(p in msg for p in [
+        'day to day', 'day-to-day', 'showing up in', 'observing',
+        'see it in meetings', 'written updates', 'where is this showing',
+        'where do you see this', 'what are you noticing', 'notice in their work',
+        'see this play out',
+    ]):
+        return 'q_daytoday'
+
+    # ── Specific challenges ───────────────────────────────────────────────────
+    if any(p in msg for p in [
+        'challenges are they running into', 'running into right now',
+        'what challenges', 'struggles they', 'specific challenge',
+        'challenges right now', 'what are they struggling with',
+        'what problems are they', 'what issues', 'be specific if you can',
+    ]):
+        return 'q_challenges'
+
+    # ── Role and seniority ────────────────────────────────────────────────────
+    if any(p in msg for p in [
+        'what role are they in', 'seniority ladder', 'seniority level',
+        'their role', 'what is their role', "what's their role",
+        'where are they on the', 'level are they', 'their position',
+        'what position', 'their title', 'job title', 'role and seniority',
+    ]):
+        return 'q_role'
+
+    # ── Team size follow-up ───────────────────────────────────────────────────
+    if any(p in msg for p in [
+        'how big is the company', 'company size', 'how many people overall',
+        'rough is fine', 'rough number', 'overall headcount',
+        'how large is the company', 'company overall',
+    ]):
+        return 'q_team_size'
+
+    # ── Diagnostic questions ──────────────────────────────────────────────────
     if any(p in msg for p in [
         'biggest challenge', "team's biggest challenge", 'main challenge',
         'biggest challenge your team', 'team is facing right now',
@@ -253,59 +407,54 @@ def detect_question_type(ai_message):
     if any(p in msg for p in [
         'success look like', 'what does success', '6 months from now',
         'six months from now', 'look like in 6', 'look like for this team',
-        'define success', 'what would success',
     ]):
         return 'q_diag_success'
 
-    # ── Stage 1 questions ───────────────────────────────────────────────────────
-
-    # Q4: Performance data — broad match (check BEFORE Q1/Q2/Q3 to avoid noise)
+    # ── Data availability ─────────────────────────────────────────────────────
     if any(p in msg for p in [
         'performance data', 'performance review', 'review data', 'employee data',
         'any data', 'data available', 'data you can share', 'share any data',
-        'do you have data', 'access to data', 'have you got data',
-        'data to share', 'data on your team',
+        'do you have data', 'access to data', 'have you got data', 'data to share',
+        'what can you share', 'what do you have', 'i can work with',
     ]) and any(p in msg for p in [
         'do you', 'is there', 'have you', 'any ', 'could you', 'can you',
-        'would you', 'share', 'available',
+        'would you', 'share', 'available', 'can work with',
     ]):
         return 'q_data'
 
-    # Q6: Timeline
+    # ── Timeline ──────────────────────────────────────────────────────────────
     if any(p in msg for p in [
         'timeline', 'urgency', 'time frame', 'timeframe', 'start date',
-        'kicking off', 'when do you need', 'any deadlines', 'deadline',
-        'is there a time', 'driving this', 'urgency driving',
+        'kicking off', 'when do you want', 'when do you need', 'any deadlines',
+        'deadline', 'when do you want this to start', 'when to start',
     ]):
         return 'q_timeline'
 
-    # Q3: Focus type
+    # ── Who is training for (focus type) ─────────────────────────────────────
     if any(p in msg for p in [
-        'focused on an individual', 'specific cohort', 'whole team',
-        'individual or a', 'cohort or', 'who is the training for',
-        'who would be trained', 'who are we training', 'focused on a specific',
-        'training for an individual', 'entire team', 'are you focused on',
-        'this for an individual', 'this for a cohort',
+        "who's this training for", "who is this training for", "who is the training for",
+        "who are we training", "training for one person", "one person or",
+        "individual or a team", "this for an individual",
     ]):
         return 'q_focus'
 
-    # Q2: Training goal
+    # ── Training goal ─────────────────────────────────────────────────────────
     if any(p in msg for p in [
-        'accomplish with training', 'trying to accomplish', 'training goal',
-        'hoping to achieve', 'what are you hoping', 'what would you like to achieve',
-        'goal for this training', 'what is the goal', 'what are you looking',
-        'what do you hope', 'what are you trying to', 'objective for this',
-        'outcome are you', 'what outcome',
+        'accomplish with training', 'hoping the training will accomplish',
+        'training will accomplish', 'training goal', 'hoping to achieve',
+        'what are you hoping', 'what would you like to achieve', 'goal for this',
+        'what are you trying to', 'objective for this', 'what outcome',
+        'hoping this will do', 'want the training to',
     ]):
         return 'q_goal'
 
-    # Q1: Company/industry/size — broadest, check last
+    # ── Company intro (broadest — check last) ─────────────────────────────────
     if any(p in msg for p in [
-        'company name', 'what company', 'your company', 'which company',
-        'team size', 'how many people', 'approximate team', 'how big is your team',
-        'how large', 'tell me about your company', 'what industry',
-        'your industry', 'size of your', 'how many employees',
-        'name of your company', 'company are you',
+        'what company', 'company is this for', 'company name', 'which company',
+        'your company', 'team size', 'how many people', 'approximate team',
+        'how big is your team', 'how large', 'what does your team do',
+        'roughly what does', 'tell me about your company', 'what industry',
+        'your industry', 'how many employees', 'name of your company',
     ]):
         return 'q_company'
 
@@ -367,7 +516,12 @@ CURRENT RUN STATE:
 - Company: {run.company_name or 'Not yet collected'}
 - Industry: {run.industry or 'Not yet collected'}
 - Team Size: {run.team_size or 'Not yet collected'}
+- Role Title: {run.role_title or 'Not yet collected'}
+- Seniority Level: {run.seniority_level or 'Not yet collected'}
 - Training Goal: {run.training_goal or 'Not yet collected'}
+- Observed Challenges: {run.observed_challenges or 'Not yet collected'}
+- Success Metrics: {run.success_metrics or 'Not yet collected'}
+- Training Constraints: {run.training_constraints or 'Not yet collected'}
 - Focus Type: {run.focus_type or 'Not yet collected'}
 - Has Performance Data: {run.has_performance_data or 'Not yet collected'}
 - Budget Tier: {run.budget_tier or 'Not yet collected'}
@@ -405,7 +559,9 @@ After EVERY message where you learn new context, append a [DATA: key=value | key
 This is parsed by the backend and saved to the database automatically.
 
 Valid DATA keys:
-  company_name, industry, team_size, training_goal,
+  company_name, industry, team_size,
+  role_title, seniority_level,
+  training_goal, observed_challenges, success_metrics, training_constraints,
   focus_type (individual|cohort|whole_team),
   target_type (individual|cohort),
   has_performance_data (yes|informal|no),
@@ -413,53 +569,131 @@ Valid DATA keys:
   budget_tier (start_here|build_momentum|full_impact),
   timeline, selected_scenario (A|B|C), num_sessions (number only)
 
-Example: [DATA: company_name=Acme Corp | industry=Technology | team_size=150]
+Example: [DATA: company_name=Acme Corp | industry=Fintech | team_size=200 | role_title=Operations Manager | seniority_level=mid-level]
 
 Output [DATA:] tag BEFORE [SUGGESTIONS:] tag, both at the very end of your message.
 If no new data to save, still output [DATA:] with the most recently confirmed values.
 
+=== LENGTH AND DEPTH — NON-NEGOTIABLE ===
+Every output must be FULLY written out. NEVER abbreviate, truncate, or summarise with
+"[repeat for other employees]" or "[continued]" or "..." or similar shorthand.
+These are real client deliverables — incompleteness destroys their value.
+
+Specific minimums:
+- Analysis paragraph (Stage 4): minimum 3 sentences with specific evidence
+- Each growth opportunity: minimum 2 sentences with a direct quote or specific reference
+- "If you go all in" paragraph: minimum 3 sentences with named outcomes
+- "If you start small" paragraph: minimum 2 sentences naming specific gaps that remain
+- Sequencing paragraph (Stage 5): minimum 4 sentences explaining the arc
+- "Why this session" per row: minimum 3 sentences, must reference specific data
+- Coaching support paragraph: minimum 3 sentences, specific to this person
+- Delivery method explanations: minimum 2 sentences each, specific to their gaps
+
+When generating Stage 5 plans with multiple employees, write EVERY employee block in full.
+Do not compress or reference earlier blocks. Each block is independent and complete.
+
 === BRAND TONE ===
 Warm, expert, specific. Like a trusted advisor. Never robotic. Never generic filler.
+Write like someone who actually read the data — not like someone filling in a template.
 
 === CONVERSATION FLOW — FOLLOW EXACTLY ===
 
-STAGE 1 — Context Collection (one question at a time):
-Q1: "What is your company name, industry, and approximate team size?"
-Q2: "What are you trying to accomplish with training?"
-    (e.g., improve manager effectiveness, reduce turnover, build a leadership pipeline)
-Q3: "Are you focused on an individual, a specific cohort, or a whole team?"
-Q4: "Do you have any performance data you can share?"
-    (yes / I have something but it's not formal / no data — just a goal)
-Q5: "What is your approximate training budget?"
-    Show these three options clearly:
-    - Start Here: entry-level, one-off investment
-    - Build Momentum: structured program for measurable behavior change
-    - Full Impact: comprehensive, for serious development goals
-Q6: "Is there a timeline or urgency driving this?"
-    (e.g., new cohort starting in Q3, upcoming leadership transition)
+OPENING LINE (first message only):
+"Hi. I'm going to ask you a few things about your team and what you're trying to solve,
+then put together a plan you can react to. There are no wrong answers — the more specific
+you are, the more useful the plan will be.
 
-STAGE 2 — Data Input (route to ONE based on Q4 answer):
+To start: what company is this for, and roughly what does your team do?"
 
-  Path A — Has performance data:
-  "Please paste or upload your performance review data. I'll read it in any format —
-  spreadsheet, doc, or plain text — and extract what I need."
+STAGE 1 — Context Collection (ONE question per message, conversational tone):
+
+Q1: "What company is this for, and roughly what does your team do?"
+    [DATA: company_name=X | industry=X]
+
+Q2: "How big is the company overall? Rough is fine."
+    [DATA: team_size=X]
+
+Q3: "Who's this training for?"
+    (One specific person / A specific cohort / The whole team)
+    [DATA: focus_type=individual|cohort|whole_team]
+
+Q4: "What role are they in, and where are they on the seniority ladder?"
+    (e.g. A mid-level operations manager, A senior IC, A new first-line manager)
+    [DATA: role_title=X | seniority_level=X]
+
+Q5: "What are you hoping the training will accomplish for this person?"
+    [DATA: training_goal=X]
+
+Q6: "What challenges are they running into right now? Be specific if you can."
+    [DATA: observed_challenges=X]
+
+Q7: "What are you observing day to day — is this showing up in meetings, written updates,
+     something else?"
+    [DATA: observed_challenges=updated with this context]
+
+Q8: "What can you share with me about this person? I can work with performance reviews,
+     job descriptions, or just our conversation here — whatever you have."
+    Route based on answer → see Stage 2 below.
+    [DATA: has_performance_data=yes|informal|no]
+
+STAGE 2 — Data Input (route to ONE path based on Q8 answer):
+
+  Path A — Has performance review / document:
+  "Drop the file with the paperclip, or paste the text into the chat.
+   PDF, CSV, Excel or plain text all work."
   [DATA: entry_point=performance_data]
 
-  Path B — Has JDs / no formal data:
-  "Please paste the job description(s) for the roles you want to train. I'll identify
-  the skill development priorities from there."
-  [DATA: entry_point=jd_based]
+  After receiving the document, ALWAYS summarise in 1-2 sentences what you found and
+  ask for confirmation before continuing:
+  "Looks like [brief summary of what the document shows — role, main themes, key gaps].
+   That right?"
+  [SUGGESTIONS: "Yes, that's accurate" | "Close — let me clarify one thing" | "Not quite"]
 
-  Path C — No data at all — run the DIAGNOSTIC (8 questions, ONE at a time):
+  Path B — Has job descriptions / no formal data:
+  "Drop the file with the paperclip, or paste the JD directly into the chat."
+  [DATA: entry_point=jd_based]
+  After receiving: summarise and confirm as above.
+
+  Path C — No data — run these questions ONE at a time:
   [DATA: entry_point=diagnostic]
-  Q1: "What's the biggest challenge your team is facing right now?"
-  Q2: "Where do you see the most friction — communication, execution, leadership, or morale?"
-  Q3: "Are your managers confident giving direct feedback when performance falls short?"
-  Q4: "When conflict comes up on the team, how does it typically get handled?"
-  Q5: "When priorities shift unexpectedly, do people adapt quickly or does it create real struggle?"
-  Q6: "Do people on this team generally take ownership of outcomes, or do they tend to wait for direction?"
-  Q7: "How well does this team collaborate across functions or with other departments?"
-  Q8: "What does success look like for this team in 6 months?"
+  D1: "What's the biggest challenge your team is facing right now?"
+  D2: "Where do you see the most friction — communication, execution, leadership, or morale?"
+  D3: "Are your managers confident giving direct feedback when performance falls short?"
+  D4: "When conflict comes up on the team, how does it typically get handled?"
+  D5: "When priorities shift unexpectedly, do people adapt quickly or does it create real struggle?"
+  D6: "Do people on this team generally take ownership of outcomes, or do they tend to wait for direction?"
+  D7: "How well does this team collaborate across functions or with other departments?"
+  D8: "What does success look like for this team in 6 months?"
+
+AFTER STAGE 2 DATA IS CONFIRMED — ask these follow-up questions ONE at a time:
+
+Q9: "What does this person do well already? Anything you'd want the training to build on
+     rather than replace?"
+     [DATA: — save to the run context for use in the plan]
+
+Q10: "How would you know this worked? What changes for you, this person, or the business?"
+     [DATA: success_metrics=X]
+
+Q11: "How big a program are you imagining?"
+     Show these naturally — no pricing:
+     - Start small — 4 sessions to test the approach
+     - A structured program — 6 sessions
+     - Full programme — 8 sessions for comprehensive development
+     [DATA: budget_tier=start_here|build_momentum|full_impact]
+
+Q12: "When do you want this to start?"
+     [DATA: timeline=X]
+
+Q13: "Anything that's off the table? Topics or approaches that wouldn't land with
+      this person?"
+     [DATA: training_constraints=X]
+
+Q14: "I've got what I need. Want to add anything before I put your recommendation together?"
+     [SUGGESTIONS: "Go ahead — generate the recommendation" | "Generate it now" | "Let me add one more thing first"]
+
+When the user says to go ahead, reply with ONE short bridge message:
+"On it. I'll put your recommendation together now."
+Then immediately produce the Stage 4 recommendation in your next output.
 
 STAGE 3 — AI Analysis (internal, no user question):
 Map inputs to Bundle's skills taxonomy. Identify 3-4 highest-leverage development areas.
@@ -563,9 +797,14 @@ Which delivery method and budget tier feels right for your situation?
 
 STAGE 4b — After user selects a delivery method:
 [DATA: selected_scenario=A] (Training+Coaching=A, Training Only=B, Coaching Only=C)
-"How many sessions are you thinking? Here are my suggestions based on your goals:"
+Send a short confirmation first: "Pathway locked: [delivery method they chose]."
+Then immediately ask: "How many sessions are you imagining?"
 (The UI will show 4 / 6 / 8 session cards automatically)
 [SUGGESTIONS: "Start Here — 4 sessions" | "Build Momentum — 6 sessions" | "Full Impact — 8 sessions"]
+
+After user selects session count, confirm: "Budget locked at [N] sessions."
+Then ask: "All set. Anything else you want me to factor in before drafting the per-learner plan?"
+[SUGGESTIONS: "Go ahead and draft it" | "Nothing else — let's go" | "One more thing first"]
 
 STAGE 5 — FULL TRAINING PLAN OUTPUT:
 When user confirms session count, generate the COMPLETE plan. Use this EXACT format.
@@ -712,6 +951,17 @@ def save_data_from_tag(run, user_msg, ai_reply):
             run.num_sessions = int(re.sub(r'\D', '', str(data['num_sessions'])))
         except (ValueError, AttributeError):
             pass
+    # New learner-profile fields
+    if 'role_title' in data and data['role_title']:
+        run.role_title = data['role_title']
+    if 'seniority_level' in data and data['seniority_level']:
+        run.seniority_level = data['seniority_level']
+    if 'observed_challenges' in data and data['observed_challenges']:
+        run.observed_challenges = data['observed_challenges']
+    if 'success_metrics' in data and data['success_metrics']:
+        run.success_metrics = data['success_metrics']
+    if 'training_constraints' in data and data['training_constraints']:
+        run.training_constraints = data['training_constraints']
 
 
 def detect_and_update_stage(run, user_msg, ai_reply):
@@ -727,8 +977,10 @@ def detect_and_update_stage(run, user_msg, ai_reply):
     # Stage 5: full plan with session tables
     plan_signal = (
         ('| 1 |' in ai_reply and 'why this session' in ai_lower) or
-        ('| # |' in ai_reply and 'option a' in ai_lower) or
-        (all(p in ai_lower for p in ['option a', 'option b', '| # |']))
+        ('| # |' in ai_reply and 'skill focus' in ai_lower) or
+        ('coaching support' in ai_lower and '| 1 |' in ai_reply) or
+        ('sequencing' in ai_lower and '| 1 |' in ai_reply) or
+        ('growth opportunities' in ai_lower and '| 1 |' in ai_reply)
     )
     if plan_signal:
         run.current_stage = 5
@@ -899,7 +1151,7 @@ def chat_with_ai(run, user_message):
             {"role": "system", "content": build_system_prompt(run)},
             *messages_to_send,
         ],
-        max_tokens=5000,
+        max_tokens=6000,
         temperature=0.7,
     )
 

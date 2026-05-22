@@ -1,9 +1,81 @@
 // ── State ──────────────────────────────────────────────────────────────────
-let currentRunId  = window.BUNDLE?.currentRunId  || null;
-let currentStage  = 1;
-let isProcessing  = false;
-let selectedTime  = null;
-let typingEl      = null;
+let currentRunId       = window.BUNDLE?.currentRunId  || null;
+let currentStage       = 1;
+let isProcessing       = false;
+let selectedTime       = null;
+let typingEl           = null;
+let generatingEl       = null;
+let generatingInterval = null;
+
+// ── Multi-step generating animation ───────────────────────────────────────
+const GENERATING_STEPS = {
+  recommendation: [
+    'Reading your inputs',
+    'Identifying growth opportunities',
+    'Generating your recommendation',
+    'Checking the pathway',
+    'Polishing the recommendation',
+  ],
+  plan: [
+    'Reading your inputs',
+    'Selecting sessions for your learner',
+    'Building the per-learner plan',
+    'Adding coaching context',
+    'Finalising your plan',
+  ],
+};
+
+function _generatingType(text) {
+  const t = (text || '').toLowerCase();
+  if (/generat.*recommendation|put.*recommendation|go ahead.*generat|recommendation.*together/.test(t))
+    return 'recommendation';
+  if (/draft.*plan|per.learner|generat.*plan|create.*plan|build.*plan|all set.*draft|go ahead.*draft/.test(t))
+    return 'plan';
+  return null;
+}
+
+function showGeneratingSteps(type) {
+  const scroll = document.getElementById('messagesScroll');
+  if (!scroll) return;
+  removeGeneratingSteps();
+  removeTyping();
+
+  const steps = GENERATING_STEPS[type] || GENERATING_STEPS.recommendation;
+  let idx = 0;
+
+  generatingEl = document.createElement('div');
+  generatingEl.className = 'message ai';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = 'B';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble generating-bubble';
+  bubble.innerHTML = `<span class="gen-step">${steps[0]}</span>`;
+
+  generatingEl.appendChild(avatar);
+  generatingEl.appendChild(bubble);
+  scroll.appendChild(generatingEl);
+  scrollToBottom();
+
+  generatingInterval = setInterval(() => {
+    idx = (idx + 1) % steps.length;
+    const el = bubble.querySelector('.gen-step');
+    if (!el) return;
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = steps[idx];
+      el.style.opacity = '1';
+    }, 220);
+  }, 1400);
+}
+
+function removeGeneratingSteps() {
+  if (generatingInterval) { clearInterval(generatingInterval); generatingInterval = null; }
+  if (generatingEl?.parentNode) generatingEl.parentNode.removeChild(generatingEl);
+  generatingEl = null;
+}
 
 // ── Markdown Renderer ──────────────────────────────────────────────────────
 function renderMarkdown(text) {
@@ -169,6 +241,7 @@ function showTyping() {
 function removeTyping() {
   if (typingEl?.parentNode) typingEl.parentNode.removeChild(typingEl);
   typingEl = null;
+  removeGeneratingSteps();
 }
 
 // ── Suggestions Bar ────────────────────────────────────────────────────────
@@ -377,7 +450,14 @@ async function sendMessage(overrideText) {
 
   hideSuggestions();
   appendMessage('user', text);
-  showTyping();
+
+  // Show multi-step animation for recommendation/plan generation; plain dots otherwise
+  const genType = _generatingType(text);
+  if (genType) {
+    showGeneratingSteps(genType);
+  } else {
+    showTyping();
+  }
   isProcessing = true;
 
   const sendBtn = document.getElementById('sendBtn');

@@ -80,6 +80,12 @@ class BuilderRun(models.Model):
     focus_type = models.CharField(max_length=50, blank=True)
     budget_tier = models.CharField(max_length=30, blank=True)
     timeline = models.CharField(max_length=200, blank=True)
+    # Learner profile (new)
+    role_title = models.CharField(max_length=200, blank=True)
+    seniority_level = models.CharField(max_length=100, blank=True)
+    observed_challenges = models.TextField(blank=True)
+    success_metrics = models.TextField(blank=True)
+    training_constraints = models.TextField(blank=True)
     # Stage 2 data
     entry_point = models.CharField(max_length=30, blank=True)
     target_type = models.CharField(max_length=20, blank=True)
