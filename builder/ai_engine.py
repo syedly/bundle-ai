@@ -40,111 +40,106 @@ def extract_data_tag(text):
 
 STAGE_SUGGESTIONS = {
     'q_company': [
-        "Tech startup",
-        "Retail company",
-        "Professional services",
-        "Healthcare organization",
+        "Tech startup, ~50 employees",
+        "Mid-size retail, 200+ employees",
+        "Professional services, 80 staff",
+        "Healthcare org, ~500 people",
     ],
     'q_goal': [
-        "Develop managers",
-        "Build leadership",
-        "Reduce turnover",
-        "Improve communication",
+        "Improve manager effectiveness",
+        "Build a leadership pipeline",
+        "Reduce team turnover",
+        "Scale a skill across the team",
     ],
     'q_focus': [
-        "Specific individual",
-        "Manager cohort",
-        "Whole team",
+        "One specific individual",
+        "A cohort of managers",
+        "The whole team",
     ],
     'q_data': [
-        "Have data",
-        "Informal notes",
-        "No data",
-        "Use diagnostic",
+        "Yes, I have performance reviews",
+        "I have informal notes only",
+        "No data — just a goal and budget",
     ],
     'q_budget': [
-        "Start Here",
-        "Build Momentum",
-        "Full Impact",
+        "Start Here — entry level",
+        "Build Momentum — structured program",
+        "Full Impact — comprehensive",
     ],
     'q_timeline': [
-        "This month",
-        "Next quarter",
-        "No timeline",
-        "Urgent need",
+        "New cohort starting in Q3",
+        "Upcoming leadership transition",
+        "No specific timeline",
+        "End of year deadline",
     ],
     'q_data_upload': [
-        "Paste data",
-        "Upload file",
-        "Describe findings",
-        "Use diagnostic",
+        "I'll paste the data now",
+        "I'll use the upload button",
+        "Let me describe the key findings",
     ],
     'q_data_jd': [
-        "Paste job description",
-        "Multiple roles",
-        "Describe roles",
-        "Use diagnostic",
+        "I'll paste a job description now",
+        "I have multiple roles to add",
+        "Let me describe the roles instead",
     ],
     'q_diag_challenge': [
-        "Communication gaps",
-        "Leadership gaps",
-        "Execution issues",
-        "Low morale",
+        "Communication and alignment gaps",
+        "Leadership and management gaps",
+        "Execution and accountability issues",
+        "Low morale and engagement",
     ],
     'q_diag_friction': [
-        "Communication friction",
-        "Execution friction",
-        "Leadership friction",
-        "Morale friction",
+        "Communication breakdowns",
+        "Execution and follow-through",
+        "Leadership inconsistency",
+        "Low team morale",
     ],
     'q_diag_feedback': [
-        "Very confident",
-        "Somewhat confident",
-        "Not confident",
-        "Avoid hard talks",
+        "Yes, very confident",
+        "Somewhat — it varies by manager",
+        "Not really — they tend to avoid it",
     ],
     'q_diag_conflict': [
-        "Address directly",
-        "Often avoided",
-        "Often escalates",
-        "Depends on manager",
+        "We address it directly",
+        "It tends to get avoided",
+        "It escalates and becomes a problem",
+        "Inconsistent — depends on the manager",
     ],
     'q_diag_change': [
-        "Adapt quickly",
-        "Real struggle",
-        "Depends on person",
+        "They adapt quickly",
+        "It's a real struggle for most",
+        "Depends on the person",
     ],
     'q_diag_ownership': [
-        "Strong ownership",
-        "Mixed ownership",
-        "Wait for direction",
+        "Strong — people own their work",
+        "Mixed — some do, some don't",
+        "Most people wait for direction",
     ],
     'q_diag_collab': [
-        "Very well",
-        "Some silos",
-        "Poor collaboration",
-        "Depends on team",
+        "Very well — strong cross-functional culture",
+        "Okay within teams, but silos exist",
+        "Collaboration is a real problem",
     ],
     'q_diag_success': [
-        "Better leadership",
-        "Lower turnover",
-        "Stronger communication",
-        "Improved accountability",
+        "Better leadership at every level",
+        "Measurably lower turnover",
+        "Stronger communication and trust",
+        "Improved accountability and performance",
     ],
     'q_scenario': [
-        "Choose Start Here",
-        "Choose Build Momentum",
-        "Choose Full Impact",
+        "1:1 Training + Coaching",
+        "1:1 Training Only",
+        "Coaching Only",
     ],
     'q_sessions': [
-        "4 sessions",
-        "6 sessions",
-        "8 sessions",
+        "Start Here — 4 sessions",
+        "Build Momentum — 6 sessions",
+        "Full Impact — 8 sessions",
     ],
     'q_book': [
-        "Book a call",
-        "Download plan",
-        "Ask questions",
+        "Yes, let's book a call",
+        "Download the plan first",
+        "I have a few more questions",
     ],
 }
 
@@ -163,8 +158,14 @@ def detect_question_type(ai_message):
        any(p in msg for p in ['start here', 'build momentum', 'full impact']):
         return 'q_budget'
 
-    # Scenario selection (needs all three scenario labels)
+    # Scenario / delivery method selection
     if all(p in msg for p in ['scenario a', 'scenario b', 'scenario c']):
+        return 'q_scenario'
+    if any(p in msg for p in [
+        '1:1 training + coaching', 'training + coaching', 'training only', 'coaching only',
+        'delivery method', 'delivery option', 'which pathway', 'which delivery',
+        'which of these feels right', 'which option feels right',
+    ]):
         return 'q_scenario'
 
     # Session count
@@ -178,6 +179,7 @@ def detect_question_type(ai_message):
     if any(p in msg for p in [
         'book a', 'schedule a', 'consultation call', '30-minute',
         'talk to a bundle', 'book a call', 'get you scheduled',
+        'download this plan', 'download as a pdf',
     ]):
         return 'q_book'
 
@@ -460,124 +462,189 @@ STAGE 2 — Data Input (route to ONE based on Q4 answer):
   Q8: "What does success look like for this team in 6 months?"
 
 STAGE 3 — AI Analysis (internal, no user question):
-Map inputs to Bundle's skills taxonomy. Identify 2-4 highest-leverage development areas.
-Note individual vs. cohort splits. Apply budget constraints. Then go to Stage 4.
+Map inputs to Bundle's skills taxonomy. Identify 3-4 highest-leverage development areas.
+Pull out SPECIFIC phrases, quotes, or patterns from the data the user provided.
+Note individual vs. cohort splits. Identify evidence for each gap. Then immediately produce Stage 4.
 
-STAGE 4 — Recommendation Output:
-Present EXACTLY 3 scenarios. Use this EXACT format:
-
-## 🎯 Training Recommendation for [Company Name]
-
-### What We Found
-[2-3 sentences on the highest-leverage skill gaps. Be SPECIFIC — mention company, role, stated goal.]
-
-**Confidence Level:** [Strong / Moderate / Limited] — [one sentence reason]
+STAGE 4 — DETAILED RECOMMENDATION OUTPUT:
+This is the full recommendation. Use the EXACT format below. Every section must be specific
+to THIS company, THIS person/team, and THIS data. NEVER write generic filler.
 
 ---
 
-### Scenario A — Start Here
-**Pathway:** [name]
-**Delivery:** [method]
-**Who First:** [specific target group]
-**Sessions:** [N] sessions
-**What this delivers:** [2 specific sentences tied to their situation]
+## [Company Name] — [Individual / Cohort / Team]
+[Confidence level: Strong confidence / Moderate confidence / Limited confidence]
+
+[ANALYSIS PARAGRAPH: 2-3 sentences. Reference company name, role title, the specific data
+provided, and what it reveals. Quote specific phrases from performance reviews or user
+descriptions. This must feel like it was written by someone who read their actual data.]
+
+### Growth opportunities
+
+**What we'd focus on**
+
+1. **[Primary Skill Area — e.g. Communication]**
+   [2-3 sentences of specific evidence. Quote or closely paraphrase actual phrases from the
+   performance review, manager feedback, or diagnostic answers. Example: "The manager review
+   explicitly flags that [name] 'struggles to frame updates in terms leadership cares about'
+   and 'gets lost in the details during leadership meetings' — patterns directly addressable
+   through this skill area."]
+
+2. **[Second Skill Area — e.g. Leadership]**
+   [2-3 sentences with specific evidence and quotes from the data]
+
+3. **[Third Skill Area — e.g. Time Management / Execution]**
+   [2-3 sentences with specific evidence and quotes from the data]
+
+4. **[Fourth Skill Area — e.g. Interpersonal Dexterity]** *(if a clear fourth gap exists)*
+   [2-3 sentences with specific evidence]
 
 ---
 
-### Scenario B — Build Momentum ⭐ BUNDLE RECOMMENDS
-**Pathway:** [name]
-**Delivery:** [method]
-**Who First:** [target]
-**Sessions:** [N] sessions
-**What this delivers:** [2 specific sentences]
+### Three pathways
+
+**How Bundle delivers this**
+
+Three delivery options. Pick the one that fits when you come back to the chat.
+
+**1:1 Training + Coaching** ⭐ Recommended
+[2-3 sentences explaining WHY this combination is specifically right for THIS person's gaps.
+Reference the nature of their development areas — if the gaps are behavioral and contextual
+(how they show up in a room, how they deliver feedback), explain why 1:1 coaching creates
+the space to practice in real situations. Be specific to their role and company context.]
+[N] sessions · includes coaching support
+
+**1:1 Training Only**
+[2-3 sentences on when training alone is the right fit. Reference this person's self-direction,
+what structured sessions give them, and what the trade-off is without the coaching layer.]
+[N] sessions
+
+**Coaching Only**
+[2-3 sentences explaining when coaching alone fits — typically strong self-awareness, primarily
+needs a thought partner. Reference their specific situation and development stage.]
+[N] sessions · includes coaching support
 
 ---
 
-### Scenario C — Full Impact
-**Pathway:** [name]
-**Delivery:** Group + 1:1 Training + Coaching
-**Who First:** [full group]
-**Sessions:** [N] sessions
-**What this delivers:** [2 specific sentences]
+### Budget scenarios
+
+**Three depths to start at**
+All three tiers deliver real work; the difference is depth and sequencing. A Bundle consultant
+scopes pricing on the call.
+
+**If you go all in**
+[FULL OUTCOME PARAGRAPH: 3-4 sentences describing specific, tangible outcomes for this person
+at the highest tier. What are they doing differently 3 months from now? Be concrete — name
+the behaviors, the situations, the stakeholders involved. Quote the development areas back
+in terms of outcomes.]
+
+**Start Here** · [N] sessions
+[Minimum viable intervention: name the specific sessions, what communication/leadership
+foundation they build, what immediate visible change this creates. 2-3 sentences.]
+
+**Build Momentum** · [N] sessions
+[What the additional sessions add beyond Start Here. Name the additional skills unlocked
+and why they matter for this person's specific trajectory. 2-3 sentences.]
+
+**Full Impact** · [N] sessions
+[What the final sessions add. Complete the arc — what does the full program equip them to do
+that the shorter tiers don't. 2-3 sentences.]
+
+**If you start small**
+[Honest assessment paragraph: what is NOT covered at the minimum tier. What gaps remain open?
+What situations will this person still struggle with? Be specific — this builds trust. 2-3 sentences.]
 
 ---
 
-Which of these feels right for your situation?
+Which delivery method and budget tier feels right for your situation?
 
-STAGE 4b — After user selects a scenario:
-[DATA: selected_scenario=A] (or B or C)
+[DATA: selected_scenario=TBD]
+[SUGGESTIONS: "1:1 Training + Coaching" | "1:1 Training Only" | "Coaching Only"]
+
+STAGE 4b — After user selects a delivery method:
+[DATA: selected_scenario=A] (Training+Coaching=A, Training Only=B, Coaching Only=C)
 "How many sessions are you thinking? Here are my suggestions based on your goals:"
 (The UI will show 4 / 6 / 8 session cards automatically)
+[SUGGESTIONS: "Start Here — 4 sessions" | "Build Momentum — 6 sessions" | "Full Impact — 8 sessions"]
 
-STAGE 5 — Full Training Plan Output:
-When user confirms session count, generate the COMPLETE plan. Use this EXACT format:
-
-## 🎯 [Company Name] — Performance-Aligned Learning Plans
-
-Rooted in real feedback. Designed for real growth. These plans were built directly from
-[Company Name]'s input. Each session is selected and sequenced to reflect where each person
-is today and where they are headed. Sessions are delivered live, 1:1, with a dedicated Bundle trainer.
+STAGE 5 — FULL TRAINING PLAN OUTPUT:
+When user confirms session count, generate the COMPLETE plan. Use this EXACT format.
+Every section must be specific — quote the data, name the situations, reference the person's role.
 
 ---
 
-### [Employee Name or Role] — [Job Title]
+## [Company Name] — Performance-Aligned Learning Plans
 
-| | |
-|:--|:--|
-| **Role** | [One sentence on what they do] |
-| **Strengths** | [3-4 specific strengths from the user's data] |
-| **Growth Opportunities** | [2-3 specific development areas from the user's data] |
-| **Career Direction** | [One sentence on where they are headed] |
+Rooted in real feedback. Designed for real growth.
 
-#### Option A — [shorter session count]-Session Pathway
-
-[One compelling sentence: what this option delivers for this specific person.]
-
-| # | Session | Skill Focus | Why This Session |
-|---|---------|-------------|-----------------|
-| 1 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [2 sentences referencing SPECIFIC things the user told you. Explain WHY this session goes first.] |
-| 2 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [2 specific sentences] |
-
-[Repeat real session rows until the shorter option session count is reached. Do not include placeholder or ellipsis rows.]
-
-**Coaching Support:** Available after Session 1. [One specific note about this person.]
+[INTRO PARAGRAPH: 2-3 sentences explaining how these plans were built from the specific data
+provided. Reference the company name and what data/input was used — performance reviews,
+manager feedback, self-assessment, diagnostic answers. This must feel specific, not templated.]
 
 ---
 
-#### Option B — [selected session count]-Session Pathway
+### [Employee Name or Role Title]
+[Job title / Team / Context — one descriptive line including any relevant transition or context]
 
-[One sentence: what the expanded pathway unlocks.]
+**Strengths**
+[Bullet list of 3-5 specific strengths drawn directly from the user's data. Quote or closely
+paraphrase actual feedback phrases. NEVER write generic strengths like "strong communicator"
+unless the data supports it.]
 
-| # | Session | Skill Focus | Why This Session |
-|---|---------|-------------|-----------------|
-| 1 | [Title] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [Why — specific] |
-| 2 | [Title] | [Sub-skill 1]<br>[Sub-skill 2] | [Why] |
+**Growth opportunities**
+[Bullet list of 3-4 specific development areas from the data. Use the exact framing from
+the performance review or user's description. NEVER write vague items like "leadership skills."]
 
-[Repeat real session rows until the user's selected session count is reached. Do not include placeholder or ellipsis rows.]
+**Career direction**
+[One sentence on where this person is headed based on what the user shared about their goals
+or trajectory. Specific to them — not a generic statement.]
 
-**Coaching Support:** Available after Session 1. [Specific note.]
+[SEQUENCING PARAGRAPH — MANDATORY: Write 1 paragraph (4-6 sentences) explaining the LOGIC
+behind the session sequence. Why does Session 1 go first? What does Session 2 build on?
+What arc does the plan follow from start to finish? This must reference the specific person's
+development areas and explain why this ORDER creates the most effective learning journey.
+NEVER write this generically — it must be written about this specific person.]
+
+| # | Session | Skill focus | Why this session |
+|---|---------|------------|-----------------|
+| 1 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [3-4 sentences. Explain WHY this session opens the plan. Quote SPECIFIC phrases from the user's data — manager feedback, self-assessment, performance review, or diagnostic answers. Connect the session's content to the person's actual stated or observed gaps.] |
+| 2 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Explain what Session 1 built and why Session 2 is the right next step. Reference specific feedback or data.] |
+| 3 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Show the arc — how this builds on what came before.] |
+| 4 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences — explain how this session completes the plan's arc and what it unlocks for this person's stated goals.] |
+[Add rows up to the selected session count. NEVER use placeholder rows or ellipsis.]
+
+### Coaching support
+
+[COACHING PARAGRAPH — MANDATORY: 3-5 sentences explaining the specific value of coaching
+for THIS person in THEIR context. Reference their role, their development areas, the types
+of real situations where coaching would help most — preparing for a difficult conversation,
+navigating a stakeholder situation, processing feedback. This must be specific to them,
+not a generic description of coaching.]
 
 ---
 
-[REPEAT employee block for EACH person mentioned]
+[REPEAT full employee block for EACH person mentioned in the data]
 
 ---
 
-*Ready to move forward? Reach out to your Bundle partner to confirm which option fits best and get these learners started.*
+*Ready to move forward? Download this plan as a PDF, or book a 30-minute call with a Bundle
+consultant to activate it.*
 
-CRITICAL STAGE 5 FORMAT RULES:
-- ALWAYS produce BOTH Option A and Option B per person.
-- Option B MUST use the user's selected session count from their latest message.
-- Option A should be the nearest shorter option: if the user selected 8, Option A is 6;
-  if the user selected 6, Option A is 4; if the user selected 4, Option A is 4 and
-  Option B is 6 as a comparison.
-- Do not stop Option B at 6 sessions when the user selected 8. It must include sessions
-  1 through 8.
-- Skill Focus: sub-skills ONE PER LINE separated by <br> — NEVER comma-separated
-- "Why This Session": reference specific things the user told you. NEVER generic.
-- Profile table uses "Growth Opportunities" — NOT "Weaknesses" or "Growth Areas"
-- Session 1 MUST be a relational opener in BOTH options
-- Include [DATA: num_sessions=N] with the actual number from their selection
+[DATA: num_sessions=N]
+[SUGGESTIONS: "Download as PDF" | "Book a consultation call" | "Tell me more"]
+
+CRITICAL STAGE 5 RULES — NEVER VIOLATE:
+1. SEQUENCING PARAGRAPH is mandatory for every employee block. It must be specific.
+2. "Why this session" must have 3-4 sentences minimum and MUST quote or reference specific data.
+   NEVER write: "This session covers X skill." Write: "The manager review flags that [person]
+   'struggles with X' — this session directly addresses that pattern by..."
+3. Coaching support section is mandatory and must be personalized per person.
+4. Strengths and Growth opportunities must come from actual user data only.
+5. Use "Growth opportunities" — NEVER "weaknesses," "areas for improvement," or "growth areas."
+6. Session 1 MUST ALWAYS be a relational opener.
+7. Sub-skills: one per line separated by <br> — NEVER comma-separated.
+8. Include [DATA: num_sessions=N] at the end with the actual selected count.
+9. NEVER stop at fewer sessions than the user selected.
 
 Then ask: "Would you like to download this plan as a PDF, or book a 30-minute call with
 a Bundle consultant to activate it?"
