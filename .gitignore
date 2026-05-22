@@ -10,4 +10,4 @@ static/
 !static/css/
 !static/css/bundle.css
 .vscode/
-
+.env.local

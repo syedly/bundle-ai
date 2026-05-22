@@ -22,4 +22,7 @@ urlpatterns = [
 
     # Confirmation
     path('confirm/<int:run_id>/', views.confirm, name='confirm'),
+
+    # PDF download
+    path('api/pdf/<int:run_id>/', views.download_pdf, name='download_pdf'),
 ]

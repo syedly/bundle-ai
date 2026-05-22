@@ -1,13 +1,11 @@
 import json
-import logging
 from io import BytesIO
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
@@ -15,10 +13,9 @@ from .models import BuilderRun
 from .ai_engine import chat_with_ai, generate_greeting
 
 FREE_LIMIT = getattr(settings, 'FREE_RUN_LIMIT', 3)
-logger = logging.getLogger(__name__)
 
 
-# ── Auth views ────────────────────────────────────────────────────────────────
+# ── Auth ──────────────────────────────────────────────────────────────────────
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -40,8 +37,8 @@ def signup_view(request):
         return redirect('index')
     error = None
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
+        username  = request.POST.get('username', '').strip()
+        email     = request.POST.get('email', '').strip()
         password1 = request.POST.get('password1', '')
         password2 = request.POST.get('password2', '')
         if not username or not password1:
@@ -68,17 +65,14 @@ def logout_view(request):
 
 @login_required
 def index(request):
-    threads = BuilderRun.objects.filter(user=request.user).order_by('-updated_at')[:20]
-    runs_used = BuilderRun.objects.filter(user=request.user).count()
+    threads    = BuilderRun.objects.filter(user=request.user).order_by('-updated_at')[:20]
+    runs_used  = BuilderRun.objects.filter(user=request.user).count()
     current_run_id = request.session.get('run_id')
-    if current_run_id and not BuilderRun.objects.filter(id=current_run_id, user=request.user).exists():
-        request.session.pop('run_id', None)
-        current_run_id = None
     return render(request, 'builder/index.html', {
-        'threads': threads,
-        'runs_used': runs_used,
-        'free_limit': FREE_LIMIT,
-        'is_locked': runs_used >= FREE_LIMIT,
+        'threads':       threads,
+        'runs_used':     runs_used,
+        'free_limit':    FREE_LIMIT,
+        'is_locked':     runs_used >= FREE_LIMIT,
         'current_run_id': current_run_id,
     })
 
@@ -90,24 +84,25 @@ def start_chat(request):
     run_id = request.session.get('run_id')
     if run_id:
         try:
-            run = BuilderRun.objects.get(id=run_id, user=request.user)
+            run     = BuilderRun.objects.get(id=run_id, user=request.user)
             history = run.get_chat_history()
             if history:
                 return JsonResponse({
-                    'type': 'resume',
+                    'type':    'resume',
                     'history': history,
-                    'stage': run.current_stage,
-                    'run_id': run.id,
+                    'stage':   run.current_stage,
+                    'status':  run.status,
+                    'run_id':  run.id,
                 })
         except BuilderRun.DoesNotExist:
-            request.session.pop('run_id', None)
+            pass
 
     runs_used = BuilderRun.objects.filter(user=request.user).count()
     return JsonResponse({
-        'type': 'new',
-        'runs_used': runs_used,
+        'type':       'new',
+        'runs_used':  runs_used,
         'free_limit': FREE_LIMIT,
-        'locked': runs_used >= FREE_LIMIT,
+        'locked':     runs_used >= FREE_LIMIT,
     })
 
 
@@ -116,7 +111,10 @@ def start_chat(request):
 def new_run(request):
     runs_used = BuilderRun.objects.filter(user=request.user).count()
     if runs_used >= FREE_LIMIT:
-        return JsonResponse({'error': 'free_limit_reached', 'runs_used': runs_used, 'free_limit': FREE_LIMIT}, status=403)
+        return JsonResponse(
+            {'error': 'free_limit_reached', 'runs_used': runs_used, 'free_limit': FREE_LIMIT},
+            status=403,
+        )
 
     if not request.session.session_key:
         request.session.create()
@@ -132,21 +130,27 @@ def new_run(request):
         greeting, suggestions = generate_greeting(run)
     except Exception:
         greeting = (
-            "Welcome! I'm the Bundle AI Training Builder — I'll help you build a specific, "
-            "role-by-role training plan for your team in minutes.\n\n"
+            "Welcome! I'm the Bundle AI Training Builder. I'll help you build a specific, "
+            "role-by-role training plan for your team.\n\n"
             "To get started — what's your company name, industry, and approximately how many people are on your team?"
         )
-        suggestions = ["Tech startup, ~40 people", "Retail company, 200+ staff", "Professional services, small team", "Healthcare org, 80 employees"]
+        suggestions = [
+            "Tech company, ~50 people",
+            "Mid-size retail, 200+ employees",
+            "Professional services, 80 staff",
+            "Healthcare org, ~500 people",
+        ]
         history = [{"role": "assistant", "content": greeting}]
         run.set_chat_history(history)
         run.save()
 
     return JsonResponse({
-        'run_id': run.id,
-        'message': greeting,
+        'run_id':     run.id,
+        'message':    greeting,
         'suggestions': suggestions,
-        'stage': 1,
-        'runs_used': runs_used + 1,
+        'stage':      1,
+        'status':     'in_progress',
+        'runs_used':  runs_used + 1,
         'free_limit': FREE_LIMIT,
     })
 
@@ -155,60 +159,40 @@ def new_run(request):
 @require_http_methods(["POST"])
 def chat(request):
     try:
-        data = json.loads(request.body)
+        data    = json.loads(request.body)
         message = data.get('message', '').strip()
-        run_id = data.get('run_id')
+        run_id  = data.get('run_id')
 
         if not message:
             return JsonResponse({'error': 'Message is required.'}, status=400)
         if not run_id:
             return JsonResponse({'error': 'Run ID is required.'}, status=400)
 
-        try:
-            run = BuilderRun.objects.get(id=run_id, user=request.user)
-        except BuilderRun.DoesNotExist:
-            request.session.pop('run_id', None)
-            return JsonResponse({
-                'error': 'This conversation expired. Please start a new training plan.',
-                'reset': True,
-            }, status=404)
-
+        run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
         ai_reply, suggestions = chat_with_ai(run, message)
 
         return JsonResponse({
-            'message': ai_reply,
+            'message':     ai_reply,
             'suggestions': suggestions,
-            'stage': run.current_stage,
-            'status': run.status,
-            'run_id': run.id,
+            'stage':       run.current_stage,
+            'status':      run.status,
+            'run_id':      run.id,
         })
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid request.'}, status=400)
-    except Exception as exc:
-        logger.exception("Chat request failed: %s", exc)
-        return JsonResponse({
-            'message': (
-                "I'm having trouble connecting to the AI service right now. "
-                "Please try sending that once more."
-            ),
-            'suggestions': ["Try again", "Start a new plan", "Upload context first"],
-            'stage': None,
-            'status': 'in_progress',
-            'run_id': request.session.get('run_id'),
-        })
+    except Exception as e:
+        return JsonResponse({'error': 'Something went wrong. Please try again.'}, status=500)
 
 
 @login_required
 @require_http_methods(["POST"])
 def upload_file(request, run_id):
     run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
-    f = request.FILES.get('file')
+    f   = request.FILES.get('file')
     if not f:
         return JsonResponse({'error': 'No file provided.'}, status=400)
 
     filename = f.name
-    ext = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
-    raw = f.read()
+    ext      = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+    raw      = f.read()
 
     try:
         if ext in ('txt', 'csv'):
@@ -216,59 +200,73 @@ def upload_file(request, run_id):
         elif ext == 'pdf':
             from pypdf import PdfReader
             reader = PdfReader(BytesIO(raw))
-            text = '\n'.join(page.extract_text() or '' for page in reader.pages)
+            text   = '\n'.join(page.extract_text() or '' for page in reader.pages)
         elif ext == 'docx':
             from docx import Document
-            doc = Document(BytesIO(raw))
+            doc  = Document(BytesIO(raw))
             text = '\n'.join(p.text for p in doc.paragraphs)
         elif ext in ('xlsx', 'xls'):
             from openpyxl import load_workbook
-            wb = load_workbook(BytesIO(raw), read_only=True, data_only=True)
+            wb    = load_workbook(BytesIO(raw), read_only=True, data_only=True)
             lines = []
             for ws in wb.worksheets:
                 for row in ws.iter_rows(values_only=True):
                     lines.append(', '.join(str(c) if c is not None else '' for c in row))
             text = '\n'.join(lines)
         else:
-            return JsonResponse({'error': f'Unsupported file type (.{ext}). Use PDF, DOCX, TXT, CSV, or XLSX.'}, status=400)
+            return JsonResponse(
+                {'error': f'Unsupported file type (.{ext}). Use PDF, DOCX, TXT, CSV, or XLSX.'},
+                status=400,
+            )
     except Exception as e:
         return JsonResponse({'error': f'Could not read file: {e}'}, status=400)
 
     if not text.strip():
         return JsonResponse({'error': 'No text could be extracted from the file.'}, status=400)
 
-    if len(text) > 10000:
-        text = text[:10000] + '\n[… file truncated for length …]'
+    if len(text) > 12000:
+        text = text[:12000] + '\n[… file truncated for length …]'
+
+    # Store uploaded data on the run
+    run.uploaded_data = text[:5000]  # store first 5k chars for reference
+    run.save(update_fields=['uploaded_data'])
 
     user_message = f"I've uploaded a file: {filename}\n\nHere is the content:\n\n{text}"
 
     try:
         ai_reply, suggestions = chat_with_ai(run, user_message)
     except Exception:
-        ai_reply = "I've received your file. Could you also tell me a bit about what you'd like me to focus on in this data?"
-        suggestions = ["Look for skill gaps", "Identify training priorities", "Summarize the key themes", "Use this for my training plan"]
+        ai_reply   = "I've received your file. Could you also tell me a bit about what you'd like me to focus on in this data?"
+        suggestions = [
+            "Look for skill gaps",
+            "Identify training priorities",
+            "Summarize the key themes",
+            "Use this for my training plan",
+        ]
 
     return JsonResponse({
-        'filename': filename,
+        'filename':        filename,
         'display_message': f'📎 Uploaded: {filename}',
-        'message': ai_reply,
-        'suggestions': suggestions,
-        'stage': run.current_stage,
-        'run_id': run.id,
+        'message':         ai_reply,
+        'suggestions':     suggestions,
+        'stage':           run.current_stage,
+        'status':          run.status,
+        'run_id':          run.id,
     })
 
 
 @login_required
 def load_thread(request, run_id):
-    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+    run     = get_object_or_404(BuilderRun, id=run_id, user=request.user)
     request.session['run_id'] = run.id
     history = run.get_chat_history()
     return JsonResponse({
-        'type': 'resume',
+        'type':    'resume',
         'history': history,
-        'stage': run.current_stage,
-        'run_id': run.id,
-        'title': run.display_title(),
+        'stage':   run.current_stage,
+        'status':  run.status,
+        'run_id':  run.id,
+        'title':   run.display_title(),
     })
 
 
@@ -278,12 +276,12 @@ def book(request, run_id):
     run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
     try:
         data = json.loads(request.body)
-        run.contact_name = data.get('name', '')
+        run.contact_name  = data.get('name',  '')
         run.contact_email = data.get('email', '')
         run.contact_phone = data.get('phone', '')
-        run.booked_date = data.get('date', '')
-        run.booked_time = data.get('time', '')
-        run.status = 'cta_clicked'
+        run.booked_date   = data.get('date',  '')
+        run.booked_time   = data.get('time',  '')
+        run.status        = 'cta_clicked'
         run.save()
         return JsonResponse({'success': True, 'redirect': f'/confirm/{run.id}/'})
     except Exception:
@@ -294,3 +292,21 @@ def book(request, run_id):
 def confirm(request, run_id):
     run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
     return render(request, 'builder/confirmation.html', {'run': run})
+
+
+@login_required
+def download_pdf(request, run_id):
+    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+    if not run.final_plan:
+        return HttpResponse('No plan generated yet.', status=404)
+
+    try:
+        from .pdf_export import generate_plan_pdf
+        pdf_bytes = generate_plan_pdf(run)
+        company   = run.company_name or 'Training'
+        filename  = f"Bundle_{company.replace(' ', '_')}_Training_Plan.pdf"
+        response  = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+    except Exception as e:
+        return HttpResponse(f'PDF generation error: {e}', status=500)

@@ -93,6 +93,8 @@ class BuilderRun(models.Model):
     final_plan = models.TextField(blank=True)
     # Chat
     chat_history = models.TextField(blank=True, default='[]')
+    # User flags / feedback on recommendations
+    user_flags = models.TextField(blank=True, default='[]')
     # Booking
     contact_name = models.CharField(max_length=200, blank=True)
     contact_email = models.EmailField(blank=True)
