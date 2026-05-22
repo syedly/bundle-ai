@@ -100,6 +100,12 @@ STAGE_SUGGESTIONS = {
         "I'll use the upload button",
         "Let me describe the key findings",
     ],
+    # Stage 2 – after each document: more to add?
+    'q_more_docs': [
+        "Add another document",
+        "That's everyone — let's continue",
+        "Just this one person",
+    ],
     # Stage 2 – JD paste prompt
     'q_data_jd': [
         "I'll paste the job description now",
@@ -275,6 +281,14 @@ def detect_question_type(ai_message):
         "looks like this is", "looks like we have",
     ]):
         return 'q_confirm_data'
+
+    # ── More documents to upload? ─────────────────────────────────────────────
+    if any(p in msg for p in [
+        'do you have another', 'any more documents', 'another document to add',
+        'more to add', 'add another', "that's everyone", 'anyone else',
+        'shall we move on', 'more files', 'more documents',
+    ]):
+        return 'q_more_docs'
 
     # ── Data upload request (path A) ──────────────────────────────────────────
     if any(p in msg for p in [
@@ -640,19 +654,29 @@ STAGE 2 — Data Input (route to ONE path based on Q8 answer):
 
   Path A — Has performance review / document:
   "Drop the file with the paperclip, or paste the text into the chat.
-   PDF, CSV, Excel or plain text all work."
+   PDF, CSV, Excel or plain text all work. If you have documents for multiple people,
+   upload them one at a time — I'll keep track of each person separately."
   [DATA: entry_point=performance_data]
 
-  After receiving the document, ALWAYS summarise in 1-2 sentences what you found and
-  ask for confirmation before continuing:
-  "Looks like [brief summary of what the document shows — role, main themes, key gaps].
-   That right?"
+  MULTI-PERSON DOCUMENT HANDLING (CRITICAL):
+  - Each time a document is uploaded, identify the person it belongs to from the content.
+  - After each upload, summarise what you found for THAT person specifically and confirm.
+  - Ask: "Got it — that's [Person Name]. I've noted their profile. Do you have another
+    document to add, or shall we move on?"
+  - [SUGGESTIONS: "Add another document" | "That's everyone — let's continue" | "Just this one person"]
+  - Keep a running mental list of every person uploaded. You will generate a separate,
+    fully detailed plan block for EACH person in Stage 5.
+  - NEVER merge or combine people into one block. Every person = their own complete section.
+
+  After the FINAL document (user confirms no more to add), summarise ALL people:
+  "I have documents for [N] people: [Name 1 — role], [Name 2 — role], etc. That right?"
   [SUGGESTIONS: "Yes, that's accurate" | "Close — let me clarify one thing" | "Not quite"]
 
   Path B — Has job descriptions / no formal data:
-  "Drop the file with the paperclip, or paste the JD directly into the chat."
+  "Drop the file with the paperclip, or paste the JD directly into the chat.
+   If you have JDs for multiple roles, add them one at a time."
   [DATA: entry_point=jd_based]
-  After receiving: summarise and confirm as above.
+  After receiving each JD: identify the role, summarise, ask if there are more.
 
   Path C — No data — run these questions ONE at a time:
   [DATA: entry_point=diagnostic]
@@ -699,6 +723,17 @@ STAGE 3 — AI Analysis (internal, no user question):
 Map inputs to Bundle's skills taxonomy. Identify 3-4 highest-leverage development areas.
 Pull out SPECIFIC phrases, quotes, or patterns from the data the user provided.
 Note individual vs. cohort splits. Identify evidence for each gap. Then immediately produce Stage 4.
+
+CONFIDENCE SCORE LOGIC (use in Stage 4 header):
+- "Strong confidence" — you have a performance review OR JD with specific behavioural evidence,
+  and the skill gaps are clearly and directly evidenced by specific quotes or observations.
+- "Moderate confidence" — you have some data but it is informal, conversational, or incomplete.
+  Gaps are inferred rather than directly evidenced.
+- "Limited confidence" — no formal data; gaps derived from diagnostic questions only.
+  Note what additional data would sharpen the recommendation.
+
+For MULTI-PERSON runs: run the confidence assessment independently per person.
+One person may be Strong confidence (detailed review) while another is Moderate (JD only).
 
 STAGE 4 — DETAILED RECOMMENDATION OUTPUT:
 This is the full recommendation. Use the EXACT format below. Every section must be specific
@@ -790,10 +825,17 @@ What situations will this person still struggle with? Be specific — this build
 
 ---
 
-Which delivery method and budget tier feels right for your situation?
+Which delivery method feels right for your situation? Or if something doesn't look right,
+tell me and I'll adjust — these recommendations are a starting point, not final.
 
 [DATA: selected_scenario=TBD]
-[SUGGESTIONS: "1:1 Training + Coaching" | "1:1 Training Only" | "Coaching Only"]
+[SUGGESTIONS: "1:1 Training + Coaching" | "1:1 Training Only" | "This doesn't look right"]
+
+IF THE USER SAYS "doesn't look right" / "that's wrong" / "adjust this" / "flag":
+Respond: "No problem. What's off? Tell me what to change and I'll regenerate that part."
+Ask one clarifying question, then regenerate ONLY the affected part of the recommendation
+(not the entire thing). Never restart from Stage 1.
+[SUGGESTIONS: "The skill gaps aren't right" | "The delivery method doesn't fit" | "The sessions listed aren't right"]
 
 STAGE 4b — After user selects a delivery method:
 [DATA: selected_scenario=A] (Training+Coaching=A, Training Only=B, Coaching Only=C)
@@ -844,12 +886,12 @@ What arc does the plan follow from start to finish? This must reference the spec
 development areas and explain why this ORDER creates the most effective learning journey.
 NEVER write this generically — it must be written about this specific person.]
 
-| # | Session | Skill focus | Why this session |
-|---|---------|------------|-----------------|
-| 1 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [3-4 sentences. Explain WHY this session opens the plan. Quote SPECIFIC phrases from the user's data — manager feedback, self-assessment, performance review, or diagnostic answers. Connect the session's content to the person's actual stated or observed gaps.] |
-| 2 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Explain what Session 1 built and why Session 2 is the right next step. Reference specific feedback or data.] |
-| 3 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Show the arc — how this builds on what came before.] |
-| 4 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences — explain how this session completes the plan's arc and what it unlocks for this person's stated goals.] |
+| # | Session | What it covers | Skill focus | Why this session |
+|---|---------|---------------|------------|-----------------|
+| 1 | [Session Title] | [1-sentence plain-English description of what this session actually does — what the person will learn and practise, written for a non-expert reader] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [3-4 sentences. Explain WHY this session opens the plan. Quote SPECIFIC phrases from the user's data — manager feedback, self-assessment, performance review, or diagnostic answers. Connect the session's content to the person's actual stated or observed gaps.] |
+| 2 | [Session Title] | [1-sentence description] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Explain what Session 1 built and why Session 2 is the right next step.] |
+| 3 | [Session Title] | [1-sentence description] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Show the arc — how this builds on what came before.] |
+| 4 | [Session Title] | [1-sentence description] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences — explain how this session completes the arc and what it unlocks for their goals.] |
 [Add rows up to the selected session count. NEVER use placeholder rows or ellipsis.]
 
 ### Coaching support
@@ -873,17 +915,23 @@ consultant to activate it.*
 [SUGGESTIONS: "Download as PDF" | "Book a consultation call" | "Tell me more"]
 
 CRITICAL STAGE 5 RULES — NEVER VIOLATE:
-1. SEQUENCING PARAGRAPH is mandatory for every employee block. It must be specific.
-2. "Why this session" must have 3-4 sentences minimum and MUST quote or reference specific data.
-   NEVER write: "This session covers X skill." Write: "The manager review flags that [person]
-   'struggles with X' — this session directly addresses that pattern by..."
-3. Coaching support section is mandatory and must be personalized per person.
-4. Strengths and Growth opportunities must come from actual user data only.
-5. Use "Growth opportunities" — NEVER "weaknesses," "areas for improvement," or "growth areas."
-6. Session 1 MUST ALWAYS be a relational opener.
-7. Sub-skills: one per line separated by <br> — NEVER comma-separated.
-8. Include [DATA: num_sessions=N] at the end with the actual selected count.
-9. NEVER stop at fewer sessions than the user selected.
+1. MULTI-PERSON: Generate a COMPLETE, FULLY WRITTEN separate block for every person whose
+   document was uploaded. If 3 documents were uploaded → 3 full blocks. NEVER combine people
+   or reference "see above" or "similar to Employee 1." Each block is self-contained.
+2. "What it covers" column: 1 clear sentence in plain English — what the person will actually
+   learn and practise in this session. Written for a non-expert (the CEO or HR lead reading the plan).
+3. SEQUENCING PARAGRAPH is mandatory for every employee block. It must be specific to that person.
+4. "Why this session" must have 3-4 sentences minimum and MUST quote or reference specific data.
+   NEVER write: "This session covers X skill." Write: "The review flags that [name]
+   'struggles with X' — this session directly addresses that by..."
+5. Coaching support section is mandatory and must be personalized per person.
+6. Strengths and Growth opportunities must come from actual user data only.
+7. Use "Growth opportunities" — NEVER "weaknesses," "areas for improvement," or "growth areas."
+8. Session 1 MUST ALWAYS be a relational opener.
+9. Sub-skills: one per line separated by <br> — NEVER comma-separated.
+10. Include [DATA: num_sessions=N] at the end with the actual selected count.
+11. NEVER stop at fewer sessions than the user selected.
+12. NEVER truncate. If there are 4 people, all 4 get fully written plans. No shortcuts.
 
 Then ask: "Would you like to download this plan as a PDF, or book a 30-minute call with
 a Bundle consultant to activate it?"
@@ -1151,7 +1199,7 @@ def chat_with_ai(run, user_message):
             {"role": "system", "content": build_system_prompt(run)},
             *messages_to_send,
         ],
-        max_tokens=6000,
+        max_tokens=8000,
         temperature=0.7,
     )
 

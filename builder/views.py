@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
@@ -224,14 +225,29 @@ def upload_file(request, run_id):
     if not text.strip():
         return JsonResponse({'error': 'No text could be extracted from the file.'}, status=400)
 
-    if len(text) > 12000:
-        text = text[:12000] + '\n[… file truncated for length …]'
+    if len(text) > 15000:
+        text = text[:15000] + '\n[… file truncated for length …]'
 
-    # Store uploaded data on the run
-    run.uploaded_data = text[:5000]  # store first 5k chars for reference
+    # MULTI-PERSON SUPPORT: append to any existing uploaded data rather than replace,
+    # so the user can upload one document per employee and all data is preserved.
+    separator = f'\n\n{"="*60}\nDOCUMENT: {filename}\n{"="*60}\n'
+    if run.uploaded_data:
+        combined = run.uploaded_data + separator + text
+    else:
+        combined = separator + text
+
+    # Store up to 30 000 chars to handle large multi-person document sets
+    run.uploaded_data = combined[:30000]
     run.save(update_fields=['uploaded_data'])
 
-    user_message = f"I've uploaded a file: {filename}\n\nHere is the content:\n\n{text}"
+    # Tell the AI which file was just added so it can identify the person
+    user_message = (
+        f"I've uploaded a document for analysis: {filename}\n\n"
+        f"Here is the content:\n\n{text}\n\n"
+        "Please read this document carefully, identify the person it belongs to, "
+        "extract their strengths, growth opportunities, and any relevant context, "
+        "then summarise what you found and confirm with me before continuing."
+    )
 
     try:
         ai_reply, suggestions = chat_with_ai(run, user_message)
@@ -283,6 +299,61 @@ def book(request, run_id):
         run.booked_time   = data.get('time',  '')
         run.status        = 'cta_clicked'
         run.save()
+
+        # ── Send confirmation email ────────────────────────────────────────────
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@bundle.com')
+
+        # Email to the contact who booked
+        if run.contact_email:
+            subject_to_contact = 'Your Bundle Training Consultation is Confirmed!'
+            body_to_contact = (
+                f"Hi {run.contact_name or 'there'},\n\n"
+                f"Thank you for booking a consultation with Bundle Training!\n\n"
+                f"Here are your booking details:\n"
+                f"  • Date: {run.booked_date or 'TBC'}\n"
+                f"  • Time: {run.booked_time or 'TBC'}\n"
+                f"  • Company: {run.company_name or 'N/A'}\n\n"
+                f"We'll be in touch shortly to confirm the appointment and share "
+                f"a preview of your personalised training plan.\n\n"
+                f"If you need to make any changes, just reply to this email.\n\n"
+                f"Warm regards,\n"
+                f"The Bundle Training Team"
+            )
+            send_mail(
+                subject_to_contact,
+                body_to_contact,
+                from_email,
+                [run.contact_email],
+                fail_silently=True,
+            )
+
+        # Internal notification email (if ADMIN_EMAIL is configured)
+        admin_email = getattr(settings, 'ADMIN_NOTIFICATION_EMAIL', '')
+        if admin_email:
+            subject_internal = f'New Booking: {run.contact_name or "Unknown"} — {run.company_name or "Unknown company"}'
+            body_internal = (
+                f"A new consultation has been booked via the Bundle Training Builder.\n\n"
+                f"Contact Details:\n"
+                f"  • Name:  {run.contact_name or 'N/A'}\n"
+                f"  • Email: {run.contact_email or 'N/A'}\n"
+                f"  • Phone: {run.contact_phone or 'N/A'}\n\n"
+                f"Booking Details:\n"
+                f"  • Date:  {run.booked_date or 'TBC'}\n"
+                f"  • Time:  {run.booked_time or 'TBC'}\n\n"
+                f"Company Details:\n"
+                f"  • Company:  {run.company_name or 'N/A'}\n"
+                f"  • Industry: {run.industry or 'N/A'}\n"
+                f"  • Team size: {run.team_size or 'N/A'}\n\n"
+                f"View the full run in the admin panel: /admin/builder/builderrun/{run.id}/change/\n"
+            )
+            send_mail(
+                subject_internal,
+                body_internal,
+                from_email,
+                [admin_email],
+                fail_silently=True,
+            )
+
         return JsonResponse({'success': True, 'redirect': f'/confirm/{run.id}/'})
     except Exception:
         return JsonResponse({'error': 'Failed to save booking. Please try again.'}, status=500)
