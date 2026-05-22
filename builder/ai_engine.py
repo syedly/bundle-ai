@@ -140,7 +140,6 @@ STAGE_SUGGESTIONS = {
         "4 sessions",
         "6 sessions",
         "8 sessions",
-        "10 sessions",
     ],
     'q_book': [
         "Book a call",
@@ -508,7 +507,7 @@ Which of these feels right for your situation?
 STAGE 4b — After user selects a scenario:
 [DATA: selected_scenario=A] (or B or C)
 "How many sessions are you thinking? Here are my suggestions based on your goals:"
-(The UI will show 4 / 6 / 8 / 10 session cards automatically)
+(The UI will show 4 / 6 / 8 session cards automatically)
 
 STAGE 5 — Full Training Plan Output:
 When user confirms session count, generate the COMPLETE plan. Use this EXACT format:
@@ -530,7 +529,7 @@ is today and where they are headed. Sessions are delivered live, 1:1, with a ded
 | **Growth Opportunities** | [2-3 specific development areas from the user's data] |
 | **Career Direction** | [One sentence on where they are headed] |
 
-#### Option A — 4-Session Pathway
+#### Option A — [shorter session count]-Session Pathway
 
 [One compelling sentence: what this option delivers for this specific person.]
 
@@ -538,25 +537,23 @@ is today and where they are headed. Sessions are delivered live, 1:1, with a ded
 |---|---------|-------------|-----------------|
 | 1 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [2 sentences referencing SPECIFIC things the user told you. Explain WHY this session goes first.] |
 | 2 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [2 specific sentences] |
-| 3 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [2 specific sentences] |
-| 4 | [Session Title] | [Sub-skill 1]<br>[Sub-skill 2] | [2 specific sentences] |
+
+[Repeat real session rows until the shorter option session count is reached. Do not include placeholder or ellipsis rows.]
 
 **Coaching Support:** Available after Session 1. [One specific note about this person.]
 
 ---
 
-#### Option B — 6-Session Pathway
+#### Option B — [selected session count]-Session Pathway
 
-[One sentence: what the extra 2 sessions unlock.]
+[One sentence: what the expanded pathway unlocks.]
 
 | # | Session | Skill Focus | Why This Session |
 |---|---------|-------------|-----------------|
 | 1 | [Title] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [Why — specific] |
 | 2 | [Title] | [Sub-skill 1]<br>[Sub-skill 2] | [Why] |
-| 3 | [Title] | [Sub-skill 1]<br>[Sub-skill 2] | [Why] |
-| 4 | [Title] | [Sub-skill 1]<br>[Sub-skill 2] | [Why] |
-| 5 | [Title] | [Sub-skill 1]<br>[Sub-skill 2] | [Why] |
-| 6 | [Title] | [Sub-skill 1]<br>[Sub-skill 2] | [Why] |
+
+[Repeat real session rows until the user's selected session count is reached. Do not include placeholder or ellipsis rows.]
 
 **Coaching Support:** Available after Session 1. [Specific note.]
 
@@ -569,7 +566,13 @@ is today and where they are headed. Sessions are delivered live, 1:1, with a ded
 *Ready to move forward? Reach out to your Bundle partner to confirm which option fits best and get these learners started.*
 
 CRITICAL STAGE 5 FORMAT RULES:
-- ALWAYS produce BOTH Option A (4 sessions) AND Option B (6 sessions) per person
+- ALWAYS produce BOTH Option A and Option B per person.
+- Option B MUST use the user's selected session count from their latest message.
+- Option A should be the nearest shorter option: if the user selected 8, Option A is 6;
+  if the user selected 6, Option A is 4; if the user selected 4, Option A is 4 and
+  Option B is 6 as a comparison.
+- Do not stop Option B at 6 sessions when the user selected 8. It must include sessions
+  1 through 8.
 - Skill Focus: sub-skills ONE PER LINE separated by <br> — NEVER comma-separated
 - "Why This Session": reference specific things the user told you. NEVER generic.
 - Profile table uses "Growth Opportunities" — NOT "Weaknesses" or "Growth Areas"
@@ -706,22 +709,28 @@ def detect_and_update_stage(run, user_msg, ai_reply):
 
 # ── Fallback suggestion generator ─────────────────────────────────────────────
 
+def is_transitional_message(ai_message):
+    """Return True when the AI is acknowledging input and preparing the next output."""
+    msg_lower = ai_message.lower()
+    transitional_phrases = [
+        'please hold on', 'hold on', "i'll analyze", "i'll map",
+        "i'll now", "i'll create", "i'll prepare", 'let me analyze',
+        'let me map', 'let me review', 'let me prepare', 'analyzing your',
+        'mapping your', 'prepare the plan', 'prepare a plan', 'preparing the plan',
+        'create a tailored', 'create the plan', 'give me a moment',
+        'just a moment', 'one moment', 'processing', 'please wait',
+    ]
+    return any(phrase in msg_lower for phrase in transitional_phrases)
+
+
 def generate_fallback_suggestions(ai_message):
     """
     Generates 3-4 short (2-4 word) suggestions that actually match what the AI just said.
     For transitional/loading messages, returns instant acknowledgement replies.
     For everything else, makes a fast dedicated AI call.
     """
-    msg_lower = ai_message.lower()
-
     # Transitional messages — no AI call needed, return instant acknowledgements
-    _transitional = [
-        'please hold on', 'hold on', "i'll analyze", "i'll map",
-        "i'll now", 'let me analyze', 'let me map', 'let me review',
-        'analyzing your', 'mapping your', 'give me a moment',
-        'just a moment', 'one moment', 'processing', 'please wait',
-    ]
-    if any(phrase in msg_lower for phrase in _transitional):
+    if is_transitional_message(ai_message):
         return ["Take your time", "Sounds good", "I'm ready", "Go ahead"]
 
     # For all other messages: generate fresh contextual suggestions via a small AI call
@@ -783,15 +792,19 @@ def generate_greeting(run):
     )
     raw = response.choices[0].message.content
 
-    q_type = detect_question_type(raw)
     ai_reply, ai_suggestions = parse_suggestions(raw)
+    is_transitional = is_transitional_message(ai_reply)
 
-    if q_type:
-        # Greeting always asks Q1 — use predefined options
-        suggestions = STAGE_SUGGESTIONS[q_type]
-    else:
-        # Generate fresh suggestions (never use ai_suggestions — stale/wrong)
+    if is_transitional:
         suggestions = generate_fallback_suggestions(ai_reply)
+    else:
+        q_type = detect_question_type(ai_reply)
+        if q_type:
+            # Greeting always asks Q1 — use predefined options
+            suggestions = STAGE_SUGGESTIONS[q_type]
+        else:
+            # Generate fresh suggestions (never use ai_suggestions — stale/wrong)
+            suggestions = generate_fallback_suggestions(ai_reply)
 
     # Hard fallback: greeting always asks for company info, so this is always correct
     if not suggestions:
@@ -819,7 +832,7 @@ def chat_with_ai(run, user_message):
             {"role": "system", "content": build_system_prompt(run)},
             *messages_to_send,
         ],
-        max_tokens=3500,
+        max_tokens=5000,
         temperature=0.7,
     )
 
@@ -828,21 +841,25 @@ def chat_with_ai(run, user_message):
     # Save structured data BEFORE stripping tags
     save_data_from_tag(run, user_message, raw_reply)
 
-    # Detect question type for fixed suggestions
-    q_type = detect_question_type(raw_reply)
-
     # Strip tags (DATA + SUGGESTIONS) — ai_suggestions captured but only used as
     # last-resort safety net; we do NOT trust the AI to pick its own correct suggestions
     # for free-form / transitional messages (it often copies stale options).
     ai_reply, ai_suggestions = parse_suggestions(raw_reply)
+    is_transitional = is_transitional_message(ai_reply)
 
-    if q_type:
-        # Known question → use exact pre-defined suggestions every time
-        suggestions = STAGE_SUGGESTIONS[q_type]
-    else:
-        # Unknown / transitional message → always generate fresh contextual suggestions.
-        # NEVER use ai_suggestions — the AI copies stale options from earlier messages.
+    if is_transitional:
         suggestions = generate_fallback_suggestions(ai_reply)
+    else:
+        # Detect question type from the displayed message only. This prevents stale
+        # [SUGGESTIONS:] tags from reusing the previous question's buttons.
+        q_type = detect_question_type(ai_reply)
+        if q_type:
+            # Known question → use exact pre-defined suggestions every time
+            suggestions = STAGE_SUGGESTIONS[q_type]
+        else:
+            # Unknown message → generate fresh contextual suggestions.
+            # NEVER use ai_suggestions — the AI copies stale options from earlier messages.
+            suggestions = generate_fallback_suggestions(ai_reply)
 
     history.append({"role": "assistant", "content": ai_reply})
     run.set_chat_history(history)

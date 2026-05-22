@@ -216,7 +216,6 @@ function showSessionCards() {
     { n: 4,  desc: 'Quick start, high-focus intervention',                  rec: false },
     { n: 6,  desc: 'Balanced depth — most common starting point',            rec: false },
     { n: 8,  desc: "Full behavior change — Bundle's recommended minimum",    rec: true  },
-    { n: 10, desc: 'Comprehensive transformation — max ROI',                 rec: false },
   ].forEach(c => {
     const card = document.createElement('div');
     card.className = 'sc-card' + (c.rec ? ' recommended' : '');
