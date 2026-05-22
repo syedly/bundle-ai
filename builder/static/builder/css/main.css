@@ -374,6 +374,36 @@ a:hover { color: var(--teal); text-decoration: underline; }
 }
 
 /* ─────────────────────────────────────────────
+   GENERATING STEPS ANIMATION
+───────────────────────────────────────────── */
+.generating-bubble {
+  background: var(--mint) !important;
+  border: 1px solid var(--teal-accent) !important;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.generating-bubble::before {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal-accent);
+  flex-shrink: 0;
+  animation: genPulse 1.2s ease-in-out infinite;
+}
+.gen-step {
+  font-style: italic;
+  color: var(--teal);
+  font-size: 0.9rem;
+  transition: opacity 0.22s ease;
+}
+@keyframes genPulse {
+  0%, 100% { transform: scale(1);   opacity: 0.6; }
+  50%       { transform: scale(1.4); opacity: 1;   }
+}
+
+/* ─────────────────────────────────────────────
    SUGGESTIONS BAR
 ───────────────────────────────────────────── */
 .suggestions-bar {
