@@ -1148,6 +1148,403 @@ body.page-chat .chat-page {
 ::-webkit-scrollbar-thumb:hover { background: var(--gray); }
 
 /* ─────────────────────────────────────────────
+   REPORT PAGES (AI Analysis + Final Plan)
+───────────────────────────────────────────── */
+html:has(body.page-report),
+body.page-report {
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.app-shell--report { background: #F5F8F7; min-height: 100vh; }
+.report-page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 28px 64px;
+}
+.report-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.report-back {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--teal);
+  text-decoration: none;
+}
+.report-back:hover { text-decoration: underline; }
+.report-btn-secondary {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1.5px solid var(--teal);
+  color: var(--teal);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--white);
+}
+.report-btn-secondary:hover {
+  background: var(--green-xpale);
+  text-decoration: none;
+}
+.report-doc {
+  background: var(--white);
+  border-radius: 20px;
+  border: 1px solid #E8ECEB;
+  padding: 40px 44px;
+  box-shadow: 0 8px 32px rgba(0,64,63,0.06);
+}
+.report-hero { margin-bottom: 32px; }
+.report-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal-accent);
+  margin-bottom: 10px;
+}
+.report-hero h1 {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  color: var(--teal);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.report-confidence {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--green-xpale);
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 700;
+}
+.report-company {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--body-text);
+  margin-top: 4px;
+}
+.report-tagline {
+  font-size: 15px;
+  color: var(--teal-accent);
+  font-weight: 600;
+  margin-top: 8px;
+}
+.report-block { margin-bottom: 36px; }
+.report-block:last-child { margin-bottom: 0; }
+.report-lead, .report-body-text {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #374151;
+  margin-bottom: 16px;
+}
+.report-section-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.report-section-kicker {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9CA3AF;
+  margin-bottom: 12px;
+}
+.report-muted {
+  font-size: 14px;
+  color: var(--gray);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.report-growth-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.report-growth-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.report-growth-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.report-growth-item h3 {
+  font-size: 17px;
+  color: var(--teal);
+  margin-bottom: 8px;
+  font-family: var(--font-heading);
+}
+.report-growth-item p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #374151;
+}
+.report-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.report-card {
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+}
+.report-card--recommended {
+  border-color: var(--teal);
+  background: #F8FCFB;
+}
+.report-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: var(--mint);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.report-card h3 {
+  font-size: 16px;
+  color: var(--teal);
+  margin-bottom: 10px;
+  padding-right: 80px;
+}
+.report-card p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #374151;
+}
+.report-card-meta {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray);
+}
+.report-depth-full,
+.report-depth-small {
+  background: #F9FAFB;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.report-depth-full h3,
+.report-depth-small h3 {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  color: var(--teal);
+  margin-bottom: 10px;
+}
+.report-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.report-tier-card {
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 18px;
+}
+.report-tier-card h3 {
+  font-size: 15px;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.report-tier-sessions { font-weight: 500; color: var(--gray); }
+.report-tier-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--teal-accent);
+  margin-bottom: 8px;
+}
+.report-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--teal);
+  padding: 12px 0;
+}
+.report-details-body {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #374151;
+  padding-top: 8px;
+  white-space: pre-wrap;
+}
+.report-employee-block {
+  border-top: 2px solid var(--mint);
+  padding-top: 32px;
+  margin-top: 32px;
+}
+.report-employee-name {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.report-employee-role {
+  font-size: 14px;
+  color: var(--gray);
+  margin-bottom: 20px;
+}
+.report-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.report-profile-col h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--teal-accent);
+  margin-bottom: 10px;
+}
+.report-profile-col ul {
+  list-style: disc;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #374151;
+}
+.report-profile-col--full { margin-bottom: 20px; }
+.report-sequencing { margin: 20px 0; }
+.report-table-wrap { overflow-x: auto; margin: 24px 0; }
+.report-session-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.report-session-table th {
+  background: var(--teal);
+  color: var(--white);
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.report-session-table td {
+  padding: 14px;
+  border-bottom: 1px solid #E5E7EB;
+  vertical-align: top;
+  line-height: 1.6;
+  color: #374151;
+}
+.report-session-table .col-num {
+  width: 40px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.report-session-table .col-session strong {
+  display: block;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.session-covers {
+  display: block;
+  font-size: 13px;
+  color: var(--gray);
+  font-weight: 400;
+}
+.report-session-table .col-skills ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.report-session-table .col-skills li {
+  padding: 2px 0;
+  font-size: 13px;
+}
+.report-coaching {
+  background: var(--green-xpale);
+  border-radius: 12px;
+  padding: 22px;
+  margin-top: 24px;
+}
+.report-coaching h3 {
+  font-family: var(--font-heading);
+  color: var(--teal);
+  margin-bottom: 10px;
+}
+.report-coaching p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #374151;
+}
+
+/* Report action buttons in chat */
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 0 12px 48px;
+  animation: msgIn 0.3s ease forwards;
+  opacity: 0;
+  position: sticky;
+  bottom: 100px;
+  background: var(--white);
+  border-top: 1px solid var(--gray-border);
+  margin: 12px 0 0 0;
+  z-index: 50;
+}
+.btn-report-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: var(--font-body);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-report-analysis {
+  background: var(--teal);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(0,64,63,0.2);
+}
+.btn-report-analysis:hover {
+  background: var(--teal-accent);
+  color: var(--white);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.btn-report-plan {
+  background: var(--white);
+  color: var(--teal);
+  border: 1.5px solid var(--teal);
+}
+.btn-report-plan:hover {
+  background: var(--green-xpale);
+  text-decoration: none;
+}
+
+/* ─────────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────────── */
 @media (max-width: 700px) {
@@ -1162,4 +1559,7 @@ body.page-chat .chat-page {
   .form-row       { flex-direction: column; }
   .auth-card      { padding: 32px 24px; }
   .msg-bubble     { max-width: 90% !important; }
+  .report-doc { padding: 24px 20px; }
+  .report-profile-grid { grid-template-columns: 1fr; }
+  .report-actions { padding-left: 0; }
 }

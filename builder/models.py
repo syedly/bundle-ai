@@ -101,6 +101,8 @@ class BuilderRun(models.Model):
     # Outputs
     selected_scenario = models.CharField(max_length=5, blank=True)
     num_sessions = models.IntegerField(default=0)
+    ai_analysis_json = models.TextField(blank=True, default='')
+    final_plan_json = models.TextField(blank=True, default='')
     final_plan = models.TextField(blank=True)
     # Chat
     chat_history = models.TextField(blank=True, default='[]')
@@ -133,6 +135,20 @@ class BuilderRun(models.Model):
         if self.title:
             return self.title
         return f"Conversation #{self.id}"
+
+    def get_ai_analysis(self):
+        try:
+            return json.loads(self.ai_analysis_json) if self.ai_analysis_json else None
+        except (json.JSONDecodeError, TypeError):
+            return None
+
+    def get_final_plan_data(self):
+        try:
+            if self.final_plan_json:
+                return json.loads(self.final_plan_json)
+        except (json.JSONDecodeError, TypeError):
+            pass
+        return None
 
     def __str__(self):
         return f"BuilderRun {self.id} — {self.display_title()}"

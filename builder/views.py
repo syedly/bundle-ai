@@ -1,5 +1,7 @@
 import json
 import uuid
+import logging
+import traceback
 from io import BytesIO
 
 from django.contrib.auth import authenticate, login, logout
@@ -12,10 +14,24 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
+logger = logging.getLogger(__name__)
+
 from .models import BuilderRun, PasswordResetToken
 from .ai_engine import chat_with_ai, generate_greeting, get_suggestions_for_message
+from .ai_tools import run_report_flags
 
 FREE_LIMIT = getattr(settings, 'FREE_RUN_LIMIT', 3)
+
+
+def _chat_api_payload(run, message, suggestions):
+    return {
+        'message':     message,
+        'suggestions': suggestions,
+        'stage':       run.current_stage,
+        'status':      run.status,
+        'run_id':      run.id,
+        **run_report_flags(run),
+    }
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
@@ -249,6 +265,7 @@ def start_chat(request):
                     'status':      run.status,
                     'run_id':      run.id,
                     'suggestions': suggestions,
+                    **run_report_flags(run),
                 })
         except BuilderRun.DoesNotExist:
             pass
@@ -323,15 +340,22 @@ def chat(request):
         run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
         ai_reply, suggestions = chat_with_ai(run, message)
 
-        return JsonResponse({
-            'message':     ai_reply,
-            'suggestions': suggestions,
-            'stage':       run.current_stage,
-            'status':      run.status,
-            'run_id':      run.id,
-        })
+        return JsonResponse(_chat_api_payload(run, ai_reply, suggestions))
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in chat request: {str(e)}", exc_info=True)
+        return JsonResponse({'error': 'Invalid request format.'}, status=400)
+    except BuilderRun.DoesNotExist:
+        logger.error(f"BuilderRun not found for user {request.user.id}")
+        return JsonResponse({'error': 'Chat session not found.'}, status=404)
     except Exception as e:
-        return JsonResponse({'error': 'Something went wrong. Please try again.'}, status=500)
+        logger.error(
+            f"Error in chat endpoint - Run ID: {data.get('run_id')}, User: {request.user.id}, Error: {str(e)}",
+            exc_info=True
+        )
+        return JsonResponse({
+            'error': 'Something went wrong while processing your message. Please try again.',
+            'detail': str(e) if settings.DEBUG else None,
+        }, status=500)
 
 
 @login_required
@@ -371,6 +395,10 @@ def upload_file(request, run_id):
                 status=400,
             )
     except Exception as e:
+        logger.error(
+            f"Error reading file - Run ID: {run_id}, User: {request.user.id}, File: {filename} (.{ext}), Error: {str(e)}",
+            exc_info=True
+        )
         return JsonResponse({'error': f'Could not read file: {e}'}, status=400)
 
     if not text.strip():
@@ -402,7 +430,11 @@ def upload_file(request, run_id):
 
     try:
         ai_reply, suggestions = chat_with_ai(run, user_message)
-    except Exception:
+    except Exception as e:
+        logger.error(
+            f"Error processing uploaded file - Run ID: {run_id}, User: {request.user.id}, File: {filename}, Error: {str(e)}",
+            exc_info=True
+        )
         ai_reply   = "I've received your file. Could you also tell me a bit about what you'd like me to focus on in this data?"
         suggestions = [
             "Look for skill gaps",
@@ -411,15 +443,10 @@ def upload_file(request, run_id):
             "Use this for my training plan",
         ]
 
-    return JsonResponse({
-        'filename':        filename,
-        'display_message': f'📎 Uploaded: {filename}',
-        'message':         ai_reply,
-        'suggestions':     suggestions,
-        'stage':           run.current_stage,
-        'status':          run.status,
-        'run_id':          run.id,
-    })
+    payload = _chat_api_payload(run, ai_reply, suggestions)
+    payload['filename'] = filename
+    payload['display_message'] = f'📎 Uploaded: {filename}'
+    return JsonResponse(payload)
 
 
 @login_required
@@ -442,6 +469,31 @@ def load_thread(request, run_id):
         'run_id':      run.id,
         'title':       run.display_title(),
         'suggestions': suggestions,
+        **run_report_flags(run),
+    })
+
+
+@login_required
+def report_ai_analysis(request, run_id):
+    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+    report = run.get_ai_analysis()
+    if not report:
+        return redirect('chat_thread', run_id=run.id)
+    return render(request, 'builder/report_ai_analysis.html', {
+        'run': run,
+        'report': report,
+    })
+
+
+@login_required
+def report_final_plan(request, run_id):
+    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+    report = run.get_final_plan_data()
+    if not report:
+        return redirect('chat_thread', run_id=run.id)
+    return render(request, 'builder/report_final_plan.html', {
+        'run': run,
+        'report': report,
     })
 
 
@@ -514,7 +566,14 @@ def book(request, run_id):
             )
 
         return JsonResponse({'success': True, 'redirect': f'/confirm/{run.id}/'})
-    except Exception:
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in book request: {str(e)}", exc_info=True)
+        return JsonResponse({'error': 'Invalid request format.'}, status=400)
+    except Exception as e:
+        logger.error(
+            f"Error in book endpoint - Run ID: {run_id}, User: {request.user.id}, Error: {str(e)}",
+            exc_info=True
+        )
         return JsonResponse({'error': 'Failed to save booking. Please try again.'}, status=500)
 
 
@@ -526,17 +585,25 @@ def confirm(request, run_id):
 
 @login_required
 def download_pdf(request, run_id):
-    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
-    if not run.final_plan:
-        return HttpResponse('No plan generated yet.', status=404)
-
     try:
-        from .pdf_export import generate_plan_pdf
-        pdf_bytes = generate_plan_pdf(run)
-        company   = run.company_name or 'Training'
-        filename  = f"Bundle_{company.replace(' ', '_')}_Training_Plan.pdf"
-        response  = HttpResponse(pdf_bytes, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        return response
+        run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+        if not run.final_plan:
+            return HttpResponse('No plan generated yet.', status=404)
+
+        try:
+            from .pdf_export import generate_plan_pdf
+            pdf_bytes = generate_plan_pdf(run)
+            company   = run.company_name or 'Training'
+            filename  = f"Bundle_{company.replace(' ', '_')}_Training_Plan.pdf"
+            response  = HttpResponse(pdf_bytes, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        except Exception as e:
+            logger.error(
+                f"Error generating PDF for run {run_id}, user {request.user.id}: {str(e)}",
+                exc_info=True
+            )
+            return HttpResponse(f'PDF generation error: {e}', status=500)
     except Exception as e:
-        return HttpResponse(f'PDF generation error: {e}', status=500)
+        logger.error(f"Error in download_pdf endpoint: {str(e)}", exc_info=True)
+        return HttpResponse(f'Error: {str(e)}', status=500)

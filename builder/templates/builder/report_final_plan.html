@@ -1,0 +1,98 @@
+{% extends 'builder/base.html' %}
+{% load static %}
+
+{% block title %}{{ report.plan_title }} — Bundle{% endblock %}
+{% block body_class %}page-report{% endblock %}
+
+{% block content %}
+<div class="app-shell app-shell--report">
+  {% include 'builder/includes/app_header.html' %}
+
+  <div class="report-page">
+    <div class="report-toolbar">
+      <a href="{% url 'chat_thread' run.id %}" class="report-back">← Back to chat</a>
+      <a href="{% url 'download_pdf' run.id %}" class="report-btn-secondary" target="_blank" rel="noopener">Download PDF</a>
+    </div>
+
+    <article class="report-doc report-doc--plan">
+      <header class="report-hero">
+        <p class="report-eyebrow">Performance-aligned learning plan</p>
+        <h1>{{ report.plan_title }}</h1>
+        <p class="report-company">{{ report.company_name }}</p>
+        <p class="report-tagline">{{ report.tagline }}</p>
+      </header>
+
+      <section class="report-block">
+        <p class="report-body-text">{{ report.intro_paragraph }}</p>
+        {% if report.sequencing_overview %}
+        <p class="report-body-text">{{ report.sequencing_overview }}</p>
+        {% endif %}
+      </section>
+
+      {% for emp in report.employees %}
+      <section class="report-employee-block">
+        <h2 class="report-employee-name">{{ emp.name }}</h2>
+        <p class="report-employee-role">{{ emp.role_context }}</p>
+
+        <div class="report-profile-grid">
+          <div class="report-profile-col">
+            <h3>Strengths</h3>
+            <ul>
+              {% for s in emp.strengths %}<li>{{ s }}</li>{% endfor %}
+            </ul>
+          </div>
+          <div class="report-profile-col">
+            <h3>Growth opportunities</h3>
+            <ul>
+              {% for g in emp.growth_opportunities %}<li>{{ g }}</li>{% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="report-profile-col report-profile-col--full">
+          <h3>Career direction</h3>
+          <p>{{ emp.career_direction }}</p>
+        </div>
+
+        <p class="report-body-text report-sequencing">{{ emp.sequencing_paragraph }}</p>
+
+        <div class="report-table-wrap">
+          <table class="report-session-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Session</th>
+                <th>Skill focus</th>
+                <th>Why this session</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for sess in emp.sessions %}
+              <tr>
+                <td class="col-num">{{ sess.number }}</td>
+                <td class="col-session">
+                  <strong>{{ sess.title }}</strong>
+                  <span class="session-covers">{{ sess.what_it_covers }}</span>
+                </td>
+                <td class="col-skills">
+                  <ul>
+                    {% for skill in sess.skill_focus %}<li>{{ skill }}</li>{% endfor %}
+                  </ul>
+                </td>
+                <td class="col-why">{{ sess.why_this_session }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <section class="report-coaching">
+          <h3>Coaching support</h3>
+          <p>{{ emp.coaching_support }}</p>
+        </section>
+      </section>
+      {% endfor %}
+    </article>
+  </div>
+</div>
+{% endblock %}

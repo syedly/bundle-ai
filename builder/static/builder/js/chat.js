@@ -428,11 +428,55 @@ function removePlanActions() {
   document.getElementById('planActionsWrap')?.remove();
 }
 
+function removeReportActions() {
+  document.getElementById('reportActionsWrap')?.remove();
+}
+
+function showReportActions(data) {
+  if (!currentRunId) return;
+  removeReportActions();
+
+  const hasAnalysis = data.has_analysis_report;
+  const hasPlan = data.has_final_plan_report;
+  if (!hasAnalysis && !hasPlan) return;
+
+  const scroll = document.getElementById('messagesScroll');
+  if (!scroll) return;
+
+  const wrap = document.createElement('div');
+  wrap.id = 'reportActionsWrap';
+  wrap.className = 'report-actions';
+
+  if (hasAnalysis) {
+    const a = document.createElement('a');
+    a.href = `/chat/${currentRunId}/report/analysis/`;
+    a.className = 'btn-report-action btn-report-analysis';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML = '📊&nbsp; View AI Analysis Report';
+    wrap.appendChild(a);
+  }
+
+  if (hasPlan) {
+    const p = document.createElement('a');
+    p.href = `/chat/${currentRunId}/report/plan/`;
+    p.className = 'btn-report-action btn-report-plan';
+    p.target = '_blank';
+    p.rel = 'noopener';
+    p.innerHTML = '📋&nbsp; View Learning Plan Report';
+    wrap.appendChild(p);
+  }
+
+  scroll.appendChild(wrap);
+  scrollToBottom();
+}
+
 // ── Handle AI response (suggestions + stage-specific UI) ──────────────────
 function handleAiResponse(data) {
   removeTyping();
   appendMessage('ai', data.message);
   updateStageUI(data.stage);
+  showReportActions(data);
 
   // Show plan action buttons when plan is generated
   if (data.status === 'plan_generated') {
@@ -656,6 +700,9 @@ async function loadThread(runId) {
     }
 
     removePlanActions();
+    removeReportActions();
+    showReportActions(data);
+
     if (data.status === 'plan_generated' || data.status === 'cta_clicked') {
       showPlanActions();
       hideSuggestions();

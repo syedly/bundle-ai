@@ -19,6 +19,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('chat/new/', views.chat_new, name='chat_new'),
     path('chat/<int:run_id>/', views.chat_thread, name='chat_thread'),
+    path('chat/<int:run_id>/report/analysis/', views.report_ai_analysis, name='report_ai_analysis'),
+    path('chat/<int:run_id>/report/plan/', views.report_final_plan, name='report_final_plan'),
 
     # API
     path('api/start/',                views.start_chat,   name='start_chat'),

@@ -1,0 +1,529 @@
+INFO 2026-05-23 21:27:56,144 autoreload 1436 16388 Watching for file changes with StatReloader
+INFO 2026-05-23 21:28:03,162 autoreload 1436 16388 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py changed, reloading.
+INFO 2026-05-23 21:28:04,722 autoreload 11104 1824 Watching for file changes with StatReloader
+INFO 2026-05-23 21:28:08,735 autoreload 11104 1824 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py changed, reloading.
+INFO 2026-05-23 21:28:11,898 autoreload 2516 4016 Watching for file changes with StatReloader
+INFO 2026-05-23 21:28:18,720 autoreload 2516 4016 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py changed, reloading.
+INFO 2026-05-23 21:28:20,344 autoreload 9912 2012 Watching for file changes with StatReloader
+INFO 2026-05-23 21:28:31,558 autoreload 9912 2012 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py changed, reloading.
+INFO 2026-05-23 21:28:33,516 autoreload 16552 12596 Watching for file changes with StatReloader
+INFO 2026-05-23 21:29:28,758 autoreload 16552 12596 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py changed, reloading.
+INFO 2026-05-23 21:29:30,376 autoreload 9960 7676 Watching for file changes with StatReloader
+INFO 2026-05-23 21:29:33,991 autoreload 9960 7676 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py changed, reloading.
+INFO 2026-05-23 21:29:35,531 autoreload 12228 16708 Watching for file changes with StatReloader
+INFO 2026-05-23 21:30:46,912 autoreload 12228 16708 C:\Users\syed ali\Desktop\bundle\bundle-ai\bundle_training_builder\settings.py changed, reloading.
+INFO 2026-05-23 21:30:48,393 autoreload 16464 15044 Watching for file changes with StatReloader
+INFO 2026-05-23 21:30:52,573 log 16464 14620 "GET /chat/4/ HTTP/1.1" 200 6847
+INFO 2026-05-23 21:30:52,637 log 16464 14620 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-23 21:30:52,637 log 16464 4028 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:30:52,640 log 16464 14620 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+WARNING 2026-05-23 21:30:52,764 log 16464 9392 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 7416
+INFO 2026-05-23 21:30:58,020 log 16464 9392 "GET /chat/4/ HTTP/1.1" 200 6847
+WARNING 2026-05-23 21:30:58,150 log 16464 9392 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+WARNING 2026-05-23 21:30:58,188 log 16464 15888 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 7416
+INFO 2026-05-23 21:31:06,637 log 16464 7564 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-23 21:31:06,646 log 16464 7564 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-23 21:31:06,685 log 16464 7564 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-23 21:31:20,457 log 16464 7564 "POST /login/ HTTP/1.1" 200 2425
+WARNING 2026-05-23 21:31:30,023 log 16464 15888 "GET /threads/load/4/ HTTP/1.1" 400 106697
+INFO 2026-05-23 21:31:31,233 log 16464 7564 "POST /login/ HTTP/1.1" 200 2425
+INFO 2026-05-23 21:31:33,159 log 16464 7564 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-23 21:31:33,179 log 16464 7564 "GET / HTTP/1.1" 200 4678
+WARNING 2026-05-23 21:31:33,242 log 16464 7564 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:31:57,230 log 16464 15772 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-23 21:31:57,235 log 16464 15772 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-23 21:31:59,299 log 16464 15772 "GET /signup/ HTTP/1.1" 200 2910
+INFO 2026-05-23 21:32:14,775 log 16464 15772 "POST /signup/ HTTP/1.1" 302 0
+INFO 2026-05-23 21:32:14,787 log 16464 15772 "GET / HTTP/1.1" 200 3887
+WARNING 2026-05-23 21:32:14,846 log 16464 15772 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:33:34,645 log 16464 792 "GET /chat/new/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:33:34,759 log 16464 4440 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:33:55,256 log 16464 5432 "GET /chat/new/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:33:55,624 log 16464 15240 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:34:07,109 basehttp 16464 792 - Broken pipe from ('127.0.0.1', 53847)
+INFO 2026-05-23 21:34:27,121 log 16464 5432 "POST /api/new/ HTTP/1.1" 200 545
+INFO 2026-05-23 21:34:41,754 autoreload 15600 8428 Watching for file changes with StatReloader
+INFO 2026-05-23 21:34:48,831 log 15600 8540 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:34:48,884 log 15600 8540 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:34:48,902 log 15600 13508 "GET /threads/load/6/ HTTP/1.1" 200 656
+WARNING 2026-05-23 21:35:05,645 log 15600 12440 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 7416
+ERROR 2026-05-23 21:35:24,534 ai_engine 15600 13508 OpenAI API error on attempt 1/5 for run 6: Request timed out.
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 1037, in request
+    response = self._send_request(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_client.py", line 440, in _send_request
+    return self._send_with_auth_retry(request, stream=stream, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_client.py", line 418, in _send_with_auth_retry
+    response = super()._send_request(request, stream=stream, **kwargs)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 964, in _send_request
+    return self._client.send(request, stream=stream, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1269, in chat_with_ai
+    response = client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+    ...<4 lines>...
+        temperature=0.7,
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1215, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<51 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 1332, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 1055, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+ERROR 2026-05-23 21:35:55,891 ai_engine 15600 13508 OpenAI API error on attempt 2/5 for run 6: Request timed out.
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection.py", line 101, in handle_request
+    raise exc
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_sync\connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_backends\sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 1037, in request
+    response = self._send_request(
+        request,
+        stream=stream or self._should_stream_response_body(request=request),
+        **kwargs,
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_client.py", line 440, in _send_request
+    return self._send_with_auth_retry(request, stream=stream, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_client.py", line 418, in _send_with_auth_retry
+    response = super()._send_request(request, stream=stream, **kwargs)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 964, in _send_request
+    return self._client.send(request, stream=stream, **kwargs)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1269, in chat_with_ai
+    response = client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+    ...<4 lines>...
+        temperature=0.7,
+    )
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_utils\_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1215, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<51 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 1332, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\openai\_base_client.py", line 1055, in request
+    raise APITimeoutError(request=request) from err
+openai.APITimeoutError: Request timed out.
+INFO 2026-05-23 21:37:39,846 autoreload 9244 4272 Watching for file changes with StatReloader
+INFO 2026-05-23 21:37:42,273 log 9244 10576 "GET / HTTP/1.1" 200 4293
+INFO 2026-05-23 21:37:42,290 log 9244 10576 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-23 21:37:42,309 log 9244 10576 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:37:42,347 log 9244 16540 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-23 21:37:46,809 log 9244 16540 "GET /chat/6/ HTTP/1.1" 200 6846
+INFO 2026-05-23 21:37:46,850 log 9244 13732 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+WARNING 2026-05-23 21:37:46,850 log 9244 16540 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:37:46,889 log 9244 13732 "GET /threads/load/6/ HTTP/1.1" 200 656
+INFO 2026-05-23 21:37:55,298 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 393
+INFO 2026-05-23 21:38:14,262 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 474
+INFO 2026-05-23 21:38:23,817 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 386
+INFO 2026-05-23 21:38:41,713 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 488
+INFO 2026-05-23 21:38:49,686 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 434
+INFO 2026-05-23 21:39:08,651 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 585
+INFO 2026-05-23 21:39:17,568 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 365
+INFO 2026-05-23 21:39:29,847 log 9244 13732 "POST /api/upload/6/ HTTP/1.1" 200 1824
+INFO 2026-05-23 21:39:37,819 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 474
+INFO 2026-05-23 21:39:54,655 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 416
+INFO 2026-05-23 21:40:01,005 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 527
+INFO 2026-05-23 21:40:09,881 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 326
+INFO 2026-05-23 21:40:27,279 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 449
+INFO 2026-05-23 21:40:35,071 log 9244 13732 "POST /api/chat/ HTTP/1.1" 200 414
+ERROR 2026-05-23 21:41:11,076 ai_engine 9244 13732 Error handling tool call submit_ai_analysis for run 6: not enough values to unpack (expected 3, got 2)
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1312, in chat_with_ai
+    result, chat_msg, _ = handle_tool_call(run, tc)
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
+ERROR 2026-05-23 21:41:11,079 ai_engine 9244 13732 Critical error in chat_with_ai for run 6: not enough values to unpack (expected 3, got 2)
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1312, in chat_with_ai
+    result, chat_msg, _ = handle_tool_call(run, tc)
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
+ERROR 2026-05-23 21:41:11,080 views 9244 13732 Error in chat endpoint - Run ID: 6, User: 3, Error: not enough values to unpack (expected 3, got 2)
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py", line 341, in chat
+    ai_reply, suggestions = chat_with_ai(run, message)
+                            ~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1312, in chat_with_ai
+    result, chat_msg, _ = handle_tool_call(run, tc)
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
+ERROR 2026-05-23 21:41:11,082 log 9244 13732 Internal Server Error: /api/chat/
+ERROR 2026-05-23 21:41:11,083 log 9244 13732 "POST /api/chat/ HTTP/1.1" 500 143
+INFO 2026-05-23 21:41:25,248 log 9244 13732 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:41:25,306 log 9244 13732 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:41:25,569 log 9244 7464 "GET /threads/load/6/ HTTP/1.1" 200 14857
+INFO 2026-05-23 21:41:29,549 log 9244 7464 "GET /chat/6/report/analysis/ HTTP/1.1" 200 9983
+WARNING 2026-05-23 21:41:29,694 log 9244 7464 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:41:57,305 log 9244 16720 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:41:57,354 log 9244 16720 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:41:57,648 log 9244 13040 "GET /threads/load/6/ HTTP/1.1" 200 14857
+ERROR 2026-05-23 21:42:11,866 ai_engine 9244 13040 Error handling tool call submit_ai_analysis for run 6: not enough values to unpack (expected 3, got 2)
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1312, in chat_with_ai
+    result, chat_msg, _ = handle_tool_call(run, tc)
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
+ERROR 2026-05-23 21:42:11,869 ai_engine 9244 13040 Critical error in chat_with_ai for run 6: not enough values to unpack (expected 3, got 2)
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1312, in chat_with_ai
+    result, chat_msg, _ = handle_tool_call(run, tc)
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
+ERROR 2026-05-23 21:42:11,873 views 9244 13040 Error in chat endpoint - Run ID: 6, User: 3, Error: not enough values to unpack (expected 3, got 2)
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py", line 341, in chat
+    ai_reply, suggestions = chat_with_ai(run, message)
+                            ~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py", line 1312, in chat_with_ai
+    result, chat_msg, _ = handle_tool_call(run, tc)
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 3, got 2)
+ERROR 2026-05-23 21:42:11,877 log 9244 13040 Internal Server Error: /api/chat/
+ERROR 2026-05-23 21:42:11,879 log 9244 13040 "POST /api/chat/ HTTP/1.1" 500 143
+INFO 2026-05-23 21:42:19,840 log 9244 13040 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:42:19,905 log 9244 13040 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:42:20,160 log 9244 11524 "GET /threads/load/6/ HTTP/1.1" 200 14857
+INFO 2026-05-23 21:43:56,745 autoreload 9244 4272 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-23 21:43:58,775 autoreload 13940 15496 Watching for file changes with StatReloader
+INFO 2026-05-23 21:45:08,723 log 13940 14632 "GET /chat/6/ HTTP/1.1" 200 6846
+INFO 2026-05-23 21:45:08,751 log 13940 14632 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-23 21:45:08,772 log 13940 9208 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:45:08,774 log 13940 14632 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-23 21:45:08,815 log 13940 14632 "GET /threads/load/6/ HTTP/1.1" 200 14857
+INFO 2026-05-23 21:45:22,079 log 13940 14632 "POST /api/chat/ HTTP/1.1" 200 317
+INFO 2026-05-23 21:45:58,764 log 13940 14632 "GET /chat/6/report/analysis/ HTTP/1.1" 200 10081
+WARNING 2026-05-23 21:45:58,888 log 13940 14632 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:46:16,308 log 13940 12972 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:46:16,364 log 13940 12972 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:46:18,470 log 13940 13400 "GET /threads/load/6/ HTTP/1.1" 200 15037
+INFO 2026-05-23 21:46:25,640 log 13940 13400 "POST /api/chat/ HTTP/1.1" 200 382
+INFO 2026-05-23 21:46:31,225 log 13940 13400 "POST /api/chat/ HTTP/1.1" 200 294
+INFO 2026-05-23 21:46:42,241 log 13940 13400 "POST /api/chat/ HTTP/1.1" 200 331
+INFO 2026-05-23 21:46:46,891 log 13940 13400 "POST /api/chat/ HTTP/1.1" 200 310
+INFO 2026-05-23 21:47:09,763 log 13940 13400 "POST /api/chat/ HTTP/1.1" 200 370
+INFO 2026-05-23 21:47:18,291 log 13940 13400 "GET /chat/6/report/plan/ HTTP/1.1" 200 10038
+WARNING 2026-05-23 21:47:18,408 log 13940 13400 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:47:43,352 log 13940 1992 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:47:43,402 log 13940 1992 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:47:43,698 log 13940 14352 "GET /threads/load/6/ HTTP/1.1" 200 15983
+ERROR 2026-05-23 21:47:47,523 views 13940 14352 Error generating PDF for run 6, user 3: 
+paragraph text '<para>| 1 | Effective Communication | Techniques for clear and impactful communication tailored to client needs. | Communication Clarity<br>Active Listening<br>Audience Adaptation | The focus on effective communication addresses the specific need to improve clarity in client interactions, as emphasized by the goal of better client feedback. This session lays the foundation for all subsequent skills, ensuring communication is tailored and impactful from the outset. |</para>' caused exception paraparser: syntax error: No content allowed in br tag
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3218, in parse
+    self.feed(text)
+    ~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\html\parser.py", line 169, in feed
+    self.goahead(0)
+    ~~~~~~~~~~~~^^^
+  File "C:\Python314\Lib\html\parser.py", line 245, in goahead
+    self.handle_data(rawdata[i:j])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3123, in handle_data
+    if data!='': self._syntax_error('No content allowed in %s tag' % frag._selfClosingTag)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 2780, in _syntax_error
+    raise ValueError('paraparser: syntax error: %s' % message)
+ValueError: paraparser: syntax error: No content allowed in br tag
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py", line 595, in download_pdf
+    pdf_bytes = generate_plan_pdf(run)
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\pdf_export.py", line 303, in generate_plan_pdf
+    story.append(Paragraph(clean, styles['intro']))
+                 ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paragraph.py", line 1861, in __init__
+    self._setup(text, style, bulletText or getattr(style,'bulletText',None), frags, cleanBlockQuotedText)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paragraph.py", line 1882, in _setup
+    style, frags, bulletTextFrags = _parser.parse(text,style)
+                                    ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3220, in parse
+    annotateException('\nparagraph text %s caused exception' % ascii(text))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\lib\utils.py", line 1180, in annotateException
+    rl_reraise(t,t(sep.join((_ for _ in (msg,str(v),postMsg) if _))),b)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\lib\utils.py", line 138, in rl_reraise
+    raise v.with_traceback(b)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3218, in parse
+    self.feed(text)
+    ~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\html\parser.py", line 169, in feed
+    self.goahead(0)
+    ~~~~~~~~~~~~^^^
+  File "C:\Python314\Lib\html\parser.py", line 245, in goahead
+    self.handle_data(rawdata[i:j])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3123, in handle_data
+    if data!='': self._syntax_error('No content allowed in %s tag' % frag._selfClosingTag)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 2780, in _syntax_error
+    raise ValueError('paraparser: syntax error: %s' % message)
+ValueError: 
+paragraph text '<para>| 1 | Effective Communication | Techniques for clear and impactful communication tailored to client needs. | Communication Clarity<br>Active Listening<br>Audience Adaptation | The focus on effective communication addresses the specific need to improve clarity in client interactions, as emphasized by the goal of better client feedback. This session lays the foundation for all subsequent skills, ensuring communication is tailored and impactful from the outset. |</para>' caused exception paraparser: syntax error: No content allowed in br tag
+ERROR 2026-05-23 21:47:47,552 log 13940 14352 Internal Server Error: /api/pdf/6/
+ERROR 2026-05-23 21:47:47,553 log 13940 14352 "GET /api/pdf/6/ HTTP/1.1" 500 589
+INFO 2026-05-23 21:51:41,771 log 13940 14352 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:51:41,838 log 13940 14352 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:51:42,075 log 13940 2560 "GET /threads/load/6/ HTTP/1.1" 200 15983
+INFO 2026-05-23 21:51:52,000 log 13940 2560 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:51:52,061 log 13940 2560 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:51:52,306 log 13940 3676 "GET /threads/load/6/ HTTP/1.1" 200 15983
+INFO 2026-05-23 21:51:55,543 log 13940 3676 "GET / HTTP/1.1" 200 4296
+WARNING 2026-05-23 21:51:55,581 log 13940 3676 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:51:59,150 log 13940 16920 "GET /chat/5/ HTTP/1.1" 200 6846
+INFO 2026-05-23 21:51:59,215 log 13940 16920 "GET /threads/load/5/ HTTP/1.1" 200 656
+WARNING 2026-05-23 21:51:59,226 log 13940 16920 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:52:08,604 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 464
+INFO 2026-05-23 21:52:18,201 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 612
+INFO 2026-05-23 21:52:34,406 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-23 21:52:43,108 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 372
+INFO 2026-05-23 21:52:48,214 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-23 21:52:54,557 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 369
+INFO 2026-05-23 21:53:04,623 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 479
+INFO 2026-05-23 21:53:11,418 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 408
+INFO 2026-05-23 21:53:17,727 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 515
+INFO 2026-05-23 21:53:23,991 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 319
+INFO 2026-05-23 21:53:38,504 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 305
+INFO 2026-05-23 21:53:58,794 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 435
+INFO 2026-05-23 21:54:09,206 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 403
+INFO 2026-05-23 21:54:24,478 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 415
+INFO 2026-05-23 21:54:39,019 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 438
+INFO 2026-05-23 21:54:46,666 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 408
+INFO 2026-05-23 21:54:53,290 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 415
+INFO 2026-05-23 21:55:04,068 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 478
+INFO 2026-05-23 21:55:19,128 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 393
+INFO 2026-05-23 21:55:31,668 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 454
+INFO 2026-05-23 21:55:44,970 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 267
+INFO 2026-05-23 21:55:57,741 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 352
+INFO 2026-05-23 21:56:11,949 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 383
+INFO 2026-05-23 21:56:38,548 log 13940 8596 "POST /api/chat/ HTTP/1.1" 200 301
+INFO 2026-05-23 21:56:41,892 log 13940 8596 "GET /chat/5/report/analysis/ HTTP/1.1" 200 9778
+INFO 2026-05-23 21:56:42,090 log 13940 8596 "GET /static/builder/css/main.css HTTP/1.1" 200 52854
+WARNING 2026-05-23 21:56:42,105 log 13940 8596 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:57:02,198 log 13940 15172 "GET /chat/5/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:57:02,236 log 13940 15172 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:57:02,483 log 13940 11944 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-23 21:57:04,023 log 13940 11944 "GET /threads/load/5/ HTTP/1.1" 200 6562
+INFO 2026-05-23 21:57:10,165 log 13940 11944 "POST /api/chat/ HTTP/1.1" 200 325
+INFO 2026-05-23 21:57:21,351 log 13940 11944 "POST /api/chat/ HTTP/1.1" 200 391
+INFO 2026-05-23 21:57:30,232 log 13940 11944 "POST /api/chat/ HTTP/1.1" 200 331
+INFO 2026-05-23 21:57:47,538 log 13940 11944 "POST /api/chat/ HTTP/1.1" 200 310
+INFO 2026-05-23 21:57:49,864 log 13940 11944 "GET /chat/5/report/plan/ HTTP/1.1" 200 12298
+INFO 2026-05-23 21:57:49,979 log 13940 11944 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-23 21:57:49,995 log 13940 11944 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:58:03,519 log 13940 16288 "GET /chat/5/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:58:03,565 log 13940 16288 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:58:03,861 log 13940 16592 "GET /threads/load/5/ HTTP/1.1" 200 7316
+INFO 2026-05-23 21:58:29,899 log 13940 16592 "POST /api/book/5/ HTTP/1.1" 200 44
+INFO 2026-05-23 21:58:29,945 log 13940 16592 "GET /confirm/5/ HTTP/1.1" 200 2075
+INFO 2026-05-23 21:58:29,984 log 13940 16592 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-23 21:58:33,016 log 13940 16592 "GET / HTTP/1.1" 200 4298
+WARNING 2026-05-23 21:58:33,062 log 13940 16592 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:58:59,741 log 13940 2012 "GET /chat/5/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 21:58:59,794 log 13940 2012 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 21:59:00,050 log 13940 17300 "GET /threads/load/5/ HTTP/1.1" 200 7313
+INFO 2026-05-23 22:20:26,447 autoreload 252 11916 Watching for file changes with StatReloader
+INFO 2026-05-23 22:20:33,802 log 252 9940 "GET / HTTP/1.1" 200 4298
+INFO 2026-05-23 22:20:33,938 log 252 9940 "GET /static/builder/css/main.css HTTP/1.1" 200 52854
+INFO 2026-05-23 22:20:33,948 log 252 5288 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 200 80722
+WARNING 2026-05-23 22:20:33,981 log 252 9940 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:20:34,002 log 252 5288 "GET /static/builder/js/app.js HTTP/1.1" 200 995
+WARNING 2026-05-23 22:20:34,519 log 252 5288 "GET /favicon.ico HTTP/1.1" 404 7305
+INFO 2026-05-23 22:20:36,896 log 252 5288 "GET /chat/5/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 22:20:36,943 log 252 5288 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:20:37,016 log 252 7740 "GET /static/builder/js/chat.js HTTP/1.1" 200 28422
+INFO 2026-05-23 22:20:37,051 log 252 7740 "GET /threads/load/5/ HTTP/1.1" 200 7313
+INFO 2026-05-23 22:20:43,131 log 252 7740 "GET /chat/5/report/analysis/ HTTP/1.1" 200 9778
+WARNING 2026-05-23 22:20:43,232 log 252 7740 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:22:17,663 log 252 984 "GET /chat/5/report/plan/ HTTP/1.1" 200 12298
+WARNING 2026-05-23 22:22:17,729 log 252 984 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:22:59,846 log 252 6272 "GET /chat/5/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 22:22:59,887 log 252 6272 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:22:59,934 log 252 11596 "GET /threads/load/5/ HTTP/1.1" 200 7313
+INFO 2026-05-23 22:27:25,226 log 252 11596 "GET /chat/5/report/analysis/ HTTP/1.1" 200 9778
+INFO 2026-05-23 22:27:25,335 log 252 11596 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-23 22:27:25,349 log 252 11596 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:28:07,151 log 252 9928 "GET /chat/5/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 22:28:07,200 log 252 9928 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:28:07,488 log 252 1604 "GET /threads/load/5/ HTTP/1.1" 200 7313
+INFO 2026-05-23 22:28:14,871 log 252 1604 "GET / HTTP/1.1" 200 4298
+WARNING 2026-05-23 22:28:14,921 log 252 1604 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:28:18,955 log 252 5216 "GET /chat/6/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 22:28:18,987 log 252 5216 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:28:19,279 log 252 4704 "GET /threads/load/6/ HTTP/1.1" 200 15983
+INFO 2026-05-23 22:28:24,754 log 252 4704 "GET /chat/new/ HTTP/1.1" 200 6846
+WARNING 2026-05-23 22:28:25,058 log 252 10080 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:28:29,921 log 252 4704 "POST /api/new/ HTTP/1.1" 200 613
+INFO 2026-05-23 22:28:38,672 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 273
+INFO 2026-05-23 22:28:46,677 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 296
+INFO 2026-05-23 22:28:52,450 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 408
+INFO 2026-05-23 22:29:05,429 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 346
+INFO 2026-05-23 22:29:15,144 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 393
+INFO 2026-05-23 22:29:23,119 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 397
+INFO 2026-05-23 22:29:29,109 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 407
+INFO 2026-05-23 22:31:31,693 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 315
+INFO 2026-05-23 22:31:44,488 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 340
+INFO 2026-05-23 22:31:59,213 log 252 4704 "POST /api/upload/7/ HTTP/1.1" 200 1277
+INFO 2026-05-23 22:32:04,008 log 252 4704 "POST /api/upload/7/ HTTP/1.1" 200 1444
+INFO 2026-05-23 22:32:13,286 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 327
+INFO 2026-05-23 22:32:22,242 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 386
+INFO 2026-05-23 22:32:32,729 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 382
+INFO 2026-05-23 22:32:52,348 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 467
+INFO 2026-05-23 22:33:23,671 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 264
+INFO 2026-05-23 22:33:30,730 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 391
+INFO 2026-05-23 22:33:50,141 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 336
+INFO 2026-05-23 22:34:30,270 log 252 4704 "POST /api/chat/ HTTP/1.1" 200 332
+INFO 2026-05-23 22:34:38,198 log 252 4704 "GET /chat/7/report/analysis/ HTTP/1.1" 200 10825
+INFO 2026-05-23 22:34:38,312 log 252 4704 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-23 22:34:38,333 log 252 4704 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-23 22:34:47,541 log 252 11660 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-23 22:35:17,752 log 252 11660 "POST /api/chat/ HTTP/1.1" 200 331
+INFO 2026-05-23 22:35:22,600 log 252 11660 "POST /api/chat/ HTTP/1.1" 200 292
+INFO 2026-05-23 22:35:30,085 log 252 11660 "POST /api/chat/ HTTP/1.1" 200 331
+INFO 2026-05-23 22:35:38,787 log 252 11660 "POST /api/chat/ HTTP/1.1" 200 288
+INFO 2026-05-23 22:36:06,250 log 252 11660 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-23 22:36:12,535 log 252 9976 "GET /chat/7/report/plan/ HTTP/1.1" 200 9982
+WARNING 2026-05-23 22:36:12,611 log 252 9976 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889

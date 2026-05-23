@@ -1,6 +1,9 @@
 import re
+import logging
 from openai import OpenAI
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 # ── Tag parsers ────────────────────────────────────────────────────────────────
 
@@ -952,6 +955,23 @@ STRICT RULES:
 - NEVER skip this tag on ANY message, including the plan output and booking messages
 """
 
+TOOL_INSTRUCTIONS = """
+
+=== DELIVERABLE TOOL CALLS — MANDATORY ===
+You have two tools for formal deliverables. NEVER paste the full Stage 4 or Stage 5 report in chat.
+
+1. submit_ai_analysis — Call ONCE when Stage 4 is ready (after Q14 / user says generate recommendation).
+   Put ALL detail in the tool: confidence rationale, 3-4 growth opportunities with quoted evidence,
+   three delivery options (mark one recommended), three depth tiers, full sequencing logic.
+   chat_message: 1-3 sentences only — tell user to open the AI Analysis report.
+
+2. submit_final_plan — Call ONCE when Stage 5 is ready (after session count + user confirms draft).
+   Put ALL detail in the tool: every employee block, full session table rows, coaching support.
+   chat_message: 1-3 sentences only — tell user to open the Learning Plan report.
+
+Between tools, continue normal chat with [DATA:] and [SUGGESTIONS:] tags on short messages only.
+"""
+
 
 # ── Stage + data detection ─────────────────────────────────────────────────────
 
@@ -1199,52 +1219,146 @@ def generate_greeting(run):
 
 # ── Main chat ──────────────────────────────────────────────────────────────────
 
+def _resolve_suggestions(run, ai_reply):
+    if is_transitional_message(ai_reply):
+        return generate_fallback_suggestions(ai_reply)
+    if run.status == 'plan_generated':
+        return STAGE_SUGGESTIONS.get('q_book', [
+            'Download as PDF', 'Book a consultation call', 'Tell me more',
+        ])
+    if run.status == 'recommendation_ready' and run.ai_analysis_json:
+        return STAGE_SUGGESTIONS.get('q_scenario', [
+            '1:1 Training + Coaching', '1:1 Training Only', "This doesn't look right",
+        ])
+    q_type = detect_question_type(ai_reply)
+    if q_type and q_type in STAGE_SUGGESTIONS:
+        return STAGE_SUGGESTIONS[q_type]
+    return generate_fallback_suggestions(ai_reply)
+
+
 def chat_with_ai(run, user_message):
-    """Returns (ai_reply, suggestions_list)."""
-    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    """Returns (ai_reply, suggestions_list). Uses tool calls for Stage 4/5 deliverables."""
+    from .ai_tools import BUNDLE_TOOLS, handle_tool_call
 
-    history = run.get_chat_history()
-    history.append({"role": "user", "content": user_message})
-    messages_to_send = history[-20:]
+    try:
+        # Validate OpenAI API key
+        api_key = settings.OPENAI_API_KEY
+        if not api_key or api_key == 'YOUR_OPENAI_API_KEY_HERE':
+            logger.error("OpenAI API key is not configured")
+            raise ValueError("OpenAI API key is not configured. Check settings.OPENAI_API_KEY")
+        
+        client = OpenAI(api_key=api_key)
+        
+        # Get chat history
+        try:
+            history = run.get_chat_history()
+        except Exception as e:
+            logger.error(f"Error retrieving chat history for run {run.id}: {str(e)}", exc_info=True)
+            history = []
+        
+        history.append({"role": "user", "content": user_message})
 
-    response = client.chat.completions.create(
-        model=settings.OPENAI_MODEL,
-        messages=[
-            {"role": "system", "content": build_system_prompt(run)},
-            *messages_to_send,
-        ],
-        max_tokens=8000,
-        temperature=0.7,
-    )
+        system = build_system_prompt(run) + TOOL_INSTRUCTIONS
+        api_messages = [{"role": "system", "content": system}, *history[-20:]]
 
-    raw_reply = response.choices[0].message.content
+        ai_reply = ''
+        last_tool_chat = ''
 
-    # Save structured data BEFORE stripping tags
-    save_data_from_tag(run, user_message, raw_reply)
+        for attempt in range(5):
+            try:
+                response = client.chat.completions.create(
+                    model=settings.OPENAI_MODEL,
+                    messages=api_messages,
+                    tools=BUNDLE_TOOLS,
+                    tool_choice='auto',
+                    max_tokens=8000,
+                    temperature=0.7,
+                )
+            except Exception as e:
+                logger.error(
+                    f"OpenAI API error on attempt {attempt + 1}/5 for run {run.id}: {str(e)}",
+                    exc_info=True
+                )
+                if attempt == 4:  # Last attempt
+                    raise
+                continue
+            
+            try:
+                msg = response.choices[0].message
+            except (IndexError, AttributeError) as e:
+                logger.error(f"Error parsing OpenAI response for run {run.id}: {str(e)}", exc_info=True)
+                raise ValueError("Invalid response from OpenAI API")
 
-    # Strip tags (DATA + SUGGESTIONS) — ai_suggestions captured but only used as
-    # last-resort safety net; we do NOT trust the AI to pick its own correct suggestions
-    # for free-form / transitional messages (it often copies stale options).
-    ai_reply, ai_suggestions = parse_suggestions(raw_reply)
-    is_transitional = is_transitional_message(ai_reply)
+            if msg.tool_calls:
+                assistant_msg = {
+                    'role': 'assistant',
+                    'content': msg.content or '',
+                    'tool_calls': [
+                        {
+                            'id': tc.id,
+                            'type': 'function',
+                            'function': {
+                                'name': tc.function.name,
+                                'arguments': tc.function.arguments,
+                            },
+                        }
+                        for tc in msg.tool_calls
+                    ],
+                }
+                api_messages.append(assistant_msg)
 
-    if is_transitional:
-        suggestions = generate_fallback_suggestions(ai_reply)
-    else:
-        # Detect question type from the displayed message only. This prevents stale
-        # [SUGGESTIONS:] tags from reusing the previous question's buttons.
-        q_type = detect_question_type(ai_reply)
-        if q_type:
-            # Known question → use exact pre-defined suggestions every time
-            suggestions = STAGE_SUGGESTIONS[q_type]
+                for tc in msg.tool_calls:
+                    try:
+                        result, chat_msg, _ = handle_tool_call(run, tc)
+                        last_tool_chat = chat_msg
+                        api_messages.append({
+                            'role': 'tool',
+                            'tool_call_id': tc.id,
+                            'content': result,
+                        })
+                    except Exception as e:
+                        logger.error(
+                            f"Error handling tool call {tc.function.name} for run {run.id}: {str(e)}",
+                            exc_info=True
+                        )
+                        raise
+                continue
+
+            raw_reply = msg.content or ''
+            try:
+                save_data_from_tag(run, user_message, raw_reply)
+            except Exception as e:
+                logger.error(f"Error saving data from AI response for run {run.id}: {str(e)}", exc_info=True)
+                # Don't fail the whole request if data saving fails
+            
+            ai_reply, _ = parse_suggestions(raw_reply)
+            break
         else:
-            # Unknown message → generate fresh contextual suggestions.
-            # NEVER use ai_suggestions — the AI copies stale options from earlier messages.
-            suggestions = generate_fallback_suggestions(ai_reply)
+            ai_reply = last_tool_chat or (
+                'Your report is ready — use the button below to view it.'
+            )
 
-    history.append({"role": "assistant", "content": ai_reply})
-    run.set_chat_history(history)
-    detect_and_update_stage(run, user_message, ai_reply)
-    run.save()
+        if last_tool_chat and not ai_reply:
+            ai_reply = last_tool_chat
 
-    return ai_reply, suggestions
+        history.append({"role": "assistant", "content": ai_reply})
+        
+        try:
+            run.set_chat_history(history)
+        except Exception as e:
+            logger.error(f"Error saving chat history for run {run.id}: {str(e)}", exc_info=True)
+
+        if not run.ai_analysis_json and not run.final_plan_json:
+            try:
+                detect_and_update_stage(run, user_message, ai_reply)
+            except Exception as e:
+                logger.error(f"Error detecting stage for run {run.id}: {str(e)}", exc_info=True)
+
+        suggestions = _resolve_suggestions(run, ai_reply)
+        run.save()
+
+        return ai_reply, suggestions
+    
+    except Exception as e:
+        logger.error(f"Critical error in chat_with_ai for run {run.id}: {str(e)}", exc_info=True)
+        raise
