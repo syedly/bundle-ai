@@ -115,6 +115,7 @@ STAGE_SUGGESTIONS = {
         "I'll paste the job description now",
         "I have multiple roles to add",
         "Let me describe the roles instead",
+        "No data — let's use your questions",
     ],
     # Stage 2 – AI summary confirmation
     'q_confirm_data': [
