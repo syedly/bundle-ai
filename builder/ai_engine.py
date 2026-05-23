@@ -41,10 +41,11 @@ def extract_data_tag(text):
 STAGE_SUGGESTIONS = {
     # Stage 1 – company intro
     'q_company': [
-        "Tech startup, ~50 employees",
-        "Mid-size fintech, 200+ employees",
-        "Professional services firm, 80 staff",
-        "Healthcare org, ~500 people",
+        "A 200-person fintech operations team",
+        "A healthcare clinic's leadership team",
+        "A 1,000-person SaaS engineering org",
+        "A mid-size manufacturing plant",
+        "A regional retail chain's management team",
     ],
     # Stage 1 – team size follow-up
     'q_team_size': [
@@ -1088,6 +1089,19 @@ def is_transitional_message(ai_message):
         'just a moment', 'one moment', 'processing', 'please wait',
     ]
     return any(phrase in msg_lower for phrase in transitional_phrases)
+
+
+def get_suggestions_for_message(ai_message):
+    """Suggestion chips for a given assistant message (e.g. when resuming a thread)."""
+    if not ai_message or is_transitional_message(ai_message):
+        return []
+    msg_lower = ai_message.lower()
+    if re.search(r'how many sessions|number of sessions', msg_lower):
+        return []
+    q_type = detect_question_type(ai_message)
+    if q_type and q_type in STAGE_SUGGESTIONS:
+        return STAGE_SUGGESTIONS[q_type]
+    return generate_fallback_suggestions(ai_message)
 
 
 def generate_fallback_suggestions(ai_message):

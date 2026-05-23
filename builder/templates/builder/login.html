@@ -2,58 +2,54 @@
 {% load static %}
 
 {% block title %}Sign In — Bundle AI Training Builder{% endblock %}
+{% block body_class %}page-auth{% endblock %}
 
 {% block content %}
-<div class="auth-page">
-  <div class="auth-card">
-    <div class="auth-logo">
-      <img
-        src="{% static 'builder/images/bundle.png' %}"
-        alt="Bundle"
-        class="auth-logo-img"
-        onerror="this.style.display='none';document.getElementById('authLogoText').style.display='block';"
-      >
-      <span id="authLogoText" class="auth-logo-text" style="display:none">BUNDLE</span>
+<div class="auth-split">
+  <aside class="auth-left">
+    <div class="left-brand">
+      <img src="{% static 'builder/images/Logo - White (4).png' %}" alt="Bundle" class="left-logo">
+      <div class="left-eyebrow">AI TRAINING BUILDER</div>
     </div>
 
-    <h1 class="auth-title">Welcome back</h1>
-    <p class="auth-subtitle">Sign in to your Bundle AI Training Builder account.</p>
+    <div class="left-copy">
+      <p>Rooted in real feedback. Designed for real growth.</p>
+      <p class="left-small">Confidential — prepared by Bundle.</p>
+    </div>
+  </aside>
 
-    {% if error %}
-    <div class="auth-error">{{ error }}</div>
-    {% endif %}
-
-    <form method="post" class="auth-form">
-      {% csrf_token %}
-      <div class="auth-field">
-        <label for="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          placeholder="yourname"
-          autocomplete="username"
-          required
-          autofocus
+  <main class="auth-right">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <img
+          src="{% static 'builder/images/Logo - Teal - PRIMARY (1).png' %}"
+          alt="Bundle"
+          class="auth-logo-img"
         >
       </div>
-      <div class="auth-field">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="••••••••"
-          autocomplete="current-password"
-          required
-        >
-      </div>
-      <button type="submit" class="auth-btn">Sign In →</button>
-    </form>
 
-    <p class="auth-switch">
-      Don't have an account? <a href="/signup/">Create one free</a>
-    </p>
-  </div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Log in to continue.</p>
+
+      {% if error %}
+      <div class="auth-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" class="auth-form">
+        {% csrf_token %}
+        <div class="auth-field">
+          <label for="username">Work email</label>
+          <input type="text" id="username" name="username" placeholder="" autocomplete="username" required autofocus>
+        </div>
+        <div class="auth-field">
+          <label for="password">Password <a href="{% url 'bundle_password_reset' %}" class="forgot-link">Forgot?</a></label>
+          <input type="password" id="password" name="password" placeholder="" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="auth-btn">Log in →</button>
+      </form>
+
+      <p class="auth-switch">Don't have an account yet? <a href="/signup/">Sign up</a></p>
+    </div>
+  </main>
 </div>
 {% endblock %}

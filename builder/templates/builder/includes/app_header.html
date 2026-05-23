@@ -1,0 +1,31 @@
+{% load static %}
+<header class="dashboard-header">
+  <div class="dashboard-brand">
+    <a href="{% url 'index' %}" class="dashboard-logo-link" aria-label="Bundle home">
+      <img src="{% static 'builder/images/bundle.png' %}" alt="Bundle" class="logo dashboard-logo-img"
+           onerror="this.style.display='none';document.getElementById('logoText').style.display='inline';">
+      <span id="logoText" class="dashboard-logo-wordmark" style="display:none">bundle</span>
+    </a>
+  </div>
+  <div class="dashboard-actions">
+    <a href="mailto:hello@bundle.com" class="dashboard-contact">
+      <svg class="dashboard-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      Contact Bundle
+    </a>
+    <div class="dashboard-user-menu" id="userMenu">
+      <button type="button" class="dashboard-user-pill" id="userMenuBtn" aria-label="Account menu" aria-expanded="false" aria-controls="userMenuDropdown">
+        <span class="dashboard-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1"|upper }}{% if request.user.last_name %}{{ request.user.last_name|slice:":1"|upper }}{% endif %}{% else %}{{ request.user.username|slice:":2"|upper }}{% endif %}</span>
+        <span class="dashboard-user-name">{{ request.user.email|default:request.user.username }}</span>
+        <svg class="dashboard-user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div class="dashboard-user-dropdown" id="userMenuDropdown" role="menu" hidden>
+        <a href="{% url 'logout' %}" class="dashboard-user-dropdown-item" role="menuitem">Log out</a>
+      </div>
+    </div>
+  </div>
+</header>

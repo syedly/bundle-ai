@@ -1,0 +1,72 @@
+{% extends 'builder/base.html' %}
+{% load static %}
+
+{% block title %}Bundle — Your Workspace{% endblock %}
+{% block body_class %}page-dashboard{% endblock %}
+
+{% block content %}
+<div id="splash" class="splash-overlay">
+  <img src="{% static 'builder/images/Logo - Teal - PRIMARY (1).png' %}" alt="Bundle" class="splash-logo">
+</div>
+
+<div class="app-shell">
+  {% include 'builder/includes/app_header.html' %}
+
+  <div class="dashboard-page">
+    <main class="dashboard-main">
+      <section class="workspace-hero">
+        <div class="hero-copy">
+          <div class="eyebrow-label">YOUR WORKSPACE</div>
+          <h1>Welcome back, {{ request.user.get_full_name|default:request.user.username|title }}.</h1>
+          <p>Build a personalized training plan rooted in real feedback. Start a new run to walk through intake; pick up any in-progress run below.</p>
+        </div>
+        <div class="hero-actions">
+          <span class="plan-pill">{{ runs_used }}/{{ free_limit }} free plans used</span>
+          {% if is_locked %}
+          <button class="btn-primary" type="button" disabled title="Free plan limit reached">+ Start a new run</button>
+          {% else %}
+          <a href="{% url 'chat_new' %}" class="btn-primary btn-primary-link">+ Start a new run</a>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="runs-section">
+        <div class="runs-heading">
+          <span class="runs-label">YOUR RUNS</span>
+        </div>
+        <div class="runs-list">
+          {% if threads %}
+            {% for run in threads %}
+            <a href="{% url 'chat_thread' run.id %}" class="run-card">
+              <div class="run-card-title">{{ run.display_title }}</div>
+              <div class="run-card-meta">
+                <span>Updated {{ run.updated_at|date:"M j" }}</span>
+                <span class="run-status">{{ run.get_status_display }}</span>
+              </div>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="run-card run-card-empty">
+              <div class="run-card-title">No runs yet</div>
+              <div class="run-card-meta">Start a new run to build your first training plan.</div>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const splash = document.getElementById('splash');
+    if (!splash) return;
+    setTimeout(() => {
+      splash.classList.add('splash-hide');
+      setTimeout(() => { splash.parentNode && splash.parentNode.removeChild(splash); }, 600);
+    }, 800);
+  });
+</script>
+{% endblock %}

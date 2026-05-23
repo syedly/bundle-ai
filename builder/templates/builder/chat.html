@@ -1,0 +1,102 @@
+{% extends 'builder/base.html' %}
+{% load static %}
+
+{% block title %}Bundle — Chat{% endblock %}
+{% block body_class %}page-chat{% endblock %}
+
+{% block content %}
+<div class="app-shell app-shell--chat">
+  {% include 'builder/includes/app_header.html' %}
+
+  <div id="chatWrapper" class="chat-page">
+    <div class="chat-progress-row">
+      <div class="chat-progress-track"><div class="chat-progress-fill"></div></div>
+      <div class="chat-progress-label">1 of ~15 questions</div>
+    </div>
+
+    <div class="chat-body">
+      <main class="chat-area">
+        <div class="messages-container" id="messagesContainer">
+          <div class="messages-scroll" id="messagesScroll"></div>
+        </div>
+
+        <div class="suggestions-bar" id="suggestionsBar" aria-live="polite"></div>
+
+        <div class="booking-form-wrap" id="bookingFormWrap" style="display:none">
+          <div class="booking-form">
+            <h3 class="booking-title">📅 Schedule Your Consultation</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bookName">Full Name</label>
+                <input type="text" id="bookName" placeholder="Jane Smith" oninput="checkBookingForm()">
+              </div>
+              <div class="form-group">
+                <label for="bookEmail">Work Email</label>
+                <input type="email" id="bookEmail" placeholder="jane@company.com" oninput="checkBookingForm()">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bookPhone">Phone Number</label>
+                <input type="tel" id="bookPhone" placeholder="+1 (555) 000-0000" oninput="checkBookingForm()">
+              </div>
+              <div class="form-group">
+                <label for="bookDate">Preferred Date</label>
+                <input type="date" id="bookDate" oninput="checkBookingForm()">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Preferred Time</label>
+              <div class="time-slots">
+                <button class="time-slot" type="button" onclick="selectTime(this,'9:00 AM')">9:00 AM</button>
+                <button class="time-slot" type="button" onclick="selectTime(this,'10:00 AM')">10:00 AM</button>
+                <button class="time-slot" type="button" onclick="selectTime(this,'11:00 AM')">11:00 AM</button>
+                <button class="time-slot" type="button" onclick="selectTime(this,'1:00 PM')">1:00 PM</button>
+                <button class="time-slot" type="button" onclick="selectTime(this,'2:00 PM')">2:00 PM</button>
+                <button class="time-slot" type="button" onclick="selectTime(this,'3:00 PM')">3:00 PM</button>
+                <button class="time-slot" type="button" onclick="selectTime(this,'4:00 PM')">4:00 PM</button>
+              </div>
+            </div>
+            <button class="btn-book" id="bookBtn" onclick="submitBooking()" disabled>Book My Consultation</button>
+          </div>
+        </div>
+
+        <div class="input-area" id="inputArea">
+          <div class="input-wrapper">
+            <label class="btn-attach" for="fileInput" title="Attach a file (PDF, CSV, or XLSX)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"></path>
+              </svg>
+              <input type="file" id="fileInput" accept=".txt,.csv,.pdf,.docx,.xlsx" style="display:none" onchange="uploadFile(this)">
+            </label>
+            <textarea id="messageInput" placeholder="Reply in your own words..." rows="1" oninput="autoResize(this); updateSendButton()" onkeydown="handleKeyDown(event)"></textarea>
+            <button class="btn-send btn-send--inactive" id="sendBtn" type="button" onclick="sendMessage()" disabled aria-label="Send message">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+          <p class="input-shortcuts">Enter to send · Shift + Enter for a new line · attach PDF, CSV, or XLSX</p>
+          <div class="input-hint" id="fileUploadHint" style="display:none">
+            <span id="fileUploadHintText"></span>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.BUNDLE = {
+    chatMode: "{{ chat_mode }}",
+    runId: {{ run_id|default:"null" }},
+    isLocked: {{ is_locked|yesno:"true,false" }},
+    freeLimit: {{ free_limit }},
+  };
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'builder/js/chat.js' %}"></script>
+{% endblock %}

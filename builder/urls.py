@@ -7,8 +7,18 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
 
+    # Bundle custom password reset (not django.contrib.auth.urls)
+    path('bundle/password-reset/', views.password_reset_request, name='bundle_password_reset'),
+    path(
+        'bundle/password-reset/<uuid:token>/',
+        views.password_reset_confirm,
+        name='bundle_password_reset_confirm',
+    ),
+
     # App
     path('', views.index, name='index'),
+    path('chat/new/', views.chat_new, name='chat_new'),
+    path('chat/<int:run_id>/', views.chat_thread, name='chat_thread'),
 
     # API
     path('api/start/',                views.start_chat,   name='start_chat'),

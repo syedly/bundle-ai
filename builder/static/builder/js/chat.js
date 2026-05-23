@@ -48,7 +48,7 @@ function showGeneratingSteps(type) {
 
   const avatar = document.createElement('div');
   avatar.className = 'msg-avatar';
-  avatar.textContent = 'B';
+  avatar.textContent = 'b';
 
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble generating-bubble';
@@ -169,8 +169,13 @@ function getCsrf() {
 
 // ── Scroll ─────────────────────────────────────────────────────────────────
 function scrollToBottom() {
-  const el = document.getElementById('messagesScroll');
-  if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 60);
+  setTimeout(() => {
+    const el = document.getElementById('messagesScroll');
+    if (el && el.scrollHeight > el.clientHeight) {
+      el.scrollTop = el.scrollHeight;
+    }
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }, 60);
 }
 
 // ── Stage UI ───────────────────────────────────────────────────────────────
@@ -187,6 +192,28 @@ function updateStageUI(stage) {
     d.classList.toggle('active',    s === stage);
     d.classList.toggle('completed', s < stage);
   });
+  updateChatProgress();
+}
+
+const PROGRESS_TOTAL = 15;
+
+function updateChatProgress() {
+  const label = document.querySelector('.chat-progress-label');
+  const fill  = document.querySelector('.chat-progress-fill');
+  const scroll = document.getElementById('messagesScroll');
+
+  let questionNum = 1;
+  if (scroll) {
+    const userAnswers = scroll.querySelectorAll('.message.user').length;
+    questionNum = Math.min(Math.max(userAnswers + 1, 1), PROGRESS_TOTAL);
+  }
+
+  if (currentStage >= 5) questionNum = PROGRESS_TOTAL;
+  else if (currentStage >= 4) questionNum = Math.max(questionNum, 12);
+
+  const pct = Math.min((questionNum / PROGRESS_TOTAL) * 100, 100);
+  if (label) label.textContent = `${questionNum} of ~${PROGRESS_TOTAL} questions`;
+  if (fill) fill.style.width = `${pct}%`;
 }
 
 // ── Append Message ─────────────────────────────────────────────────────────
@@ -200,7 +227,7 @@ function appendMessage(role, content, animate = true) {
 
   const avatar = document.createElement('div');
   avatar.className = 'msg-avatar';
-  avatar.textContent = role === 'ai' ? 'B' : role === 'system' ? '📎' : 'You';
+  avatar.textContent = role === 'ai' ? 'b' : role === 'system' ? '📎' : 'You';
 
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
@@ -216,6 +243,7 @@ function appendMessage(role, content, animate = true) {
   wrap.appendChild(avatar);
   wrap.appendChild(bubble);
   scroll.appendChild(wrap);
+  if (role === 'user') updateChatProgress();
   scrollToBottom();
 }
 
@@ -226,9 +254,7 @@ function showTyping() {
   typingEl = document.createElement('div');
   typingEl.className = 'typing-indicator';
   typingEl.innerHTML = `
-    <div class="msg-avatar" style="background:var(--green-pale);color:var(--green);
-      width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
-      justify-content:center;font-weight:700;flex-shrink:0;font-size:14px;">B</div>
+    <div class="msg-avatar">b</div>
     <div class="typing-bubble">
       <div class="typing-dot"></div>
       <div class="typing-dot"></div>
@@ -245,34 +271,87 @@ function removeTyping() {
 }
 
 // ── Suggestions Bar ────────────────────────────────────────────────────────
+const SUGGESTIONS_SPARKLE_SVG = `<svg class="suggestions-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <path d="M12 3l1.2 4.2L17 8.5l-3.8 1.3L12 14l-1.2-4.2L7 8.5l3.8-1.3L12 3z"></path>
+  <path d="M5 16l.8 2.8L8.5 20l-2.7.9L5 24l-.8-3.1L1.5 20l2.7-.9L5 16z"></path>
+  <path d="M19 14l.8 2.8L22.5 18l-2.7.9L19 22l-.8-3.1L15.5 18l2.7-.9L19 14z"></path>
+</svg>`;
+
 function showSuggestions(suggestions) {
   const bar = document.getElementById('suggestionsBar');
   if (!bar) return;
   bar.innerHTML = '';
+  bar.classList.remove('is-visible');
 
-  if (!suggestions || suggestions.length === 0) {
-    bar.style.display = 'none';
-    return;
-  }
+  const items = normalizeSuggestions(suggestions);
+  if (!items.length) return;
 
-  bar.style.display = 'flex';
-  suggestions.forEach(text => {
-    if (!text.trim()) return;
+  const header = document.createElement('div');
+  header.className = 'suggestions-header';
+  header.innerHTML = `${SUGGESTIONS_SPARKLE_SVG}<span class="suggestions-label">Quick replies</span>`; /* styled uppercase in CSS */
+
+  const buttons = document.createElement('div');
+  buttons.className = 'suggestions-buttons';
+
+  items.forEach(text => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'sug-btn';
     btn.textContent = text;
     btn.onclick = () => {
-      hideSuggestions();
+      if (isProcessing) return;
       sendMessage(text);
     };
-    bar.appendChild(btn);
+    buttons.appendChild(btn);
   });
+
+  if (!buttons.children.length) return;
+
+  const hint = document.createElement('p');
+  hint.className = 'suggestions-hint';
+  hint.textContent = 'Tap an option to send, or type your own answer below.';
+
+  bar.appendChild(header);
+  bar.appendChild(buttons);
+  bar.appendChild(hint);
+  bar.removeAttribute('style');
+  bar.classList.add('is-visible');
 }
 
 function hideSuggestions() {
   const bar = document.getElementById('suggestionsBar');
-  if (bar) { bar.innerHTML = ''; bar.style.display = 'none'; }
+  if (bar) {
+    bar.innerHTML = '';
+    bar.classList.remove('is-visible');
+  }
   removeSessionCards();
+}
+
+function normalizeSuggestions(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    return raw.map(s => String(s).trim()).filter(Boolean);
+  }
+  if (typeof raw === 'string') {
+    return raw.split('|').map(s => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function showSuggestionsFromResponse(data, lastAiText) {
+  if (data.status === 'plan_generated') return;
+  const aiLower = (lastAiText || data.message || '').toLowerCase();
+  if (/how many sessions|number of sessions/.test(aiLower)) {
+    showSessionCards();
+    hideSuggestions();
+    return;
+  }
+  const items = normalizeSuggestions(data.suggestions);
+  if (items.length > 0) {
+    showSuggestions(items);
+  } else {
+    hideSuggestions();
+  }
 }
 
 // ── Session Count Cards ────────────────────────────────────────────────────
@@ -373,18 +452,8 @@ function handleAiResponse(data) {
     }
   }
 
-  // Decide what to show below the message (skip if plan actions shown)
   if (data.status !== 'plan_generated') {
-    const aiLower = (data.message || '').toLowerCase();
-
-    if (/how many sessions|number of sessions/.test(aiLower)) {
-      showSessionCards();
-      hideSuggestions();
-    } else if (data.suggestions && data.suggestions.length > 0) {
-      showSuggestions(data.suggestions);
-    } else {
-      hideSuggestions();
-    }
+    showSuggestionsFromResponse(data, data.message);
   }
 
   // Update thread title in sidebar if we have it
@@ -397,12 +466,15 @@ function handleAiResponse(data) {
 
 // ── Start New Chat ─────────────────────────────────────────────────────────
 async function startChat() {
-  if (window.BUNDLE?.isLocked) return;
+  if (window.BUNDLE?.isLocked) {
+    window.location.href = '/';
+    return;
+  }
 
-  document.getElementById('welcomeScreen').style.display   = 'none';
-  document.getElementById('messagesContainer').style.display = '';
-  document.getElementById('inputArea').style.display        = '';
-
+  const scroll = document.getElementById('messagesScroll');
+  if (scroll) scroll.innerHTML = '';
+  hideSuggestions();
+  updateSendButton();
   showTyping();
 
   try {
@@ -415,9 +487,7 @@ async function startChat() {
 
     if (res.status === 403 && data.error === 'free_limit_reached') {
       removeTyping();
-      document.getElementById('messagesContainer').style.display = 'none';
-      document.getElementById('inputArea').style.display         = 'none';
-      document.getElementById('welcomeScreen').style.display     = '';
+      window.location.href = '/';
       return;
     }
 
@@ -425,11 +495,12 @@ async function startChat() {
 
     currentRunId = data.run_id;
     sessionStorage.setItem('run_id', String(currentRunId));
+    if (window.BUNDLE?.chatMode === 'new') {
+      window.history.replaceState(null, '', `/chat/${currentRunId}/`);
+      window.BUNDLE.chatMode = 'thread';
+      window.BUNDLE.runId = currentRunId;
+    }
     updateStageUI(data.stage || 1);
-
-    // Update free meter
-    updateFreeMeter(data.runs_used, data.free_limit);
-
     handleAiResponse(data);
 
   } catch (err) {
@@ -460,8 +531,7 @@ async function sendMessage(overrideText) {
   }
   isProcessing = true;
 
-  const sendBtn = document.getElementById('sendBtn');
-  if (sendBtn) sendBtn.disabled = true;
+  updateSendButton();
 
   try {
     const res  = await fetch('/api/chat/', {
@@ -488,7 +558,7 @@ async function sendMessage(overrideText) {
     appendMessage('ai', 'Something went wrong. Please try again.');
   } finally {
     isProcessing = false;
-    if (sendBtn) sendBtn.disabled = false;
+    updateSendButton();
     if (!overrideText && input) input.focus();
   }
 }
@@ -514,8 +584,7 @@ async function uploadFile(input) {
   showTyping();
   isProcessing = true;
 
-  const sendBtn = document.getElementById('sendBtn');
-  if (sendBtn) sendBtn.disabled = true;
+  updateSendButton();
 
   try {
     const res  = await fetch(`/api/upload/${currentRunId}/`, {
@@ -543,7 +612,7 @@ async function uploadFile(input) {
     appendMessage('ai', 'File upload failed. Please try again.');
   } finally {
     isProcessing = false;
-    if (sendBtn) sendBtn.disabled = false;
+    updateSendButton();
     input.value = '';
   }
 }
@@ -560,11 +629,8 @@ async function loadThread(runId) {
     currentRunId = data.run_id;
     sessionStorage.setItem('run_id', String(currentRunId));
 
-    // Show chat area
-    document.getElementById('welcomeScreen').style.display    = 'none';
-    document.getElementById('messagesContainer').style.display = '';
-    document.getElementById('inputArea').style.display         = '';
-    document.getElementById('bookingFormWrap').style.display   = 'none';
+    const bookingWrap = document.getElementById('bookingFormWrap');
+    if (bookingWrap) bookingWrap.style.display = 'none';
 
     // Clear and replay
     const scroll = document.getElementById('messagesScroll');
@@ -589,16 +655,16 @@ async function loadThread(runId) {
       }
     }
 
-    // Show plan action buttons if plan was already generated
     removePlanActions();
     if (data.status === 'plan_generated' || data.status === 'cta_clicked') {
       showPlanActions();
+      hideSuggestions();
+    } else {
+      showSuggestionsFromResponse(data, lastAi);
     }
 
-    // Highlight active thread in sidebar
-    document.querySelectorAll('.thread-item').forEach(el => el.classList.remove('active'));
-    const el = document.querySelector(`.thread-item[data-run-id="${runId}"]`);
-    if (el) el.classList.add('active');
+    updateChatProgress();
+    updateSendButton();
 
   } catch (err) {
     console.error('loadThread error:', err);
@@ -621,6 +687,15 @@ function handleKeyDown(e) {
 function autoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function updateSendButton() {
+  const input = document.getElementById('messageInput');
+  const btn   = document.getElementById('sendBtn');
+  if (!btn) return;
+  const hasText = !!(input?.value.trim());
+  btn.disabled = !hasText || isProcessing;
+  btn.classList.toggle('btn-send--inactive', !hasText || isProcessing);
 }
 
 // ── Booking ────────────────────────────────────────────────────────────────
@@ -670,64 +745,22 @@ async function submitBooking() {
   }
 }
 
-// ── New Run ────────────────────────────────────────────────────────────────
-function confirmNewRun() {
-  if (currentRunId && !confirm('Start a new training plan? Your current conversation is saved.')) return;
-  sessionStorage.removeItem('run_id');
-  window.location.reload();
-}
+// ── On Page Load (chat page only) ───────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const mode = window.BUNDLE?.chatMode;
+  if (!mode) return;
 
-// ── On Page Load ───────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  // If locked, nothing to do
-  if (window.BUNDLE?.isLocked) return;
+  if (mode === 'new' && window.BUNDLE.isLocked) {
+    window.location.href = '/';
+    return;
+  }
 
-  try {
-    const res  = await fetch('/api/start/');
-    const data = await res.json();
+  updateSendButton();
+  updateChatProgress();
 
-    if (data.type === 'unauthenticated') {
-      window.location.href = '/login/';
-      return;
-    }
-
-    if (data.type === 'resume' && data.history?.length > 0) {
-      document.getElementById('welcomeScreen').style.display    = 'none';
-      document.getElementById('messagesContainer').style.display = '';
-      document.getElementById('inputArea').style.display         = '';
-
-      currentRunId = data.run_id;
-      sessionStorage.setItem('run_id', String(currentRunId));
-      updateStageUI(data.stage || 1);
-
-      let lastAi = '';
-      for (const msg of data.history) {
-        const role = msg.role === 'user' ? 'user' : 'ai';
-        appendMessage(role, msg.content, false);
-        if (role === 'ai') lastAi = msg.content;
-      }
-
-      if (data.stage === 6) {
-        const wrap = document.getElementById('bookingFormWrap');
-        if (wrap) {
-          wrap.style.display = '';
-          const di = document.getElementById('bookDate');
-          if (di) di.min = new Date().toISOString().split('T')[0];
-        }
-      }
-
-      // Show plan action buttons if plan was already generated
-      if (data.status === 'plan_generated' || data.status === 'cta_clicked') {
-        showPlanActions();
-      }
-
-      // Highlight active thread
-      const el = document.querySelector(`.thread-item[data-run-id="${data.run_id}"]`);
-      if (el) el.classList.add('active');
-    }
-    // else: welcome screen is shown by default
-
-  } catch (err) {
-    console.warn('Session check failed:', err);
+  if (mode === 'new') {
+    startChat();
+  } else if (mode === 'thread' && window.BUNDLE.runId) {
+    loadThread(window.BUNDLE.runId);
   }
 });

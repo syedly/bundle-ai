@@ -11,8 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Zilla+Slab:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'builder/css/main.css' %}">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   {% block content %}{% endblock %}
   {% block scripts %}{% endblock %}
+  <script src="{% static 'builder/js/app.js' %}"></script>
 </body>
 </html>

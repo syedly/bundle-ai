@@ -89,21 +89,26 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 FREE_RUN_LIMIT = 3
 
-# ── Email ──────────────────────────────────────────────────────────────────────
-# Development default: prints emails to the terminal (no SMTP needed).
-# To send real emails, set these four env vars in your .env file:
-#   EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
-# and change EMAIL_BACKEND to django.core.mail.backends.smtp.EmailBackend
-_email_host = os.getenv('EMAIL_HOST', '')
-if _email_host:
-    EMAIL_BACKEND      = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST         = _email_host
-    EMAIL_PORT         = int(os.getenv('EMAIL_PORT', '587'))
-    EMAIL_USE_TLS      = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-    EMAIL_HOST_USER    = os.getenv('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-else:
-    # No SMTP configured — print to console so dev/demo still works
+# ── Email (Bundle custom password reset) ───────────────────────────────────────
+# DEBUG=True  → emails print to the terminal (links still use your real site URL).
+# DEBUG=False → live Gmail SMTP (production / real inbox delivery).
+if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'hassanshah9153@gmail.com')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'kvtnashajjbbepnu')
+    EMAIL_PORT = 587
 
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Bundle Training Builder <noreply@bundle.com>')
+DEFAULT_FROM_EMAIL = os.getenv(
+    'DEFAULT_FROM_EMAIL',
+    'Bundle <hassanshah9153@gmail.com>',
+)
+
+# Optional override when building reset links without a request (e.g. scripts).
+# Leave empty to always use request.build_absolute_uri() — works locally and when deployed.
+SITE_URL = os.getenv('SITE_URL', '').rstrip('/')
+
+PASSWORD_RESET_TIMEOUT_HOURS = 24

@@ -1,4 +1,5 @@
 import json
+import uuid
 from io import BytesIO
 
 from django.contrib.auth import authenticate, login, logout
@@ -8,10 +9,11 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from .models import BuilderRun
-from .ai_engine import chat_with_ai, generate_greeting
+from .models import BuilderRun, PasswordResetToken
+from .ai_engine import chat_with_ai, generate_greeting, get_suggestions_for_message
 
 FREE_LIMIT = getattr(settings, 'FREE_RUN_LIMIT', 3)
 
@@ -62,19 +64,164 @@ def logout_view(request):
     return redirect('/login/')
 
 
+# ── Custom password reset (Bundle — not Django auth URLs) ─────────────────────
+
+def _user_by_email(email):
+    """Match account by email or username (many Bundle users sign in with email as username)."""
+    email = (email or '').strip()
+    if not email:
+        return None
+    user = User.objects.filter(email__iexact=email).first()
+    if user:
+        return user
+    return User.objects.filter(username__iexact=email).first()
+
+
+def _password_reset_link(request, token_uuid):
+    """Absolute reset URL — uses current host/port locally and your domain when deployed."""
+    path = reverse('bundle_password_reset_confirm', kwargs={'token': token_uuid})
+    if getattr(settings, 'SITE_URL', ''):
+        return f"{settings.SITE_URL}{path}"
+    return request.build_absolute_uri(path)
+
+
+def _send_password_reset_email(request, user, reset_url):
+    subject = 'Bundle — Reset your password'
+    message = (
+        f"Hi{' ' + user.first_name if user.first_name else ''},\n\n"
+        "We received a request to reset your Bundle password.\n\n"
+        f"Set a new password using this link (expires in "
+        f"{getattr(settings, 'PASSWORD_RESET_TIMEOUT_HOURS', 24)} hours):\n\n"
+        f"{reset_url}\n\n"
+        "If you did not request this, you can ignore this email.\n\n"
+        "— Bundle"
+    )
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email or user.username],
+        fail_silently=False,
+    )
+
+
+@require_http_methods(['GET', 'POST'])
+def password_reset_request(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+
+    success = False
+    error = None
+
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        if not email:
+            error = 'Please enter your email address.'
+        else:
+            user = _user_by_email(email)
+            if user:
+                PasswordResetToken.objects.filter(user=user, used=False).update(used=True)
+                reset_token = PasswordResetToken.objects.create(user=user)
+                reset_url = _password_reset_link(request, reset_token.token)
+                try:
+                    _send_password_reset_email(request, user, reset_url)
+                except Exception:
+                    error = (
+                        'We could not send the email right now. '
+                        'Please try again in a few minutes.'
+                    )
+                else:
+                    success = True
+            else:
+                # Do not reveal whether the email is registered.
+                success = True
+
+    return render(request, 'builder/password_reset_request.html', {
+        'error': error,
+        'success': success,
+    })
+
+
+@require_http_methods(['GET', 'POST'])
+def password_reset_confirm(request, token):
+    if request.user.is_authenticated:
+        return redirect('index')
+
+    try:
+        token_uuid = uuid.UUID(str(token))
+    except (ValueError, AttributeError):
+        return render(request, 'builder/password_reset_confirm.html', {
+            'invalid': True,
+            'error': None,
+        })
+
+    reset_token = PasswordResetToken.objects.filter(token=token_uuid).select_related('user').first()
+    if not reset_token or not reset_token.is_valid:
+        return render(request, 'builder/password_reset_confirm.html', {
+            'invalid': True,
+            'error': None,
+        })
+
+    error = None
+    if request.method == 'POST':
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+        if len(password1) < 8:
+            error = 'Password must be at least 8 characters.'
+        elif password1 != password2:
+            error = 'Passwords do not match.'
+        else:
+            user = reset_token.user
+            user.set_password(password1)
+            user.save(update_fields=['password'])
+            reset_token.mark_used()
+            PasswordResetToken.objects.filter(user=user, used=False).update(used=True)
+            return redirect('login')
+
+    return render(request, 'builder/password_reset_confirm.html', {
+        'invalid': False,
+        'error': error,
+        'token': token_uuid,
+    })
+
+
 # ── Main app ──────────────────────────────────────────────────────────────────
+
+def _dashboard_context(request):
+    runs_used = BuilderRun.objects.filter(user=request.user).count()
+    return {
+        'threads':    BuilderRun.objects.filter(user=request.user).order_by('-updated_at')[:20],
+        'runs_used':  runs_used,
+        'free_limit': FREE_LIMIT,
+        'is_locked':  runs_used >= FREE_LIMIT,
+    }
+
 
 @login_required
 def index(request):
-    threads    = BuilderRun.objects.filter(user=request.user).order_by('-updated_at')[:20]
-    runs_used  = BuilderRun.objects.filter(user=request.user).count()
-    current_run_id = request.session.get('run_id')
-    return render(request, 'builder/index.html', {
-        'threads':       threads,
-        'runs_used':     runs_used,
-        'free_limit':    FREE_LIMIT,
-        'is_locked':     runs_used >= FREE_LIMIT,
-        'current_run_id': current_run_id,
+    return render(request, 'builder/dashboard.html', _dashboard_context(request))
+
+
+@login_required
+def chat_new(request):
+    ctx = _dashboard_context(request)
+    if ctx['is_locked']:
+        return redirect('index')
+    return render(request, 'builder/chat.html', {
+        **ctx,
+        'chat_mode': 'new',
+        'run_id':    None,
+    })
+
+
+@login_required
+def chat_thread(request, run_id):
+    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+    request.session['run_id'] = run.id
+    return render(request, 'builder/chat.html', {
+        **_dashboard_context(request),
+        'chat_mode': 'thread',
+        'run_id':    run.id,
     })
 
 
@@ -88,12 +235,20 @@ def start_chat(request):
             run     = BuilderRun.objects.get(id=run_id, user=request.user)
             history = run.get_chat_history()
             if history:
+                last_ai = next(
+                    (m['content'] for m in reversed(history) if m.get('role') in ('assistant', 'ai')),
+                    '',
+                )
+                suggestions = []
+                if run.status not in ('plan_generated', 'cta_clicked'):
+                    suggestions = get_suggestions_for_message(last_ai)
                 return JsonResponse({
-                    'type':    'resume',
-                    'history': history,
-                    'stage':   run.current_stage,
-                    'status':  run.status,
-                    'run_id':  run.id,
+                    'type':        'resume',
+                    'history':     history,
+                    'stage':       run.current_stage,
+                    'status':      run.status,
+                    'run_id':      run.id,
+                    'suggestions': suggestions,
                 })
         except BuilderRun.DoesNotExist:
             pass
@@ -135,12 +290,8 @@ def new_run(request):
             "role-by-role training plan for your team.\n\n"
             "To get started — what's your company name, industry, and approximately how many people are on your team?"
         )
-        suggestions = [
-            "Tech company, ~50 people",
-            "Mid-size retail, 200+ employees",
-            "Professional services, 80 staff",
-            "Healthcare org, ~500 people",
-        ]
+        from .ai_engine import STAGE_SUGGESTIONS
+        suggestions = STAGE_SUGGESTIONS['q_company']
         history = [{"role": "assistant", "content": greeting}]
         run.set_chat_history(history)
         run.save()
@@ -276,13 +427,21 @@ def load_thread(request, run_id):
     run     = get_object_or_404(BuilderRun, id=run_id, user=request.user)
     request.session['run_id'] = run.id
     history = run.get_chat_history()
+    last_ai = next(
+        (m['content'] for m in reversed(history) if m.get('role') in ('assistant', 'ai')),
+        '',
+    )
+    suggestions = []
+    if run.status not in ('plan_generated', 'cta_clicked'):
+        suggestions = get_suggestions_for_message(last_ai)
     return JsonResponse({
-        'type':    'resume',
-        'history': history,
-        'stage':   run.current_stage,
-        'status':  run.status,
-        'run_id':  run.id,
-        'title':   run.display_title(),
+        'type':        'resume',
+        'history':     history,
+        'stage':       run.current_stage,
+        'status':      run.status,
+        'run_id':      run.id,
+        'title':       run.display_title(),
+        'suggestions': suggestions,
     })
 
 

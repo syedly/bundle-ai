@@ -1,6 +1,11 @@
 import json
+import uuid
+from datetime import timedelta
+
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class PrimarySkill(models.Model):
@@ -131,3 +136,29 @@ class BuilderRun(models.Model):
 
     def __str__(self):
         return f"BuilderRun {self.id} — {self.display_title()}"
+
+
+class PasswordResetToken(models.Model):
+    """One-time token for custom Bundle password reset (not Django's built-in flow)."""
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_reset_tokens')
+    token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Reset token for {self.user_id} ({self.token})"
+
+    @property
+    def is_valid(self):
+        if self.used:
+            return False
+        hours = getattr(settings, 'PASSWORD_RESET_TIMEOUT_HOURS', 24)
+        return timezone.now() < self.created_at + timedelta(hours=hours)
+
+    def mark_used(self):
+        self.used = True
+        self.save(update_fields=['used'])
