@@ -453,7 +453,7 @@ function showReportActions(data) {
     a.className = 'btn-report-action btn-report-analysis';
     a.target = '_blank';
     a.rel = 'noopener';
-    a.innerHTML = '📊&nbsp; View AI Analysis Report';
+    a.innerHTML = 'Open recommendation →';
     wrap.appendChild(a);
   }
 
@@ -463,7 +463,7 @@ function showReportActions(data) {
     p.className = 'btn-report-action btn-report-plan';
     p.target = '_blank';
     p.rel = 'noopener';
-    p.innerHTML = '📋&nbsp; View Learning Plan Report';
+    p.innerHTML = 'Open plan →';
     wrap.appendChild(p);
   }
 

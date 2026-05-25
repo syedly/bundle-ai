@@ -17,82 +17,102 @@
       <header class="report-hero">
         <p class="report-eyebrow">Recommendation</p>
         <h1>{{ report.header_title }}</h1>
-        <span class="report-confidence">{{ report.confidence }}</span>
       </header>
 
-      <section class="report-block">
-        <p class="report-lead">{{ report.confidence_rationale }}</p>
-        <p class="report-body-text">{{ report.summary_paragraph }}</p>
-      </section>
+      {% for person in report.people %}
+      <div class="{% if not forloop.first %}report-employee-block{% endif %}">
 
-      <section class="report-block">
-        <h2 class="report-section-title">Growth opportunities</h2>
-        <p class="report-section-kicker">What we'd focus on</p>
-        <ol class="report-growth-list">
-          {% for item in report.growth_opportunities %}
-          <li class="report-growth-item">
-            <span class="report-growth-num">{{ forloop.counter }}</span>
-            <div>
-              <h3>{{ item.skill_area }}</h3>
-              <p>{{ item.evidence }}</p>
-            </div>
-          </li>
-          {% endfor %}
-        </ol>
-      </section>
-
-      <section class="report-block">
-        <h2 class="report-section-title">Delivery options Bundle considered</h2>
-        <p class="report-section-kicker">How this could be delivered</p>
-        <p class="report-muted">Your plan is built around the recommended option below. The others are alternatives a Bundle consultant can walk you through on the call.</p>
-        <div class="report-card-grid">
-          {% for opt in report.delivery_options %}
-          <div class="report-card {% if opt.recommended %}report-card--recommended{% endif %}">
-            {% if opt.recommended %}<span class="report-badge">Recommended</span>{% endif %}
-            <h3>{{ opt.name }}</h3>
-            <p>{{ opt.description }}</p>
-            <p class="report-card-meta">{{ opt.sessions_label }}</p>
-          </div>
-          {% endfor %}
-        </div>
-      </section>
-
-      <section class="report-block">
-        <h2 class="report-section-title">Depth options Bundle considered</h2>
-        <p class="report-section-kicker">How deep this could go</p>
-        {% if report.depth_options.intro %}
-        <p class="report-muted">{{ report.depth_options.intro }}</p>
+        {% if report.people|length > 1 %}
+        <h2 class="report-employee-name">{{ person.name }}</h2>
+        {% if person.role_title %}<p class="report-employee-role">{{ person.role_title }}</p>{% endif %}
         {% endif %}
 
-        <div class="report-depth-full">
-          <h3>If you go all in</h3>
-          <p>{{ report.depth_options.full_outcome_paragraph }}</p>
+        <div class="report-confidence-row">
+          <span class="report-confidence">{{ person.confidence }}</span>
         </div>
 
-        <div class="report-tier-grid">
-          {% for tier in report.depth_options.tiers %}
-          <div class="report-tier-card">
-            <h3>{{ tier.name }} <span class="report-tier-sessions">· {{ tier.sessions }} sessions</span></h3>
-            <p class="report-tier-tag">{{ tier.tagline }}</p>
-            <p>{{ tier.description }}</p>
+        <section class="report-block">
+          <p class="report-lead">{{ person.confidence_rationale }}</p>
+          <p class="report-body-text">{{ person.summary_paragraph }}</p>
+        </section>
+
+        <section class="report-block">
+          <h2 class="report-section-title">Growth opportunities</h2>
+          <p class="report-section-kicker">What we'd focus on</p>
+          <ol class="report-growth-list">
+            {% for item in person.growth_opportunities %}
+            <li class="report-growth-item">
+              <span class="report-growth-num">{{ forloop.counter }}</span>
+              <div>
+                <h3>{{ item.skill_area }}</h3>
+                <p>{{ item.evidence }}</p>
+              </div>
+            </li>
+            {% endfor %}
+          </ol>
+        </section>
+
+        <section class="report-block">
+          <h2 class="report-section-title">Delivery options Bundle considered</h2>
+          <p class="report-section-kicker">How this could be delivered</p>
+          <p class="report-muted">Your plan is built around the recommended option below. The others are alternatives a Bundle consultant can walk you through on the call.</p>
+          <div class="report-card-grid">
+            {% for opt in person.delivery_options %}
+            <div class="report-card {% if opt.recommended %}report-card--recommended{% endif %}">
+              {% if opt.recommended %}<span class="report-badge">Recommended</span>{% endif %}
+              <h3>{{ opt.name }}</h3>
+              <p>{{ opt.description }}</p>
+              <p class="report-card-meta">{{ opt.sessions_label }}</p>
+            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-        </div>
+        </section>
 
-        <div class="report-depth-small">
-          <h3>If you start small</h3>
-          <p>{{ report.depth_options.start_small_paragraph }}</p>
+        <section class="report-block">
+          <h2 class="report-section-title">Depth options Bundle considered</h2>
+          <p class="report-section-kicker">How deep this could go</p>
+          <p class="report-muted">Your plan is built at the mid depth shown below. All three deliver real work; the difference is sequencing and how much ground gets covered. A Bundle consultant scopes pricing on the call.</p>
+
+          <div class="report-depth-full">
+            <h3>If you go all in</h3>
+            <p>{{ person.depth_options.full_outcome_paragraph }}</p>
+          </div>
+
+          <div class="report-tier-grid">
+            {% for tier in person.depth_options.tiers %}
+            <div class="report-tier-card">
+              <h3>{{ tier.name }} <span class="report-tier-sessions">· {{ tier.sessions }} sessions</span></h3>
+              <p class="report-tier-tag">{{ tier.tagline }}</p>
+              <p>{{ tier.description }}</p>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="report-depth-small">
+            <h3>If you start small</h3>
+            <p>{{ person.depth_options.start_small_paragraph }}</p>
+          </div>
+        </section>
+
+        {% if person.sequencing_logic %}
+        <section class="report-block report-block--collapsible">
+          <details class="report-details" open>
+            <summary>Hide why we put this together</summary>
+            <div class="report-details-body">{{ person.sequencing_logic|linebreaks }}</div>
+          </details>
+        </section>
+        {% endif %}
+
+      </div>
+      {% endfor %}
+
+      <section class="report-cta-block">
+        <p class="report-cta-heading">Ready to activate this plan?</p>
+        <p class="report-cta-sub">Go back to the chat to book a 30-minute call with a Bundle consultant — or download a PDF copy to share with your team.</p>
+        <div class="report-cta-actions">
+          <a href="{% url 'chat_thread' run.id %}" class="report-cta-btn report-cta-btn--primary">← Continue in chat</a>
         </div>
       </section>
-
-      {% if report.sequencing_logic %}
-      <section class="report-block report-block--collapsible">
-        <details class="report-details">
-          <summary>Why we put this together — sequencing logic</summary>
-          <div class="report-details-body">{{ report.sequencing_logic|linebreaks }}</div>
-        </details>
-      </section>
-      {% endif %}
     </article>
   </div>
 </div>

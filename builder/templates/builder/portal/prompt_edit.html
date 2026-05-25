@@ -1,0 +1,334 @@
+{% extends 'builder/portal/base.html' %}
+
+{% block title %}Edit — {{ section.label }}{% endblock %}
+{% block nav_prompts %}active{% endblock %}
+{% block header_title %}Edit Prompt Section{% endblock %}
+{% block header_actions %}
+  <a href="{% url 'portal_prompts' %}" class="btn btn-ghost btn-sm">← Back to prompts</a>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .edit-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; }
+  @media (max-width: 1100px) { .edit-layout { grid-template-columns: 1fr; } }
+
+  .version-panel { position: sticky; top: 0; }
+  .version-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .version-item:hover { background: var(--mint-pale); }
+  .version-item:last-child { border-bottom: none; }
+  .v-date { font-size: 12px; font-weight: 600; color: var(--teal); }
+  .v-by { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .v-note { font-size: 11px; color: var(--teal-accent); margin-top: 2px; font-style: italic; }
+  .v-preview { font-size: 10.5px; color: #999; margin-top: 3px; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .revert-banner {
+    background: #fff8e1;
+    border: 1px solid #f0c040;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #7a5200;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Agent colour indicator */
+  .agent-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .ai-context_collector { background: #d0e9ff; color: #004085; }
+  .ai-analyzer          { background: #d4edda; color: #155724; }
+  .ai-plan_generator    { background: #fff3cd; color: #856404; }
+  .ai-general           { background: #e2d9f3; color: #432874; }
+  .ai-shared            { background: #e9ecef; color: #555; }
+
+  /* Preview modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: var(--radius);
+    width: 90vw;
+    max-width: 860px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .modal-header h3 { color: #e6edf3; font-size: 14px; flex: 1; }
+  .modal-close { background: none; border: none; color: #8b949e; font-size: 20px; cursor: pointer; }
+  .modal-close:hover { color: #e6edf3; }
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    color: #e6edf3;
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if revert_content %}
+<div class="revert-banner">
+  ↩ <strong>Reverting.</strong> {{ revert_note }} — review the content below, then click <strong>Save Changes</strong> to confirm.
+</div>
+{% endif %}
+
+<div class="edit-layout">
+
+  <!-- ── Left: editor ───────────────────────────────────────────── -->
+  <div>
+    <!-- Section info -->
+    <div style="margin-bottom:20px">
+      <h2 class="page-title">{{ section.label }}</h2>
+      {% if section.description %}
+      <p class="page-sub">{{ section.description }}</p>
+      {% endif %}
+
+      {% if section.agent %}
+      <span class="agent-indicator ai-{{ section.agent.key }}">
+        🤖 {{ section.agent.label }}
+      </span>
+      {% else %}
+      <span class="agent-indicator ai-shared">⚪ Shared — included in all agents</span>
+      {% endif %}
+    </div>
+
+    <form method="post" id="editForm">
+      {% csrf_token %}
+
+      <!-- Code editor -->
+      <div style="margin-bottom:20px">
+        <div class="editor-toolbar">
+          <span id="statChars" class="stat-pill">0 chars</span>
+          <span id="statWords" class="stat-words">0 words</span>
+          <span id="statLines" class="stat-lines">0 lines</span>
+          <span style="margin-left:auto;font-size:11px">Tab = 2 spaces &nbsp;·&nbsp; Ctrl+S = save</span>
+        </div>
+        <textarea
+          class="code-editor"
+          name="content"
+          id="contentEditor"
+          spellcheck="false"
+          autocomplete="off"
+        >{% if revert_content %}{{ revert_content }}{% else %}{{ section.content }}{% endif %}</textarea>
+      </div>
+
+      <!-- Meta row -->
+      <div style="display:grid;grid-template-columns:120px 1fr 160px;gap:14px;margin-bottom:20px">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Order</label>
+          <input type="number" name="order" value="{{ section.order }}" min="0" max="99">
+          <div class="form-hint">Lower = earlier</div>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Agent</label>
+          <select name="agent">
+            <option value="">⚪ Shared (all agents)</option>
+            {% for agent in agents %}
+            <option value="{{ agent.pk }}" {% if section.agent_id == agent.pk %}selected{% endif %}>{{ agent.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;padding-top:22px">
+          <label class="toggle-wrap" style="text-transform:none;font-size:13px;cursor:pointer">
+            <span class="toggle">
+              <input type="checkbox" name="is_active" id="isActive" {% if section.is_active %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </span>
+            Active
+          </label>
+          <div class="form-hint">Inactive sections are excluded from prompts</div>
+        </div>
+      </div>
+
+      <!-- Save note -->
+      <div class="form-group" style="margin-bottom:20px">
+        <label>Save note <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <input type="text" name="save_note" placeholder="e.g. 'Added more detail to Q4' — shows in version history" maxlength="200">
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display:flex;gap:12px;align-items:center">
+        <button type="submit" class="btn btn-primary" id="saveBtn">💾 Save Changes</button>
+        <button type="button" class="btn btn-ghost" onclick="openPreview()">🔍 Preview Full Prompt</button>
+        <a href="{% url 'portal_prompts' %}" class="btn btn-ghost">Cancel</a>
+        <span id="unsavedBadge" style="display:none;font-size:12px;color:#e67e22;font-weight:600">● Unsaved changes</span>
+      </div>
+    </form>
+  </div>
+
+  <!-- ── Right: version history ─────────────────────────────────── -->
+  <div class="version-panel">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Version History</span>
+        <span style="font-size:11px;color:var(--text-muted)">{{ versions|length }} saved</span>
+      </div>
+      {% if versions %}
+      <div style="max-height:520px;overflow-y:auto">
+        {% for v in versions %}
+        <div class="version-item" onclick="previewVersion({{ v.pk }}, this)">
+          <div class="v-date">{{ v.saved_at|date:"d M Y, H:i" }}</div>
+          <div class="v-by">by {{ v.saved_by.username|default:"system" }}</div>
+          {% if v.note %}<div class="v-note">{{ v.note }}</div>{% endif %}
+          <div class="v-preview">{{ v.content|truncatechars:80 }}</div>
+          <div style="margin-top:6px">
+            <a
+              href="{% url 'portal_prompt_edit' section.key %}?revert={{ v.pk }}"
+              onclick="return confirmRevert(event)"
+              class="btn btn-ghost btn-sm"
+              style="font-size:11px;padding:3px 9px"
+            >↩ Revert</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12px">
+        No versions yet.<br>Versions are saved automatically when you edit.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Preview modal ──────────────────────────────────────────────── -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="previewTitle">Full assembled prompt</h3>
+      <button class="modal-close" onclick="closePreview()">✕</button>
+    </div>
+    <div class="modal-body" id="previewBody">Loading…</div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const editor = document.getElementById('contentEditor');
+const charsEl = document.getElementById('statChars');
+const wordsEl = document.getElementById('statWords');
+const linesEl = document.getElementById('statLines');
+const unsavedBadge = document.getElementById('unsavedBadge');
+let originalContent = editor.value;
+let dirty = false;
+
+// ── Live stats ──────────────────────────────────────────────────────
+function updateStats() {
+  const t = editor.value;
+  const chars = t.length;
+  const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+  const lines = t.split('\n').length;
+  charsEl.textContent = chars.toLocaleString() + ' chars';
+  wordsEl.textContent = words.toLocaleString() + ' words';
+  linesEl.textContent = lines.toLocaleString() + ' lines';
+  charsEl.style.color = chars > 5000 ? '#f85149' : chars > 2000 ? '#e3b341' : '#58a6ff';
+}
+editor.addEventListener('input', function() {
+  updateStats();
+  dirty = editor.value !== originalContent;
+  unsavedBadge.style.display = dirty ? 'inline' : 'none';
+});
+updateStats();
+
+// ── Tab key → 2 spaces ─────────────────────────────────────────────
+editor.addEventListener('keydown', function(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const s = this.selectionStart, end = this.selectionEnd;
+    this.value = this.value.slice(0, s) + '  ' + this.value.slice(end);
+    this.selectionStart = this.selectionEnd = s + 2;
+    updateStats();
+  }
+  // Ctrl+S → submit
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    dirty = false;
+    document.getElementById('editForm').submit();
+  }
+});
+
+// ── Unsaved warning ─────────────────────────────────────────────────
+window.addEventListener('beforeunload', function(e) {
+  if (dirty) { e.preventDefault(); e.returnValue = ''; }
+});
+document.getElementById('editForm').addEventListener('submit', function() { dirty = false; });
+
+// ── Confirm revert ──────────────────────────────────────────────────
+function confirmRevert(e) {
+  return confirm('Revert to this version? The current content will be snapshot before reverting.');
+}
+
+// ── Version preview (hover-load optional) ──────────────────────────
+function previewVersion(pk, el) {
+  // Just highlight — revert link does the actual action
+  document.querySelectorAll('.version-item').forEach(i => i.style.background = '');
+  el.style.background = 'var(--mint-pale)';
+}
+
+// ── Full prompt preview modal ───────────────────────────────────────
+function openPreview() {
+  const modal = document.getElementById('previewModal');
+  const body  = document.getElementById('previewBody');
+  modal.classList.add('open');
+  body.textContent = 'Loading assembled prompt…';
+  fetch('{% url "portal_prompt_preview" section.key %}')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('previewTitle').textContent =
+        'Assembled prompt — ' + data.agent_key;
+      body.textContent = data.prompt;
+    })
+    .catch(() => { body.textContent = 'Error loading preview.'; });
+}
+function closePreview() {
+  document.getElementById('previewModal').classList.remove('open');
+}
+document.getElementById('previewModal').addEventListener('click', function(e) {
+  if (e.target === this) closePreview();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePreview();
+});
+
+// ── Auto-height ─────────────────────────────────────────────────────
+editor.style.height = Math.max(480, Math.min(editor.scrollHeight, 800)) + 'px';
+</script>
+{% endblock %}

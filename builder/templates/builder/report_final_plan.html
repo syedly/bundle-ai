@@ -15,6 +15,8 @@
     </div>
 
     <article class="report-doc report-doc--plan">
+
+      <!-- ── Hero ── -->
       <header class="report-hero">
         <p class="report-eyebrow">Performance-aligned learning plan</p>
         <h1>{{ report.plan_title }}</h1>
@@ -22,76 +24,159 @@
         <p class="report-tagline">{{ report.tagline }}</p>
       </header>
 
-      <section class="report-block">
-        <p class="report-body-text">{{ report.intro_paragraph }}</p>
-        {% if report.sequencing_overview %}
-        <p class="report-body-text">{{ report.sequencing_overview }}</p>
-        {% endif %}
+      <!-- ── Intro paragraph ── -->
+      {% if report.intro_paragraph %}
+      <section class="report-intro-block">
+        <p>{{ report.intro_paragraph }}</p>
       </section>
+      {% endif %}
 
+      <!-- ── Per-employee blocks ── -->
       {% for emp in report.employees %}
-      <section class="report-employee-block">
-        <h2 class="report-employee-name">{{ emp.name }}</h2>
-        <p class="report-employee-role">{{ emp.role_context }}</p>
+      <div class="report-plan-employee{% if not forloop.first %} report-plan-employee--sep{% endif %}">
 
-        <div class="report-profile-grid">
-          <div class="report-profile-col">
-            <h3>Strengths</h3>
-            <ul>
-              {% for s in emp.strengths %}<li>{{ s }}</li>{% endfor %}
-            </ul>
+        <!-- Employee header card (dark teal) -->
+        <div class="report-learner-card">
+          <div class="report-learner-card-top">
+            <span class="report-learner-badge">Start Here</span>
           </div>
-          <div class="report-profile-col">
-            <h3>Growth opportunities</h3>
-            <ul>
-              {% for g in emp.growth_opportunities %}<li>{{ g }}</li>{% endfor %}
-            </ul>
+          <h2 class="report-learner-name">{{ emp.name }}</h2>
+          <p class="report-learner-role">{{ emp.role_context }}</p>
+
+          {% if emp.sequencing_paragraph %}
+          <div class="report-learner-why">
+            <span class="report-learner-why-label">Why this group first:</span>
+            <span class="report-learner-why-text">{{ emp.sequencing_paragraph }}</span>
+          </div>
+          {% endif %}
+
+          <div class="report-learner-chips">
+            {% if report.num_sessions %}<span class="report-lchip">{{ report.num_sessions }}-session program</span>{% endif %}
+            {% if report.delivery_method %}<span class="report-lchip">{{ report.delivery_method }}</span>{% endif %}
           </div>
         </div>
 
-        <div class="report-profile-col report-profile-col--full">
-          <h3>Career direction</h3>
-          <p>{{ emp.career_direction }}</p>
-        </div>
+        <!-- Sessions -->
+        <section class="report-sessions-section">
+          <h3 class="report-sessions-heading">Sessions for this group</h3>
 
-        <p class="report-body-text report-sequencing">{{ emp.sequencing_paragraph }}</p>
+          {% for sess in emp.sessions %}
+          <div class="report-session-card">
+            <div class="report-session-header">
+              <div class="report-session-left">
+                <span class="report-session-num">{{ sess.number|stringformat:"02d" }}</span>
+                <div class="report-session-title-wrap">
+                  <h4 class="report-session-title">{{ sess.title }}</h4>
+                  {% if sess.skill_focus %}
+                  <p class="report-session-subskills">
+                    {% for sk in sess.skill_focus %}{{ sk }}{% if not forloop.last %} · {% endif %}{% endfor %}
+                  </p>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="report-session-right">
+                <span class="report-session-type-badge">1:1</span>
+                {% if sess.skill_categories %}
+                <span class="report-session-cat-badge">
+                  {% for cat in sess.skill_categories %}{{ cat }}{% if not forloop.last %} · {% endif %}{% endfor %}
+                </span>
+                {% elif sess.skill_focus %}
+                <span class="report-session-cat-badge">{{ sess.skill_focus.0 }}</span>
+                {% endif %}
+              </div>
+            </div>
 
-        <div class="report-table-wrap">
-          <table class="report-session-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Session</th>
-                <th>Skill focus</th>
-                <th>Why this session</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for sess in emp.sessions %}
-              <tr>
-                <td class="col-num">{{ sess.number }}</td>
-                <td class="col-session">
-                  <strong>{{ sess.title }}</strong>
-                  <span class="session-covers">{{ sess.what_it_covers }}</span>
-                </td>
-                <td class="col-skills">
-                  <ul>
-                    {% for skill in sess.skill_focus %}<li>{{ skill }}</li>{% endfor %}
-                  </ul>
-                </td>
-                <td class="col-why">{{ sess.why_this_session }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+            {% if sess.recommended_because %}
+            <p class="report-session-rec-because">
+              <span class="report-rec-label">Recommended because</span> {{ sess.recommended_because }}
+            </p>
+            {% endif %}
 
-        <section class="report-coaching">
-          <h3>Coaching support</h3>
+            {% if sess.why_this_session %}
+            <p class="report-session-why">{{ sess.why_this_session }}</p>
+            {% endif %}
+          </div>
+          {% empty %}
+          <p class="report-empty-note">Sessions are being generated — refresh to see the full plan.</p>
+          {% endfor %}
+        </section>
+
+        <!-- Add-on recommendations -->
+        <section class="report-addons-section">
+          <h3 class="report-addons-heading">Add-on recommendations</h3>
+          <div class="report-addons-grid">
+            <!-- 1:1 Coaching -->
+            <div class="report-addon-card report-addon-card--recommended">
+              <div class="report-addon-header">
+                <span class="report-addon-name">1:1 coaching</span>
+                <span class="report-addon-badge report-addon-badge--yes">Recommended</span>
+              </div>
+              <p class="report-addon-desc">Dedicated coaching sessions alongside the training program to apply learning directly to live situations.</p>
+              {% if emp.coaching_support %}
+              <p class="report-addon-why">
+                <span class="report-addon-why-label">Why for this group:</span>
+                {{ emp.coaching_support }}
+              </p>
+              {% endif %}
+              <a href="{% url 'chat_thread' run.id %}" class="report-addon-link">Continue in chat →</a>
+            </div>
+            <!-- Peer workshops -->
+            <div class="report-addon-card">
+              <div class="report-addon-header">
+                <span class="report-addon-name">Peer workshops</span>
+                <span class="report-addon-badge report-addon-badge--no">Not for this group</span>
+              </div>
+              <p class="report-addon-desc">Group learning sessions with peers facing similar challenges.</p>
+              <p class="report-addon-why">
+                <span class="report-addon-why-label">Why not for this group:</span>
+                Individual 1:1 delivery is more targeted for the specific gaps identified in this review. Peer workshops may be worth revisiting once the core development areas are addressed.
+              </p>
+              <a href="{% url 'chat_thread' run.id %}" class="report-addon-link">Add to plan anyway</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Coaching support block -->
+        {% if emp.coaching_support %}
+        <section class="report-coaching-block">
+          <h3 class="report-coaching-heading">Coaching support</h3>
           <p>{{ emp.coaching_support }}</p>
         </section>
-      </section>
+        {% endif %}
+
+        <!-- What this delivers -->
+        {% if emp.what_this_delivers %}
+        <section class="report-delivers-section">
+          <h3 class="report-delivers-heading">What this delivers</h3>
+          <ul class="report-delivers-list">
+            {% for item in emp.what_this_delivers %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </section>
+        {% else %}
+        <!-- Fallback: strengths & growth -->
+        <section class="report-profile-fallback">
+          <div class="report-profile-grid">
+            <div class="report-profile-col">
+              <h3>Strengths</h3>
+              <ul>{% for s in emp.strengths %}<li>{{ s }}</li>{% endfor %}</ul>
+            </div>
+            <div class="report-profile-col">
+              <h3>Growth opportunities</h3>
+              <ul>{% for g in emp.growth_opportunities %}<li>{{ g }}</li>{% endfor %}</ul>
+            </div>
+          </div>
+        </section>
+        {% endif %}
+
+      </div><!-- /report-plan-employee -->
       {% endfor %}
+
+      <!-- ── Footer CTA ── -->
+      <section class="report-footer-cta">
+        <p class="report-footer-cta-text">Done reviewing the plan? Head back to the chat — your Bundle consultant call is the next step.</p>
+        <a href="{% url 'chat_thread' run.id %}" class="report-cta-btn report-cta-btn--primary">Done — back to chat →</a>
+      </section>
+
     </article>
   </div>
 </div>

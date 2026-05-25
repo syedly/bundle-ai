@@ -1,0 +1,120 @@
+{% extends 'builder/portal/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
+
+{% block content %}
+<p class="page-sub">Live overview of the Bundle AI Training Builder system.</p>
+
+<!-- Stat cards -->
+<div class="stat-grid">
+  <div class="stat-card accent">
+    <div class="s-label">Runs today</div>
+    <div class="s-value">{{ runs_today }}</div>
+    <div class="s-sub">{{ runs_week }} this week</div>
+  </div>
+  <div class="stat-card">
+    <div class="s-label">Total runs</div>
+    <div class="s-value">{{ runs_total }}</div>
+    <div class="s-sub">All time</div>
+  </div>
+  <div class="stat-card">
+    <div class="s-label">Plans generated</div>
+    <div class="s-value">{{ plans_made }}</div>
+    <div class="s-sub">Stage 5 complete</div>
+  </div>
+  <div class="stat-card">
+    <div class="s-label">Bookings</div>
+    <div class="s-value">{{ bookings }}</div>
+    <div class="s-sub">CTA clicked</div>
+  </div>
+  <div class="stat-card">
+    <div class="s-label">In progress</div>
+    <div class="s-value">{{ in_progress }}</div>
+    <div class="s-sub">Active right now</div>
+  </div>
+  <div class="stat-card">
+    <div class="s-label">Prompt sections</div>
+    <div class="s-value">{{ prompt_count }}</div>
+    <div class="s-sub">{{ agents|length }} agents</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+  <!-- Recent runs -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Recent Runs</span>
+      <a href="{% url 'portal_runs' %}" class="btn btn-ghost btn-sm">View all</a>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Company</th>
+          <th>Stage</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in recent_runs %}
+        <tr>
+          <td style="color:var(--text-muted);font-family:monospace">{{ run.id }}</td>
+          <td>
+            {% if run.company_name %}
+              <strong>{{ run.company_name }}</strong>
+            {% else %}
+              <span style="color:var(--text-muted)">—</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge {% if run.current_stage <= 2 %}badge-blue{% elif run.current_stage <= 4 %}badge-teal{% elif run.current_stage == 5 %}badge-orange{% else %}badge-purple{% endif %}">
+              Stage {{ run.current_stage }}
+            </span>
+          </td>
+          <td>
+            <span class="badge {% if run.status == 'in_progress' %}badge-gray{% elif run.status == 'plan_generated' %}badge-green{% elif run.status == 'cta_clicked' %}badge-purple{% else %}badge-teal{% endif %}">
+              {{ run.get_status_display }}
+            </span>
+          </td>
+          <td style="color:var(--text-muted);font-size:12px;white-space:nowrap">{{ run.created_at|date:"d M, H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">No runs yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Agents -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Agent Status</span>
+      <a href="{% url 'portal_agents' %}" class="btn btn-ghost btn-sm">Configure</a>
+    </div>
+    <div class="card-body">
+      {% for agent in agents %}
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)">
+        <div style="width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0;background:{% if agent.key == 'context_collector' %}#0d6efd{% elif agent.key == 'analyzer' %}#198754{% elif agent.key == 'plan_generator' %}#fd7e14{% else %}#6f42c1{% endif %}"></div>
+        <div style="flex:1">
+          <div style="font-weight:600;font-size:13px;color:var(--teal)">{{ agent.label }}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ agent.model_name }} · temp {{ agent.temperature }} · {{ agent.max_tokens|floatformat:0 }} tokens</div>
+          <div style="font-size:11px;margin-top:4px">
+            <a href="{% url 'portal_prompts' %}?agent={{ agent.key }}" style="color:var(--teal-accent)">
+              {{ agent.sections.count }} section{{ agent.sections.count|pluralize }}
+            </a>
+          </div>
+        </div>
+        <span class="badge {% if agent.is_active %}badge-green{% else %}badge-gray{% endif %}">
+          {% if agent.is_active %}Active{% else %}Off{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

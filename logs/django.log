@@ -649,3 +649,649 @@ INFO 2026-05-23 23:03:52,003 log 2888 7808 "GET /chat/8/report/plan/ HTTP/1.1" 2
 WARNING 2026-05-23 23:03:52,114 log 2888 7808 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
 INFO 2026-05-23 23:03:56,314 log 2888 12244 "GET /chat/8/report/analysis/ HTTP/1.1" 200 9695
 WARNING 2026-05-23 23:03:56,425 log 2888 12244 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 03:50:07,646 autoreload 39162 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 03:50:23,172 autoreload 39312 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 03:50:50,475 basehttp 39312 6160461824 "GET / HTTP/1.1" 200 4009
+WARNING 2026-05-25 03:50:50,491 basehttp 39312 6194114560 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 03:50:50,493 basehttp 39312 6177288192 "GET /static/builder/css/main.css HTTP/1.1" 200 51289
+INFO 2026-05-25 03:50:50,493 basehttp 39312 6160461824 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 200 80722
+INFO 2026-05-25 03:50:50,924 basehttp 39312 6160461824 "GET /static/builder/js/app.js HTTP/1.1" 200 960
+WARNING 2026-05-25 03:50:51,523 basehttp 39312 6160461824 "GET /favicon.ico HTTP/1.1" 404 7305
+INFO 2026-05-25 03:50:55,092 basehttp 39312 6160461824 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-25 03:50:55,096 basehttp 39312 6160461824 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 03:50:55,118 basehttp 39312 6160461824 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 200 75506
+INFO 2026-05-25 03:50:58,024 basehttp 39312 6160461824 "POST /login/ HTTP/1.1" 200 2425
+INFO 2026-05-25 03:50:58,038 basehttp 39312 6160461824 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 03:50:58,038 basehttp 39312 6194114560 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 03:50:58,038 basehttp 39312 6177288192 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 03:50:59,859 basehttp 39312 6194114560 "GET /signup/ HTTP/1.1" 200 2910
+INFO 2026-05-25 03:51:03,126 basehttp 39312 6194114560 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 03:51:03,139 basehttp 39312 6194114560 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 304 0
+INFO 2026-05-25 04:02:31,067 autoreload 39312 8301779136 /Users/maisam/Desktop/proj/builder/models.py changed, reloading.
+INFO 2026-05-25 04:02:31,498 autoreload 39851 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:06:26,374 autoreload 39851 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 04:06:26,698 autoreload 39972 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:09:15,088 autoreload 39972 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 04:09:15,499 autoreload 40029 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:09:30,181 autoreload 40029 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 04:09:30,504 autoreload 40041 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:09:36,958 autoreload 40041 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 04:09:37,281 autoreload 40047 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:10:58,111 autoreload 40047 8301779136 /Users/maisam/Desktop/proj/builder/admin.py changed, reloading.
+INFO 2026-05-25 04:10:58,840 autoreload 40142 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:13:40,206 basehttp 40142 6199455744 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 04:13:40,216 basehttp 40142 6199455744 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 304 0
+INFO 2026-05-25 04:13:40,216 basehttp 40142 6216282112 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:13:40,217 basehttp 40142 6249934848 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 04:13:40,217 basehttp 40142 6233108480 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:13:41,095 basehttp 40142 6249934848 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 04:13:41,269 basehttp 40142 6249934848 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 04:13:41,418 basehttp 40142 6249934848 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 04:14:37,596 autoreload 40440 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:14:49,450 basehttp 40440 6126317568 "POST /login/ HTTP/1.1" 200 2425
+INFO 2026-05-25 04:14:59,666 basehttp 40440 6126317568 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:14:59,674 basehttp 40440 6126317568 "GET / HTTP/1.1" 200 3903
+WARNING 2026-05-25 04:14:59,689 basehttp 40440 6126317568 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:15:08,049 basehttp 40440 6143143936 "GET /admin/ HTTP/1.1" 200 10945
+INFO 2026-05-25 04:15:08,065 basehttp 40440 6126317568 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,065 basehttp 40440 6143143936 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,067 basehttp 40440 6159970304 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,066 basehttp 40440 6176796672 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,067 basehttp 40440 6193623040 "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,067 basehttp 40440 6210449408 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,069 basehttp 40440 6193623040 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,072 basehttp 40440 6210449408 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:08,072 basehttp 40440 6193623040 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+ERROR 2026-05-25 04:15:11,530 log 40440 6193623040 Internal Server Error: /admin/builder/promptsection/
+Traceback (most recent call last):
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/options.py", line 720, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/options.py", line 2025, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/options.py", line 868, in get_changelist_instance
+    return ChangeList(
+        request,
+    ...<12 lines>...
+        self.search_help_text,
+    )
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/views/main.py", line 145, in __init__
+    self.queryset = self.get_queryset(request)
+                    ~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/views/main.py", line 553, in get_queryset
+    new_qs = filter_spec.queryset(request, qs)
+  File "/Users/maisam/Desktop/proj/builder/admin.py", line 180, in queryset
+    return qs.filter(agent_id=int(value))
+           ^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'filter'
+ERROR 2026-05-25 04:15:11,534 basehttp 40440 6193623040 "GET /admin/builder/promptsection/ HTTP/1.1" 500 130599
+INFO 2026-05-25 04:15:15,777 basehttp 40440 6193623040 "GET /admin/ HTTP/1.1" 200 10945
+INFO 2026-05-25 04:15:19,295 basehttp 40440 6193623040 "GET /admin/builder/agentconfig/ HTTP/1.1" 200 17157
+INFO 2026-05-25 04:15:19,311 basehttp 40440 6143143936 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,312 basehttp 40440 6210449408 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,313 basehttp 40440 6143143936 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,313 basehttp 40440 6176796672 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,314 basehttp 40440 6159970304 "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,314 basehttp 40440 6126317568 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,316 basehttp 40440 6143143936 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,317 basehttp 40440 6176796672 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,316 basehttp 40440 6210449408 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,317 basehttp 40440 6126317568 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,319 basehttp 40440 6193623040 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-25 04:15:19,321 basehttp 40440 6193623040 "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,323 basehttp 40440 6193623040 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,336 basehttp 40440 6126317568 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:19,337 basehttp 40440 6193623040 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 304 0
+INFO 2026-05-25 04:15:22,155 basehttp 40440 6193623040 "GET /admin/ HTTP/1.1" 200 10945
+INFO 2026-05-25 04:15:29,591 basehttp 40440 6193623040 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:15:29,594 basehttp 40440 6193623040 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 04:15:31,212 basehttp 40440 6193623040 "POST /login/ HTTP/1.1" 200 2425
+INFO 2026-05-25 04:18:21,680 basehttp 40440 6193623040 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:18:21,687 basehttp 40440 6193623040 "GET / HTTP/1.1" 200 4647
+INFO 2026-05-25 04:18:21,701 basehttp 40440 6193623040 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:18:21,704 basehttp 40440 6126317568 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+WARNING 2026-05-25 04:18:21,707 basehttp 40440 6193623040 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:18:21,704 basehttp 40440 6176796672 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:18:21,980 autoreload 40440 8301779136 /Users/maisam/Desktop/proj/builder/urls.py changed, reloading.
+INFO 2026-05-25 04:18:22,768 autoreload 40519 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:18:27,987 autoreload 40519 8301779136 /Users/maisam/Desktop/proj/builder/urls.py changed, reloading.
+INFO 2026-05-25 04:18:28,531 autoreload 40530 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:18:28,705 basehttp 40530 6194032640 "GET /admin/ HTTP/1.1" 200 10944
+INFO 2026-05-25 04:18:30,407 basehttp 40530 6194032640 "GET /admin/auth/user/ HTTP/1.1" 200 18046
+INFO 2026-05-25 04:18:30,424 basehttp 40530 6227685376 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2026-05-25 04:18:30,427 basehttp 40530 6227685376 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+INFO 2026-05-25 04:18:30,427 basehttp 40530 6210859008 "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+INFO 2026-05-25 04:18:30,427 basehttp 40530 6194032640 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-25 04:18:30,443 basehttp 40530 6194032640 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2026-05-25 04:18:48,259 basehttp 40530 6194032640 "POST /admin/auth/user/ HTTP/1.1" 200 13192
+INFO 2026-05-25 04:18:48,270 basehttp 40530 6194032640 "GET /static/admin/js/cancel.js HTTP/1.1" 200 884
+INFO 2026-05-25 04:18:51,049 basehttp 40530 6194032640 "POST /admin/auth/user/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:18:51,069 basehttp 40530 6194032640 "GET /admin/auth/user/ HTTP/1.1" 200 15029
+INFO 2026-05-25 04:18:51,082 basehttp 40530 6194032640 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+ERROR 2026-05-25 04:18:53,145 log 40530 6194032640 Internal Server Error: /admin/builder/promptsection/
+Traceback (most recent call last):
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/options.py", line 720, in wrapper
+    return self.admin_site.admin_view(view)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/sites.py", line 246, in inner
+    return view(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 48, in _wrapper
+    return bound_method(*args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/options.py", line 2025, in changelist_view
+    cl = self.get_changelist_instance(request)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/options.py", line 868, in get_changelist_instance
+    return ChangeList(
+        request,
+    ...<12 lines>...
+        self.search_help_text,
+    )
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/views/main.py", line 145, in __init__
+    self.queryset = self.get_queryset(request)
+                    ~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/django/contrib/admin/views/main.py", line 553, in get_queryset
+    new_qs = filter_spec.queryset(request, qs)
+  File "/Users/maisam/Desktop/proj/builder/admin.py", line 180, in queryset
+    return qs.filter(agent_id=int(value))
+           ^^^^^^^^^
+AttributeError: 'WSGIRequest' object has no attribute 'filter'
+ERROR 2026-05-25 04:18:53,148 basehttp 40530 6194032640 "GET /admin/builder/promptsection/ HTTP/1.1" 500 130608
+INFO 2026-05-25 04:19:00,349 basehttp 40530 6194032640 "GET /admin/auth/user/ HTTP/1.1" 200 14894
+INFO 2026-05-25 04:19:01,689 basehttp 40530 6194032640 "GET /admin/builder/pathway/ HTTP/1.1" 200 15533
+INFO 2026-05-25 04:19:01,704 basehttp 40530 6194032640 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-25 04:19:07,878 basehttp 40530 6194032640 "GET /admin/builder/builderrun/ HTTP/1.1" 200 17273
+INFO 2026-05-25 04:19:07,894 basehttp 40530 6194032640 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-25 04:19:11,953 basehttp 40530 6194032640 "GET /admin/builder/agentconfig/ HTTP/1.1" 200 17156
+INFO 2026-05-25 04:19:11,966 basehttp 40530 6194032640 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-25 04:19:23,841 basehttp 40530 6194032640 "GET /admin/builder/subskill/ HTTP/1.1" 200 40119
+INFO 2026-05-25 04:19:23,853 basehttp 40530 6194032640 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-25 04:19:26,143 basehttp 40530 6194032640 "GET /admin/builder/session/ HTTP/1.1" 200 30537
+INFO 2026-05-25 04:19:26,156 basehttp 40530 6194032640 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-25 04:22:57,095 basehttp 40530 6210859008 "GET /admin/ HTTP/1.1" 200 13083
+INFO 2026-05-25 04:22:57,111 basehttp 40530 6210859008 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+INFO 2026-05-25 04:23:00,315 basehttp 40530 6210859008 "GET / HTTP/1.1" 200 4900
+INFO 2026-05-25 04:23:00,335 basehttp 40530 6210859008 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 04:23:00,340 basehttp 40530 6210859008 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:23:00,341 basehttp 40530 6227685376 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 04:23:00,341 basehttp 40530 6244511744 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:23:23,583 autoreload 40785 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 04:23:31,789 basehttp 40785 6165000192 "GET / HTTP/1.1" 200 4900
+WARNING 2026-05-25 04:23:31,802 basehttp 40785 6165000192 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:23:36,048 basehttp 40785 6165000192 "GET /control/ HTTP/1.1" 200 24403
+INFO 2026-05-25 04:23:54,942 basehttp 40785 6165000192 "GET /control/runs/ HTTP/1.1" 200 21012
+INFO 2026-05-25 04:23:56,276 basehttp 40785 6165000192 "GET /control/ HTTP/1.1" 200 24403
+INFO 2026-05-25 04:23:58,158 basehttp 40785 6165000192 "GET /control/prompts/ HTTP/1.1" 200 35931
+INFO 2026-05-25 04:24:15,723 basehttp 40785 6165000192 "GET /control/agents/ HTTP/1.1" 200 29785
+INFO 2026-05-25 04:24:32,363 basehttp 40785 6165000192 "GET /control/prompts/ HTTP/1.1" 200 35931
+INFO 2026-05-25 04:24:41,681 basehttp 40785 6165000192 "GET /control/prompts/stage_2_paths/ HTTP/1.1" 200 32909
+INFO 2026-05-25 04:24:53,082 basehttp 40785 6165000192 "GET /control/prompts/ HTTP/1.1" 200 35931
+INFO 2026-05-25 04:24:54,571 basehttp 40785 6165000192 "GET /control/prompts/identity/ HTTP/1.1" 200 29051
+INFO 2026-05-25 04:24:58,309 basehttp 40785 6165000192 "GET /control/prompts/ HTTP/1.1" 200 35931
+INFO 2026-05-25 04:25:27,908 basehttp 40785 6165000192 "GET / HTTP/1.1" 200 4900
+WARNING 2026-05-25 04:25:27,938 basehttp 40785 6165000192 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:25:31,552 basehttp 40785 6181826560 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:25:31,563 basehttp 40785 6181826560 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 04:25:31,575 basehttp 40785 6181826560 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 304 0
+INFO 2026-05-25 04:25:33,447 basehttp 40785 6181826560 "GET /signup/ HTTP/1.1" 200 2910
+INFO 2026-05-25 04:25:51,190 basehttp 40785 6181826560 "POST /signup/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:25:51,198 basehttp 40785 6181826560 "GET / HTTP/1.1" 200 3938
+WARNING 2026-05-25 04:25:51,207 basehttp 40785 6181826560 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:25:55,748 basehttp 40785 6165000192 "GET /chat/new/ HTTP/1.1" 200 6876
+WARNING 2026-05-25 04:25:55,759 basehttp 40785 6165000192 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:25:55,762 basehttp 40785 6181826560 "GET /static/builder/js/chat.js HTTP/1.1" 200 27609
+INFO 2026-05-25 04:25:58,855 basehttp 40785 6181826560 "POST /api/new/ HTTP/1.1" 200 614
+INFO 2026-05-25 04:26:03,709 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 334
+INFO 2026-05-25 04:26:07,697 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 375
+INFO 2026-05-25 04:26:11,342 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 451
+INFO 2026-05-25 04:26:17,167 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 389
+INFO 2026-05-25 04:26:24,785 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 504
+INFO 2026-05-25 04:26:32,019 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 491
+INFO 2026-05-25 04:26:36,151 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 489
+INFO 2026-05-25 04:26:39,201 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 316
+INFO 2026-05-25 04:27:00,761 basehttp 40785 6181826560 "POST /api/upload/18/ HTTP/1.1" 200 1668
+INFO 2026-05-25 04:27:11,079 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 418
+INFO 2026-05-25 04:27:26,992 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 557
+INFO 2026-05-25 04:27:43,698 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 274
+INFO 2026-05-25 04:27:58,481 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 417
+INFO 2026-05-25 04:28:15,149 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 427
+INFO 2026-05-25 04:28:47,066 basehttp 40785 6181826560 "POST /api/chat/ HTTP/1.1" 200 334
+INFO 2026-05-25 04:28:48,803 basehttp 40785 6181826560 "GET /chat/18/report/analysis/ HTTP/1.1" 200 10116
+INFO 2026-05-25 04:28:48,840 basehttp 40785 6215479296 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:28:48,841 basehttp 40785 6198652928 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 04:28:48,844 basehttp 40785 6181826560 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:29:22,108 basehttp 40785 6198652928 "POST /api/chat/ HTTP/1.1" 200 285
+INFO 2026-05-25 04:29:39,616 basehttp 40785 6198652928 "POST /api/chat/ HTTP/1.1" 200 332
+INFO 2026-05-25 04:30:13,821 basehttp 40785 6198652928 "POST /api/chat/ HTTP/1.1" 200 321
+INFO 2026-05-25 04:30:15,748 basehttp 40785 6198652928 "GET /chat/18/report/plan/ HTTP/1.1" 200 8766
+WARNING 2026-05-25 04:30:15,791 basehttp 40785 6198652928 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:30:43,985 basehttp 40785 6215479296 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:30:43,996 basehttp 40785 6215479296 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 04:30:44,010 basehttp 40785 6215479296 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 04:30:44,011 basehttp 40785 6165573632 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 04:30:44,012 basehttp 40785 6215479296 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 304 0
+INFO 2026-05-25 04:30:44,012 basehttp 40785 6182400000 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 04:30:54,528 basehttp 40785 6182400000 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-25 04:30:54,536 basehttp 40785 6182400000 "GET / HTTP/1.1" 200 4900
+WARNING 2026-05-25 04:30:54,553 basehttp 40785 6182400000 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 04:30:58,720 basehttp 40785 6215479296 "GET /control/ HTTP/1.1" 200 24978
+INFO 2026-05-25 04:31:03,398 basehttp 40785 6215479296 "GET /control/prompts/ HTTP/1.1" 200 35931
+INFO 2026-05-25 04:46:31,990 basehttp 40785 6165573632 "GET /control/prompts/suggestions_rules/ HTTP/1.1" 200 29525
+INFO 2026-05-25 04:46:51,712 basehttp 40785 6165573632 "GET /control/prompts/suggestions_rules/preview/ HTTP/1.1" 200 9804
+INFO 2026-05-25 04:47:15,699 basehttp 40785 6165573632 "GET /control/prompts/ HTTP/1.1" 200 35931
+INFO 2026-05-25 04:47:20,601 basehttp 40785 6165573632 "GET /control/ HTTP/1.1" 200 24978
+INFO 2026-05-25 05:08:55,594 basehttp 40785 6165573632 "GET / HTTP/1.1" 200 4900
+INFO 2026-05-25 05:08:55,621 basehttp 40785 6182400000 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+WARNING 2026-05-25 05:08:55,621 basehttp 40785 6165573632 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:08:55,622 basehttp 40785 6199226368 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 05:08:55,622 basehttp 40785 6216052736 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 05:09:03,297 basehttp 40785 6216052736 "GET /chat/3/ HTTP/1.1" 200 7110
+WARNING 2026-05-25 05:09:03,316 basehttp 40785 6216052736 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:09:03,316 basehttp 40785 6199226368 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 05:09:03,323 basehttp 40785 6199226368 "GET /threads/load/3/ HTTP/1.1" 200 909
+INFO 2026-05-25 05:24:07,428 basehttp 40785 6165573632 "GET /control/ HTTP/1.1" 200 24978
+INFO 2026-05-25 05:24:10,431 basehttp 40785 6165573632 "GET /control/runs/ HTTP/1.1" 200 21812
+INFO 2026-05-25 05:24:11,290 basehttp 40785 6165573632 "GET /control/prompts/ HTTP/1.1" 200 35931
+INFO 2026-05-25 05:24:15,942 basehttp 40785 6165573632 "GET /control/agents/ HTTP/1.1" 200 29785
+INFO 2026-05-25 05:26:32,411 autoreload 40785 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 05:26:33,171 autoreload 41492 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 05:28:08,482 autoreload 41492 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 05:28:08,962 autoreload 41528 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 05:28:56,619 basehttp 41528 6160543744 "GET / HTTP/1.1" 200 4900
+INFO 2026-05-25 05:28:56,634 basehttp 41528 6177370112 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 05:28:56,637 basehttp 41528 6160543744 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:28:56,637 basehttp 41528 6194196480 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 05:28:56,637 basehttp 41528 6211022848 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 05:37:46,450 basehttp 41528 6160543744 "GET /chat/7/ HTTP/1.1" 200 7110
+WARNING 2026-05-25 05:37:46,469 basehttp 41528 6160543744 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:37:46,470 basehttp 41528 6177370112 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 05:37:46,476 basehttp 41528 6177370112 "GET /threads/load/7/ HTTP/1.1" 200 17610
+INFO 2026-05-25 05:37:49,745 basehttp 41528 6177370112 "GET /chat/7/report/plan/ HTTP/1.1" 302 0
+INFO 2026-05-25 05:37:49,753 basehttp 41528 6177370112 "GET /chat/7/ HTTP/1.1" 200 7110
+WARNING 2026-05-25 05:37:49,790 basehttp 41528 6177370112 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:37:49,821 basehttp 41528 6160543744 "GET /threads/load/7/ HTTP/1.1" 200 17610
+INFO 2026-05-25 05:37:54,480 basehttp 41528 6160543744 "GET /chat/7/report/plan/ HTTP/1.1" 302 0
+INFO 2026-05-25 05:37:54,488 basehttp 41528 6160543744 "GET /chat/7/ HTTP/1.1" 200 7110
+WARNING 2026-05-25 05:37:54,524 basehttp 41528 6160543744 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:37:54,558 basehttp 41528 6177370112 "GET /threads/load/7/ HTTP/1.1" 200 17610
+INFO 2026-05-25 05:38:26,692 basehttp 41528 6177370112 "GET /control/ HTTP/1.1" 200 24978
+INFO 2026-05-25 05:38:28,648 basehttp 41528 6177370112 "GET / HTTP/1.1" 200 4900
+WARNING 2026-05-25 05:38:28,673 basehttp 41528 6177370112 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:38:32,491 basehttp 41528 6160543744 "GET /chat/5/ HTTP/1.1" 200 7110
+WARNING 2026-05-25 05:38:32,516 basehttp 41528 6160543744 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:38:32,519 basehttp 41528 6177370112 "GET /threads/load/5/ HTTP/1.1" 200 713
+INFO 2026-05-25 05:38:40,803 basehttp 41528 6177370112 "GET /chat/5/ HTTP/1.1" 200 7110
+WARNING 2026-05-25 05:38:40,820 basehttp 41528 6177370112 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:38:40,825 basehttp 41528 6160543744 "GET /threads/load/5/ HTTP/1.1" 200 713
+INFO 2026-05-25 05:38:47,953 basehttp 41528 6160543744 "GET /chat/3/ HTTP/1.1" 200 7110
+WARNING 2026-05-25 05:38:47,977 basehttp 41528 6160543744 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:38:47,980 basehttp 41528 6177370112 "GET /threads/load/3/ HTTP/1.1" 200 908
+INFO 2026-05-25 05:39:17,797 autoreload 41528 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 05:39:18,353 autoreload 43015 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 05:40:15,613 autoreload 43015 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 05:40:16,106 autoreload 43046 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 05:42:49,479 autoreload 43225 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 05:42:53,752 basehttp 43225 6161100800 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-25 05:42:53,760 basehttp 43225 6161100800 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 05:42:53,777 basehttp 43225 6161100800 "GET /static/builder/css/main.css HTTP/1.1" 200 53077
+INFO 2026-05-25 05:42:53,781 basehttp 43225 6161100800 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 05:42:53,782 basehttp 43225 6177927168 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 304 0
+INFO 2026-05-25 05:42:53,782 basehttp 43225 6194753536 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 05:42:55,325 basehttp 43225 6194753536 "GET /signup/ HTTP/1.1" 200 2910
+INFO 2026-05-25 05:43:02,687 basehttp 43225 6194753536 "POST /signup/ HTTP/1.1" 200 2985
+INFO 2026-05-25 05:43:22,835 basehttp 43225 6194753536 "POST /signup/ HTTP/1.1" 200 2977
+INFO 2026-05-25 05:43:22,858 basehttp 43225 6194753536 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 05:43:36,901 basehttp 43225 6194753536 "POST /signup/ HTTP/1.1" 302 0
+INFO 2026-05-25 05:43:36,911 basehttp 43225 6194753536 "GET / HTTP/1.1" 200 3902
+WARNING 2026-05-25 05:43:36,923 basehttp 43225 6194753536 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:43:40,011 basehttp 43225 6177927168 "GET /chat/new/ HTTP/1.1" 200 6858
+WARNING 2026-05-25 05:43:40,040 basehttp 43225 6177927168 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:43:43,019 basehttp 43225 6161100800 "POST /api/new/ HTTP/1.1" 200 647
+INFO 2026-05-25 05:44:04,925 basehttp 43225 6161100800 "POST /api/chat/ HTTP/1.1" 200 443
+INFO 2026-05-25 05:44:15,052 basehttp 43225 6161100800 "GET /chat/new/ HTTP/1.1" 200 6858
+INFO 2026-05-25 05:44:15,074 basehttp 43225 6161100800 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 05:44:15,079 basehttp 43225 6178500608 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:44:17,422 basehttp 43225 6161100800 "POST /api/new/ HTTP/1.1" 200 647
+INFO 2026-05-25 05:46:15,540 basehttp 43225 6161100800 "GET / HTTP/1.1" 200 4312
+INFO 2026-05-25 05:46:15,559 basehttp 43225 6178500608 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 05:46:15,562 basehttp 43225 6161100800 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:46:24,463 autoreload 43225 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 05:46:25,154 autoreload 43299 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 05:46:34,508 autoreload 43299 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 05:46:34,983 autoreload 43303 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 05:47:58,854 basehttp 43303 6166900736 "GET / HTTP/1.1" 200 4312
+INFO 2026-05-25 05:47:58,863 basehttp 43303 6183727104 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 05:47:58,866 basehttp 43303 6166900736 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:48:00,419 basehttp 43303 6183727104 "GET /chat/20/ HTTP/1.1" 200 6859
+WARNING 2026-05-25 05:48:00,443 basehttp 43303 6183727104 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:48:00,447 basehttp 43303 6166900736 "GET /threads/load/20/ HTTP/1.1" 200 802
+INFO 2026-05-25 05:48:07,010 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 356
+INFO 2026-05-25 05:48:12,442 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-25 05:48:15,761 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-25 05:48:20,486 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-25 05:48:30,556 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-25 05:48:38,131 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 453
+INFO 2026-05-25 05:48:50,831 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 509
+INFO 2026-05-25 05:48:58,614 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 342
+INFO 2026-05-25 05:49:06,395 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 342
+INFO 2026-05-25 05:49:18,839 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 331
+INFO 2026-05-25 05:49:40,391 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 352
+INFO 2026-05-25 05:49:47,252 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 318
+INFO 2026-05-25 05:50:08,087 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 353
+INFO 2026-05-25 05:50:17,010 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 349
+INFO 2026-05-25 05:50:25,072 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 343
+INFO 2026-05-25 05:50:38,865 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 460
+INFO 2026-05-25 05:50:52,892 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 364
+INFO 2026-05-25 05:51:14,814 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 260
+INFO 2026-05-25 05:51:19,192 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 394
+INFO 2026-05-25 05:51:32,529 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 594
+INFO 2026-05-25 05:52:09,579 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 339
+INFO 2026-05-25 05:52:15,597 basehttp 43303 6166900736 "GET /chat/20/report/analysis/ HTTP/1.1" 200 9272
+INFO 2026-05-25 05:52:15,638 basehttp 43303 6184300544 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 05:52:15,638 basehttp 43303 6166900736 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:52:31,691 basehttp 43303 6184300544 "GET /chat/20/ HTTP/1.1" 200 6859
+WARNING 2026-05-25 05:52:31,715 basehttp 43303 6184300544 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 05:52:31,715 basehttp 43303 6166900736 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 05:52:32,579 basehttp 43303 6166900736 "GET /threads/load/20/ HTTP/1.1" 200 4794
+INFO 2026-05-25 05:52:53,729 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 299
+INFO 2026-05-25 05:53:05,202 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 336
+INFO 2026-05-25 05:53:08,515 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 357
+INFO 2026-05-25 05:53:21,275 basehttp 43303 6166900736 "POST /api/chat/ HTTP/1.1" 200 322
+INFO 2026-05-25 05:53:22,942 basehttp 43303 6166900736 "GET /chat/20/report/plan/ HTTP/1.1" 200 9451
+WARNING 2026-05-25 05:53:22,983 basehttp 43303 6166900736 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+ERROR 2026-05-25 05:53:31,161 views 43303 6184300544 Error generating PDF for run 20, user 10: 
+paragraph text "<para>| 1 | Effective Communication | Techniques to improve clarity, empathy, and engagement in communication. | Communication<br>Empathy | This session sets the groundwork for leaders to communicate effectively across functions. It addresses the need for clarity and empathy, crucial for your team's leadership development. |</para>" caused exception paraparser: syntax error: No content allowed in br tag
+Traceback (most recent call last):
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paraparser.py", line 3218, in parse
+    self.feed(text)
+    ~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/html/parser.py", line 169, in feed
+    self.goahead(0)
+    ~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/html/parser.py", line 245, in goahead
+    self.handle_data(rawdata[i:j])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paraparser.py", line 3123, in handle_data
+    if data!='': self._syntax_error('No content allowed in %s tag' % frag._selfClosingTag)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paraparser.py", line 2780, in _syntax_error
+    raise ValueError('paraparser: syntax error: %s' % message)
+ValueError: paraparser: syntax error: No content allowed in br tag
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maisam/Desktop/proj/builder/views.py", line 595, in download_pdf
+    pdf_bytes = generate_plan_pdf(run)
+  File "/Users/maisam/Desktop/proj/builder/pdf_export.py", line 303, in generate_plan_pdf
+    story.append(Paragraph(clean, styles['intro']))
+                 ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paragraph.py", line 1861, in __init__
+    self._setup(text, style, bulletText or getattr(style,'bulletText',None), frags, cleanBlockQuotedText)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paragraph.py", line 1882, in _setup
+    style, frags, bulletTextFrags = _parser.parse(text,style)
+                                    ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paraparser.py", line 3220, in parse
+    annotateException('\nparagraph text %s caused exception' % ascii(text))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/lib/utils.py", line 1180, in annotateException
+    rl_reraise(t,t(sep.join((_ for _ in (msg,str(v),postMsg) if _))),b)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/lib/utils.py", line 138, in rl_reraise
+    raise v.with_traceback(b)
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paraparser.py", line 3218, in parse
+    self.feed(text)
+    ~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/html/parser.py", line 169, in feed
+    self.goahead(0)
+    ~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.4/Frameworks/Python.framework/Versions/3.14/lib/python3.14/html/parser.py", line 245, in goahead
+    self.handle_data(rawdata[i:j])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paraparser.py", line 3123, in handle_data
+    if data!='': self._syntax_error('No content allowed in %s tag' % frag._selfClosingTag)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/maisam/Desktop/proj/venv/lib/python3.14/site-packages/reportlab/platypus/paraparser.py", line 2780, in _syntax_error
+    raise ValueError('paraparser: syntax error: %s' % message)
+ValueError: 
+paragraph text "<para>| 1 | Effective Communication | Techniques to improve clarity, empathy, and engagement in communication. | Communication<br>Empathy | This session sets the groundwork for leaders to communicate effectively across functions. It addresses the need for clarity and empathy, crucial for your team's leadership development. |</para>" caused exception paraparser: syntax error: No content allowed in br tag
+ERROR 2026-05-25 05:53:31,166 log 43303 6184300544 Internal Server Error: /api/pdf/20/
+ERROR 2026-05-25 05:53:31,167 basehttp 43303 6184300544 "GET /api/pdf/20/ HTTP/1.1" 500 445
+INFO 2026-05-25 06:03:00,526 basehttp 43303 6166900736 "GET /chat/20/report/analysis/ HTTP/1.1" 200 9882
+INFO 2026-05-25 06:03:00,567 basehttp 43303 6201126912 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 06:03:00,568 basehttp 43303 6217953280 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+WARNING 2026-05-25 06:03:00,568 basehttp 43303 6166900736 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:08:39,377 basehttp 43303 6166900736 "GET /chat/20/ HTTP/1.1" 200 6859
+INFO 2026-05-25 06:08:39,400 basehttp 43303 6201126912 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 06:08:39,400 basehttp 43303 6166900736 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:08:39,401 basehttp 43303 6217953280 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 06:08:39,401 basehttp 43303 6234779648 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 06:08:39,411 basehttp 43303 6234779648 "GET /threads/load/20/ HTTP/1.1" 200 5509
+INFO 2026-05-25 06:09:14,645 autoreload 43303 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 06:09:15,543 autoreload 43654 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:16:27,617 autoreload 43871 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:16:36,848 basehttp 43871 6190690304 "GET / HTTP/1.1" 200 4315
+WARNING 2026-05-25 06:16:36,857 basehttp 43871 6190690304 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:16:36,859 basehttp 43871 6190690304 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 06:16:36,859 basehttp 43871 6207516672 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 06:16:40,424 basehttp 43871 6207516672 "GET /chat/19/ HTTP/1.1" 200 6859
+WARNING 2026-05-25 06:16:40,451 basehttp 43871 6207516672 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:16:42,421 basehttp 43871 6190690304 "GET /threads/load/19/ HTTP/1.1" 200 998
+INFO 2026-05-25 06:16:56,360 basehttp 43871 6190690304 "GET /chat/new/ HTTP/1.1" 200 6858
+WARNING 2026-05-25 06:16:56,386 basehttp 43871 6190690304 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:16:58,828 basehttp 43871 6208090112 "POST /api/new/ HTTP/1.1" 200 690
+INFO 2026-05-25 06:17:07,806 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 404
+INFO 2026-05-25 06:17:12,786 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 352
+INFO 2026-05-25 06:17:26,208 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-25 06:17:31,760 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-25 06:17:35,148 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-25 06:17:37,901 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 453
+INFO 2026-05-25 06:17:43,408 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 509
+INFO 2026-05-25 06:17:57,752 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 466
+INFO 2026-05-25 06:18:17,566 basehttp 43871 6208090112 "POST /api/upload/21/ HTTP/1.1" 200 1599
+INFO 2026-05-25 06:18:34,402 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 591
+INFO 2026-05-25 06:18:53,334 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 373
+INFO 2026-05-25 06:19:09,205 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 269
+INFO 2026-05-25 06:19:26,453 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 408
+INFO 2026-05-25 06:19:45,227 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 814
+INFO 2026-05-25 06:20:22,327 basehttp 43871 6208090112 "POST /api/chat/ HTTP/1.1" 200 418
+INFO 2026-05-25 06:20:25,047 basehttp 43871 6208090112 "GET /chat/21/report/analysis/ HTTP/1.1" 200 10059
+WARNING 2026-05-25 06:20:25,088 basehttp 43871 6208090112 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:21:14,109 basehttp 43871 6190690304 "GET /chat/21/report/analysis/ HTTP/1.1" 200 10059
+INFO 2026-05-25 06:21:14,152 basehttp 43871 6208090112 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 06:21:14,152 basehttp 43871 6190690304 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:24:48,923 basehttp 43871 6208090112 "GET /chat/21/ HTTP/1.1" 200 6858
+INFO 2026-05-25 06:24:48,949 basehttp 43871 6190690304 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 06:24:48,951 basehttp 43871 6224916480 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+WARNING 2026-05-25 06:24:48,951 basehttp 43871 6208090112 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:24:48,954 basehttp 43871 6241742848 "GET /static/builder/js/chat.js HTTP/1.1" 200 27575
+INFO 2026-05-25 06:24:48,961 basehttp 43871 6241742848 "GET /threads/load/21/ HTTP/1.1" 200 14578
+INFO 2026-05-25 06:24:51,928 basehttp 43871 6241742848 "GET /chat/21/report/plan/ HTTP/1.1" 200 6267
+WARNING 2026-05-25 06:24:51,975 basehttp 43871 6241742848 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:30:59,425 autoreload 43871 8301779136 /Users/maisam/Desktop/proj/builder/ai_tools.py changed, reloading.
+INFO 2026-05-25 06:31:00,244 autoreload 44105 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:31:07,106 basehttp 44105 6131380224 "GET /chat/21/report/analysis/ HTTP/1.1" 200 10059
+INFO 2026-05-25 06:31:07,136 basehttp 44105 6148206592 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 06:31:07,136 basehttp 44105 6131380224 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:31:12,676 autoreload 44105 8301779136 /Users/maisam/Desktop/proj/builder/ai_tools.py changed, reloading.
+INFO 2026-05-25 06:31:13,162 autoreload 44121 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:31:20,326 basehttp 44121 6159626240 "GET /chat/21/ HTTP/1.1" 200 6858
+WARNING 2026-05-25 06:31:20,343 basehttp 44121 6159626240 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:31:20,343 basehttp 44121 6176452608 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 06:31:20,351 basehttp 44121 6176452608 "GET /threads/load/21/ HTTP/1.1" 200 14578
+INFO 2026-05-25 06:31:27,622 autoreload 44121 8301779136 /Users/maisam/Desktop/proj/builder/ai_tools.py changed, reloading.
+INFO 2026-05-25 06:31:28,116 autoreload 44139 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:31:36,933 basehttp 44139 6137131008 "GET /chat/21/report/plan/ HTTP/1.1" 200 6267
+WARNING 2026-05-25 06:31:36,969 basehttp 44139 6137131008 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:36:49,572 autoreload 44343 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:37:01,393 basehttp 44343 6197637120 "GET / HTTP/1.1" 200 4660
+WARNING 2026-05-25 06:37:01,402 basehttp 44343 6197637120 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:37:01,403 basehttp 44343 6231289856 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 06:37:01,405 basehttp 44343 6214463488 "GET /static/builder/css/main.css HTTP/1.1" 200 53277
+INFO 2026-05-25 06:37:05,884 basehttp 44343 6214463488 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-25 06:37:05,889 basehttp 44343 6214463488 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-25 06:37:05,910 basehttp 44343 6214463488 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 304 0
+INFO 2026-05-25 06:37:07,512 basehttp 44343 6214463488 "GET /signup/ HTTP/1.1" 200 2910
+INFO 2026-05-25 06:37:22,208 basehttp 44343 6214463488 "POST /signup/ HTTP/1.1" 302 0
+INFO 2026-05-25 06:37:22,214 basehttp 44343 6214463488 "GET / HTTP/1.1" 200 3896
+WARNING 2026-05-25 06:37:22,226 basehttp 44343 6214463488 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:37:25,519 basehttp 44343 6231289856 "GET /chat/new/ HTTP/1.1" 200 6855
+INFO 2026-05-25 06:37:25,547 basehttp 44343 6197637120 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+WARNING 2026-05-25 06:37:25,548 basehttp 44343 6231289856 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:37:28,300 basehttp 44343 6197637120 "POST /api/new/ HTTP/1.1" 200 690
+INFO 2026-05-25 06:38:10,902 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 356
+INFO 2026-05-25 06:38:15,743 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-25 06:38:27,181 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-25 06:38:35,273 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-25 06:38:41,058 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-25 06:38:46,085 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 453
+INFO 2026-05-25 06:38:49,315 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 509
+INFO 2026-05-25 06:39:04,272 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 465
+INFO 2026-05-25 06:39:25,716 basehttp 44343 6197637120 "POST /api/upload/22/ HTTP/1.1" 200 1700
+INFO 2026-05-25 06:39:48,214 basehttp 44343 6197637120 "POST /api/upload/22/ HTTP/1.1" 200 1855
+INFO 2026-05-25 06:40:10,951 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 442
+INFO 2026-05-25 06:40:31,942 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 384
+INFO 2026-05-25 06:40:54,370 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 364
+INFO 2026-05-25 06:41:19,866 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 260
+INFO 2026-05-25 06:41:38,706 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-25 06:42:01,645 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 832
+INFO 2026-05-25 06:42:51,015 basehttp 44343 6197637120 "POST /api/chat/ HTTP/1.1" 200 312
+INFO 2026-05-25 06:42:52,946 basehttp 44343 6197637120 "GET /chat/22/report/analysis/ HTTP/1.1" 200 10100
+INFO 2026-05-25 06:42:52,989 basehttp 44343 6231863296 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 06:42:52,990 basehttp 44343 6215036928 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 06:42:52,989 basehttp 44343 6197637120 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:43:05,005 basehttp 44343 6231863296 "GET /chat/22/ HTTP/1.1" 200 6856
+INFO 2026-05-25 06:43:05,031 basehttp 44343 6215036928 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+WARNING 2026-05-25 06:43:05,031 basehttp 44343 6231863296 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:43:05,039 basehttp 44343 6215036928 "GET /threads/load/22/ HTTP/1.1" 200 24933
+INFO 2026-05-25 06:43:07,874 basehttp 44343 6215036928 "GET /chat/22/report/plan/ HTTP/1.1" 200 6667
+WARNING 2026-05-25 06:43:07,918 basehttp 44343 6215036928 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:49:12,098 basehttp 44343 6197637120 "GET /chat/22/report/plan/ HTTP/1.1" 200 6667
+INFO 2026-05-25 06:49:12,135 basehttp 44343 6197637120 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 06:49:12,140 basehttp 44343 6215036928 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:49:52,647 basehttp 44343 6197637120 "GET / HTTP/1.1" 200 3997
+WARNING 2026-05-25 06:49:52,674 basehttp 44343 6197637120 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:51:13,694 autoreload 44343 8301779136 /Users/maisam/Desktop/proj/builder/ai_tools.py changed, reloading.
+INFO 2026-05-25 06:51:14,552 autoreload 44554 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:55:57,762 autoreload 44554 8301779136 /Users/maisam/Desktop/proj/builder/models.py changed, reloading.
+INFO 2026-05-25 06:55:58,706 autoreload 44685 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:58:24,907 autoreload 44871 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 06:58:31,030 basehttp 44871 6170488832 "GET / HTTP/1.1" 200 3997
+WARNING 2026-05-25 06:58:31,043 basehttp 44871 6170488832 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:58:31,044 basehttp 44871 6204141568 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-25 06:58:31,047 basehttp 44871 6187315200 "GET /static/builder/css/main.css HTTP/1.1" 200 53327
+INFO 2026-05-25 06:58:33,826 basehttp 44871 6187315200 "GET /chat/new/ HTTP/1.1" 200 6855
+INFO 2026-05-25 06:58:33,853 basehttp 44871 6204141568 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+WARNING 2026-05-25 06:58:33,853 basehttp 44871 6187315200 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 06:58:36,899 basehttp 44871 6204141568 "POST /api/new/ HTTP/1.1" 200 690
+INFO 2026-05-25 06:58:40,640 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 356
+INFO 2026-05-25 06:58:42,939 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-25 06:58:47,764 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-25 06:58:51,160 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-25 06:59:00,129 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-25 06:59:14,268 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 453
+INFO 2026-05-25 06:59:29,216 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 509
+INFO 2026-05-25 06:59:45,906 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 466
+INFO 2026-05-25 07:00:08,033 basehttp 44871 6204141568 "POST /api/upload/23/ HTTP/1.1" 200 1506
+INFO 2026-05-25 07:00:31,125 basehttp 44871 6204141568 "POST /api/upload/23/ HTTP/1.1" 200 1712
+INFO 2026-05-25 07:00:53,803 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 379
+INFO 2026-05-25 07:01:14,075 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 392
+INFO 2026-05-25 07:01:36,300 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 364
+INFO 2026-05-25 07:02:02,922 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 260
+INFO 2026-05-25 07:02:21,766 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 394
+INFO 2026-05-25 07:02:45,855 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 757
+INFO 2026-05-25 07:03:59,048 basehttp 44871 6204141568 "POST /api/chat/ HTTP/1.1" 200 312
+INFO 2026-05-25 07:04:01,424 basehttp 44871 6204141568 "GET /chat/23/report/analysis/ HTTP/1.1" 200 15414
+WARNING 2026-05-25 07:04:01,467 basehttp 44871 6204141568 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:04:01,468 basehttp 44871 6220967936 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 07:04:01,469 basehttp 44871 6171062272 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-25 07:04:45,446 basehttp 44871 6171062272 "GET /chat/23/ HTTP/1.1" 200 6856
+INFO 2026-05-25 07:04:45,475 basehttp 44871 6220967936 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+WARNING 2026-05-25 07:04:45,475 basehttp 44871 6171062272 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:04:45,483 basehttp 44871 6220967936 "GET /threads/load/23/ HTTP/1.1" 200 24344
+INFO 2026-05-25 07:04:47,796 basehttp 44871 6220967936 "GET /chat/23/report/plan/ HTTP/1.1" 200 3669
+WARNING 2026-05-25 07:04:47,842 basehttp 44871 6220967936 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:17:05,291 autoreload 44871 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 07:17:06,270 autoreload 45178 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 07:17:25,773 autoreload 45178 8301779136 /Users/maisam/Desktop/proj/builder/ai_engine.py changed, reloading.
+INFO 2026-05-25 07:17:26,513 autoreload 45190 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 07:18:04,369 autoreload 45190 8301779136 /Users/maisam/Desktop/proj/builder/ai_tools.py changed, reloading.
+INFO 2026-05-25 07:18:05,104 autoreload 45211 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 07:18:14,444 autoreload 45211 8301779136 /Users/maisam/Desktop/proj/builder/ai_tools.py changed, reloading.
+INFO 2026-05-25 07:18:15,124 autoreload 45218 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 07:36:56,879 autoreload 45661 8301779136 Watching for file changes with StatReloader
+INFO 2026-05-25 07:37:01,743 basehttp 45661 6202093568 "GET / HTTP/1.1" 200 4312
+INFO 2026-05-25 07:37:01,753 basehttp 45661 6235746304 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+WARNING 2026-05-25 07:37:01,753 basehttp 45661 6202093568 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:37:01,756 basehttp 45661 6235746304 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-25 07:37:01,757 basehttp 45661 6218919936 "GET /static/builder/css/main.css HTTP/1.1" 200 60786
+INFO 2026-05-25 07:37:04,972 basehttp 45661 6218919936 "GET /chat/new/ HTTP/1.1" 200 6855
+INFO 2026-05-25 07:37:04,998 basehttp 45661 6235746304 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+WARNING 2026-05-25 07:37:04,998 basehttp 45661 6218919936 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:37:07,907 basehttp 45661 6235746304 "POST /api/new/ HTTP/1.1" 200 690
+INFO 2026-05-25 07:37:11,381 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 356
+INFO 2026-05-25 07:37:14,467 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-25 07:37:16,695 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-25 07:37:19,128 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-25 07:37:32,409 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-25 07:37:47,625 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 453
+INFO 2026-05-25 07:38:03,749 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 509
+INFO 2026-05-25 07:38:18,043 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 466
+INFO 2026-05-25 07:38:42,023 basehttp 45661 6235746304 "POST /api/upload/24/ HTTP/1.1" 200 1483
+INFO 2026-05-25 07:38:57,775 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 508
+INFO 2026-05-25 07:39:16,826 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 364
+INFO 2026-05-25 07:39:35,974 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 260
+INFO 2026-05-25 07:40:07,308 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 394
+INFO 2026-05-25 07:40:15,501 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 794
+INFO 2026-05-25 07:41:13,721 basehttp 45661 6235746304 "POST /api/chat/ HTTP/1.1" 200 312
+INFO 2026-05-25 07:41:15,322 basehttp 45661 6235746304 "GET /chat/24/report/analysis/ HTTP/1.1" 200 11561
+INFO 2026-05-25 07:41:15,367 basehttp 45661 6202667008 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+WARNING 2026-05-25 07:41:15,369 basehttp 45661 6235746304 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:41:51,404 basehttp 45661 6202667008 "GET /chat/24/ HTTP/1.1" 200 6855
+WARNING 2026-05-25 07:41:51,427 basehttp 45661 6202667008 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:41:51,435 basehttp 45661 6219493376 "GET /threads/load/24/ HTTP/1.1" 200 14120
+INFO 2026-05-25 07:41:53,335 basehttp 45661 6219493376 "GET /chat/24/report/plan/ HTTP/1.1" 200 16472
+WARNING 2026-05-25 07:41:53,374 basehttp 45661 6219493376 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:42:12,872 basehttp 45661 6202667008 "GET /chat/24/ HTTP/1.1" 200 6855
+WARNING 2026-05-25 07:42:12,886 basehttp 45661 6202667008 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:42:12,894 basehttp 45661 6219493376 "GET /threads/load/24/ HTTP/1.1" 200 14120
+INFO 2026-05-25 07:42:24,672 basehttp 45661 6219493376 "GET / HTTP/1.1" 200 4657
+WARNING 2026-05-25 07:42:24,681 basehttp 45661 6219493376 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:42:27,306 basehttp 45661 6202667008 "GET /chat/24/ HTTP/1.1" 200 6855
+WARNING 2026-05-25 07:42:27,322 basehttp 45661 6202667008 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:42:27,334 basehttp 45661 6219493376 "GET /threads/load/24/ HTTP/1.1" 200 14120
+INFO 2026-05-25 07:42:29,180 basehttp 45661 6219493376 "GET /chat/24/report/plan/ HTTP/1.1" 200 16472
+WARNING 2026-05-25 07:42:29,219 basehttp 45661 6219493376 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 07:42:57,182 basehttp 45661 6202667008 "GET /chat/24/report/analysis/ HTTP/1.1" 200 11561
+WARNING 2026-05-25 07:42:57,221 basehttp 45661 6202667008 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889

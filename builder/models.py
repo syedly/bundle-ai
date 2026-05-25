@@ -138,7 +138,29 @@ class BuilderRun(models.Model):
 
     def get_ai_analysis(self):
         try:
-            return json.loads(self.ai_analysis_json) if self.ai_analysis_json else None
+            if not self.ai_analysis_json:
+                return None
+            data = json.loads(self.ai_analysis_json)
+            # Normalize old flat format (no 'people' key) to the new people-array format
+            if 'people' not in data:
+                data = {
+                    'header_title': data.get('header_title', self.company_name or ''),
+                    'people': [{
+                        'name': data.get('header_title', 'Employee'),
+                        'role_title': '',
+                        'confidence': data.get('confidence', 'Moderate confidence'),
+                        'confidence_rationale': data.get('confidence_rationale', ''),
+                        'summary_paragraph': data.get('summary_paragraph', ''),
+                        'growth_opportunities': data.get('growth_opportunities', []),
+                        'recommended_delivery': '1:1 Training + Coaching',
+                        'recommended_sessions': 6,
+                        'delivery_options': data.get('delivery_options', []),
+                        'depth_options': data.get('depth_options', {}),
+                        'sequencing_logic': data.get('sequencing_logic', ''),
+                    }],
+                    'generated_at': data.get('generated_at', ''),
+                }
+            return data
         except (json.JSONDecodeError, TypeError):
             return None
 
@@ -153,6 +175,138 @@ class BuilderRun(models.Model):
     def __str__(self):
         return f"BuilderRun {self.id} — {self.display_title()}"
 
+
+# ── Agent & Prompt management ─────────────────────────────────────────────────
+
+class AgentConfig(models.Model):
+    """One record per AI agent role. Tune temperature, tokens, model — all via admin."""
+
+    AGENT_KEYS = [
+        ('context_collector', 'Context Collector — Stage 1 & 2 (question flow)'),
+        ('analyzer',          'Analyzer — Stage 3 & 4 (recommendation)'),
+        ('plan_generator',    'Plan Generator — Stage 5 (full training plan)'),
+        ('general',           'General — Stage 6 & fallback'),
+    ]
+
+    key         = models.CharField(max_length=50, unique=True, choices=AGENT_KEYS)
+    label       = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    model_name  = models.CharField(
+        max_length=100, default='gpt-4o',
+        help_text='OpenAI model for this agent (e.g. gpt-4o, gpt-4o-mini)',
+    )
+    temperature = models.FloatField(default=0.7)
+    max_tokens  = models.IntegerField(default=8000)
+    is_active   = models.BooleanField(default=True)
+    updated_at  = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['key']
+        verbose_name = 'Agent Config'
+        verbose_name_plural = 'Agent Configs'
+
+    def __str__(self):
+        return self.label
+
+
+class PromptSection(models.Model):
+    """
+    One named section of a system prompt.
+    Shared sections (agent=None) are included in every agent.
+    Agent-specific sections are included only for their agent.
+    Sections are assembled in `order` sequence at runtime.
+    """
+
+    SECTION_KEYS = [
+        # ── Shared (all agents) ──────────────────────────────────────
+        ('identity',          'AI Identity & Role'),
+        ('critical_rules',    'Critical Rules — Never Violate'),
+        ('brand_tone',        'Brand Tone'),
+        ('data_saving',       'Data Saving Instructions'),
+        ('suggestions_rules', 'Suggestions — Rules & Format'),
+        # ── Context Collector ────────────────────────────────────────
+        ('stage_1_flow',      'Stage 1 — Context Collection Flow (Q1-Q14)'),
+        ('stage_2_paths',     'Stage 2 — Data Input Paths (A / B / C)'),
+        # ── Analyzer ────────────────────────────────────────────────
+        ('confidence_logic',  'Confidence Score Logic'),
+        ('stage_4_format',    'Stage 4 — Recommendation Format'),
+        ('length_depth_rules','Length & Depth Rules'),
+        # ── Plan Generator ───────────────────────────────────────────
+        ('stage_5_format',    'Stage 5 — Training Plan Format'),
+        ('stage_5_rules',     'Stage 5 — Critical Rules'),
+        ('tool_instructions', 'Tool Call Instructions'),
+        # ── General / Booking ────────────────────────────────────────
+        ('stage_6_booking',   'Stage 6 — Booking Flow'),
+    ]
+
+    key         = models.CharField(max_length=60, unique=True, choices=SECTION_KEYS)
+    label       = models.CharField(max_length=200)
+    content     = models.TextField()
+    description = models.TextField(
+        blank=True,
+        help_text='What this section controls and what to be careful about when editing.',
+    )
+    agent = models.ForeignKey(
+        AgentConfig,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='sections',
+        help_text='Which agent uses this section. Leave blank = shared (all agents).',
+    )
+    order = models.PositiveSmallIntegerField(
+        default=10,
+        help_text='Assembly order — lower numbers appear earlier in the assembled prompt.',
+    )
+    is_active  = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='prompt_section_edits',
+    )
+
+    class Meta:
+        ordering = ['order', 'key']
+        verbose_name = 'Prompt Section'
+        verbose_name_plural = 'Prompt Sections'
+
+    def __str__(self):
+        return self.label
+
+    def save_version(self, user=None, note=''):
+        """Snapshot current content as a version before overwriting."""
+        if self.pk and self.content:
+            PromptSectionVersion.objects.create(
+                section=self,
+                content=self.content,
+                saved_by=user,
+                note=note,
+            )
+
+
+class PromptSectionVersion(models.Model):
+    """Immutable version history for PromptSection edits."""
+
+    section  = models.ForeignKey(PromptSection, on_delete=models.CASCADE, related_name='versions')
+    content  = models.TextField()
+    saved_at = models.DateTimeField(auto_now_add=True)
+    saved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    note     = models.CharField(max_length=500, blank=True)
+
+    class Meta:
+        ordering = ['-saved_at']
+
+    def __str__(self):
+        ts = self.saved_at.strftime('%Y-%m-%d %H:%M')
+        return f"{self.section.label} — {ts}"
+
+    @property
+    def truncated_content(self):
+        return self.content[:300] + ' …' if len(self.content) > 300 else self.content
+
+
+# ── Password reset (existing) ─────────────────────────────────────────────────
 
 class PasswordResetToken(models.Model):
     """One-time token for custom Bundle password reset (not Django's built-in flow)."""

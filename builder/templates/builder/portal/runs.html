@@ -1,0 +1,79 @@
+{% extends 'builder/portal/base.html' %}
+
+{% block title %}All Runs{% endblock %}
+{% block nav_runs %}active{% endblock %}
+{% block header_title %}All Runs{% endblock %}
+{% block header_actions %}
+  <span style="font-size:12px;color:var(--text-muted)">{{ runs|length }} shown (max 50)</span>
+{% endblock %}
+
+{% block content %}
+<p class="page-sub">Every conversation that has been started. Click a company name to view the chat.</p>
+
+<div class="filter-bar">
+  <a href="{% url 'portal_runs' %}" class="{% if not status_filter %}active{% endif %}">All</a>
+  {% for key, label in status_choices %}
+  <a href="?status={{ key }}" class="{% if status_filter == key %}active{% endif %}">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Company</th>
+        <th>User</th>
+        <th>Stage</th>
+        <th>Status</th>
+        <th>Entry</th>
+        <th>Sessions</th>
+        <th>Contact</th>
+        <th>Started</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for run in runs %}
+      <tr>
+        <td style="font-family:monospace;font-size:12px;color:var(--text-muted)">{{ run.id }}</td>
+        <td>
+          <strong>{{ run.company_name|default:"—" }}</strong>
+          {% if run.industry %}<div style="font-size:11px;color:var(--text-muted)">{{ run.industry }}</div>{% endif %}
+        </td>
+        <td style="font-size:12px">{{ run.user.username|default:"anon" }}</td>
+        <td>
+          <span class="badge {% if run.current_stage <= 2 %}badge-blue{% elif run.current_stage <= 4 %}badge-teal{% elif run.current_stage == 5 %}badge-orange{% else %}badge-purple{% endif %}">
+            Stage {{ run.current_stage }}
+          </span>
+        </td>
+        <td>
+          <span class="badge {% if run.status == 'in_progress' %}badge-gray{% elif run.status == 'plan_generated' %}badge-green{% elif run.status == 'cta_clicked' %}badge-purple{% else %}badge-teal{% endif %}">
+            {{ run.get_status_display }}
+          </span>
+        </td>
+        <td style="font-size:11px;color:var(--text-muted)">{{ run.entry_point|default:"—" }}</td>
+        <td style="font-size:12px;text-align:center">
+          {% if run.num_sessions %}{{ run.num_sessions }}{% else %}—{% endif %}
+        </td>
+        <td style="font-size:11px">
+          {% if run.contact_email %}
+          <div>{{ run.contact_name }}</div>
+          <div style="color:var(--text-muted)">{{ run.contact_email }}</div>
+          {% else %}—{% endif %}
+        </td>
+        <td style="font-size:11px;color:var(--text-muted);white-space:nowrap">{{ run.created_at|date:"d M Y" }}<br>{{ run.created_at|date:"H:i" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="9">
+          <div class="empty-state">
+            <div class="es-icon">💬</div>
+            <p>No runs match this filter.</p>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

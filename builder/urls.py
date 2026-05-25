@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import portal_views
 
 urlpatterns = [
     # Auth
@@ -37,4 +38,13 @@ urlpatterns = [
 
     # PDF download
     path('api/pdf/<int:run_id>/', views.download_pdf, name='download_pdf'),
+
+    # ── Superuser control portal ──────────────────────────────────────────────
+    path('control/',                                    portal_views.portal_dashboard,     name='portal_dashboard'),
+    path('control/prompts/',                            portal_views.portal_prompts,       name='portal_prompts'),
+    path('control/prompts/<str:key>/',                  portal_views.portal_prompt_edit,   name='portal_prompt_edit'),
+    path('control/prompts/<str:key>/preview/',          portal_views.portal_prompt_preview, name='portal_prompt_preview'),
+    path('control/agents/',                             portal_views.portal_agents,        name='portal_agents'),
+    path('control/agents/<int:pk>/save/',               portal_views.portal_agent_save,    name='portal_agent_save'),
+    path('control/runs/',                               portal_views.portal_runs,          name='portal_runs'),
 ]

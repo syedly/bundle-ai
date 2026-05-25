@@ -2,6 +2,8 @@ import re
 import logging
 from openai import OpenAI
 from django.conf import settings
+from django.core.cache import cache
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -42,63 +44,67 @@ def extract_data_tag(text):
 # ── Fixed per-question suggestion sets ────────────────────────────────────────
 
 STAGE_SUGGESTIONS = {
-    # Stage 1 – company intro
+    # Q1 – company intro
     'q_company': [
         "A 200-person fintech operations team",
         "A healthcare clinic's leadership team",
         "A 1,000-person SaaS engineering org",
         "A mid-size manufacturing plant",
-        "A regional retail chain's management team",
+        "A regional retail chain's store managers",
     ],
-    # Stage 1 – team size follow-up
+    # Q2 – company size (smart follow-up with range labels)
     'q_team_size': [
-        "Under 50 people",
-        "50–200 people",
-        "200–500 people",
-        "Over 500 people",
+        "200 is the whole company",
+        "200 to 499 total",
+        "500 to 999 total",
+        "1,000 to 2,999 total",
+        "3,000 or more",
     ],
-    # Stage 1 – who is the training for
+    # Q3 – who is this training for
     'q_focus': [
         "One specific person",
-        "A cohort of managers",
-        "The whole team",
+        "A small group with shared gaps",
+        "The whole operations team",
+        "A cross-functional cohort",
     ],
-    # Stage 1 – role and seniority
+    # Q4 – role and seniority
     'q_role': [
-        "A mid-level operations manager",
-        "A senior individual contributor",
-        "A new first-line manager",
-        "A director or VP",
+        "A mid-level manager stepping up",
+        "A senior IC moving into leadership",
+        "A new VP coming from director level",
+        "A team lead with informal authority",
+        "A director managing other managers",
     ],
-    # Stage 1 – training goal
+    # Q5 – training goal
     'q_goal': [
-        "Strengthen executive communication",
-        "Build direct feedback habits",
-        "Improve leadership presence",
-        "Drive better team accountability",
+        "Strengthen their executive presence",
+        "Help them lead through other managers more effectively",
+        "Build their strategic thinking",
+        "Improve how they give feedback to their managers",
+        "Prepare them for a VP-level role",
     ],
-    # Stage 1 – specific challenges
+    # Q6 – specific challenges
     'q_challenges': [
-        "Struggles to frame updates for leadership",
-        "Doesn't give direct feedback to the team",
-        "Gets lost in detail during senior meetings",
-        "Struggles to prioritise under pressure",
+        "Struggles to command the room with senior leadership",
+        "Comes across as too tactical, not strategic enough",
+        "Has trouble influencing without authority",
+        "Gets lost in the weeds instead of setting direction",
     ],
-    # Stage 1 – day-to-day observations
+    # Q7 – what are you hearing / observing
     'q_daytoday': [
-        "Mainly in meetings and presentations",
-        "In written updates and reports",
-        "In 1:1s with their direct reports",
-        "Both in meetings and written work",
+        "Gets pulled into the weeds in leadership meetings",
+        "Struggles to influence peers and senior stakeholders",
+        "Talks about tasks, not outcomes or vision",
+        "Avoids taking a strong stance on ambiguous decisions",
     ],
-    # Stage 2 – what data is available
+    # Q8 – what data is available
     'q_data': [
-        "I have a performance review to share",
-        "I have a job description to paste",
-        "I have informal notes only",
-        "No data — let's use your questions",
+        "I can share performance reviews or feedback data",
+        "I have job descriptions I can paste or upload",
+        "I have a competency framework or learning brief",
+        "Nothing structured — let's just talk it through",
     ],
-    # Stage 2 – upload/paste prompt
+    # Stage 2 – after file upload prompt
     'q_data_upload': [
         "I'll paste the review now",
         "I'll use the upload button",
@@ -115,55 +121,51 @@ STAGE_SUGGESTIONS = {
         "I'll paste the job description now",
         "I have multiple roles to add",
         "Let me describe the roles instead",
-        "No data — let's use your questions",
+        "Nothing structured — let's just talk it through",
     ],
-    # Stage 2 – AI summary confirmation
+    # Stage 2 – AI document summary confirmation (after upload analysis)
     'q_confirm_data': [
         "Yes, that's accurate",
-        "Close — let me clarify one thing",
-        "Not quite — here's what's different",
+        "Mostly right — let me clarify one thing",
+        "Add one more detail",
+        "Not quite — here's the correction",
     ],
-    # Stage 1 – strengths question
+    # Q9 – strengths (beyond what's in the review)
     'q_strengths': [
-        "Strong relationship management",
-        "Excellent technical depth",
-        "Great with external stakeholders",
-        "Strong execution and follow-through",
+        "Strong client and borrower relationships",
+        "Deep technical knowledge of the portfolio",
+        "Willing to take on stretch assignments",
+        "Good at developing junior team members",
     ],
-    # Stage 1 – success metrics
-    'q_success': [
-        "They run leadership meetings confidently",
-        "Measurable improvement in 360 feedback",
-        "Fewer escalations to me",
-        "Their team performs more independently",
+    # Q10 – company values / competencies (NEW)
+    'q_values': [
+        "Yes, I'll paste them",
+        "We have a competency framework",
+        "Not formalized — just feel of the place",
+        "Skip — keep it generic",
     ],
-    # Stage 1 – budget / program size
-    'q_budget': [
-        "Start small — 4 sessions to test",
-        "A structured program — 6 sessions",
-        "Full programme — 8 sessions",
-    ],
-    # Stage 1 – timeline
+    # Q11 – timeline
     'q_timeline': [
         "Within the next 30 days",
         "Next quarter",
-        "No specific deadline",
-        "Before end of year",
+        "Next 6 months",
+        "No specific timeline",
     ],
-    # Stage 1 – constraints / off-limits
+    # Q12 – constraints / off-limits
     'q_constraints': [
+        "No exclusions — open to anything",
+        "Avoid anything overly academic",
         "We've already done communication training",
-        "Nothing is off the table",
-        "Keep it practical — no theory-heavy content",
-        "Limited to 1 session per month",
+        "Avoid time-management-focused sessions",
     ],
-    # Stage 1 – ready to generate
+    # Q13 – summary confirmation + generate (replaces old Q14)
     'q_ready': [
-        "Go ahead — generate the recommendation",
-        "Generate it now",
-        "Let me add one more thing first",
+        "Go ahead, generate the recommendation",
+        "Actually, change the timeline",
+        "Actually, add more context on his role",
+        "Actually, adjust the training goals",
     ],
-    # Diagnostic questions
+    # Diagnostic questions (Path C – no data)
     'q_diag_challenge': [
         "Communication and alignment gaps",
         "Leadership and management gaps",
@@ -220,11 +222,24 @@ STAGE_SUGGESTIONS = {
         "Build Momentum — 6 sessions",
         "Full Impact — 8 sessions",
     ],
+    # Stage 4 – budget depth
+    'q_budget': [
+        "Start small — 4 sessions to test",
+        "A structured program — 6 sessions",
+        "Full programme — 8 sessions",
+    ],
     # Stage 6 – booking
     'q_book': [
         "Yes, let's talk",
         "Open the plan first",
         "I'll review and come back",
+    ],
+    # Kept for legacy / resume compatibility
+    'q_success': [
+        "They run leadership meetings confidently",
+        "Measurable improvement in 360 feedback",
+        "Fewer escalations to me",
+        "Their team performs more independently",
     ],
 }
 
@@ -232,7 +247,7 @@ STAGE_SUGGESTIONS = {
 def detect_question_type(ai_message):
     """
     Detect which question the AI just asked and return the matching suggestion key.
-    Patterns are broad to catch all natural AI phrasings. Most-specific checks first.
+    Order: most-specific first, broadest last. Returns None for transitional messages.
     """
     msg = ai_message.lower()
 
@@ -254,7 +269,7 @@ def detect_question_type(ai_message):
     ]):
         return 'q_sessions'
 
-    # ── Budget (needs BOTH a budget word AND a tier label) ────────────────────
+    # ── Budget depth ──────────────────────────────────────────────────────────
     if any(p in msg for p in ['budget', 'investment', 'training spend']) and \
        any(p in msg for p in ['start here', 'build momentum', 'full impact',
                                'start small', 'structured program', 'full programme']):
@@ -264,25 +279,44 @@ def detect_question_type(ai_message):
     if any(p in msg for p in [
         'book a', 'schedule a', 'consultation call', '30-minute',
         'talk to a bundle', 'book a call', 'get you scheduled',
-        'download this plan', 'download as a pdf', "set up a quick call",
+        'download this plan', 'download as a pdf', 'set up a quick call',
         'quick call with a bundle',
     ]):
         return 'q_book'
 
-    # ── Ready to generate recommendation ────────────────────────────────────
+    # ── Q13 Summary confirmation / ready to generate ──────────────────────────
+    # These patterns ONLY appear in the AI's Q13 recap message, not in the opening line.
+    # Keep patterns specific to avoid false-positives against the greeting/opening.
     if any(p in msg for p in [
-        "want to add anything", "anything else before", "want me to factor",
-        "before i put your recommendation", "ready to generate",
-        "shall i put together", "ready to proceed", "anything you'd like to add",
-        "anything else you want me to", "before i draft",
+        "so we're looking at", "so we are looking at",
+        "here's what i've got", "here's what we have",
+        "to summarise", "to summarize",
+        "ready to generate your", "ready to move forward",
+        "shall i go ahead", "go ahead and generate",
+        "before i put your recommendation",
+        "before i generate your", "before i generate the",
+        "we'll build around what's left", "we've got everything",
+        "i have everything i need",
+        "ready to generate?", "shall i put together your",
     ]):
         return 'q_ready'
 
-    # ── AI summary confirmation (after doc upload) ───────────────────────────
+    # ── Q2 Company size (smart follow-up) ─────────────────────────────────────
+    if any(p in msg for p in [
+        'how big is the company overall', 'is that the whole org',
+        'just the operations', 'just the team', 'whole org, or',
+        'whole company, or', 'just the', 'whole org',
+        'how big is the company', 'company size', 'how many people overall',
+        'overall headcount', 'how large is the company', 'company overall',
+        'rough number', 'rough is fine',
+    ]):
+        return 'q_team_size'
+
+    # ── AI document summary confirmation (after upload) ───────────────────────
     if any(p in msg for p in [
         "that right?", "is that right?", "does that sound right",
         "that accurate?", "is that accurate", "sound about right",
-        "have i got that right", "is that a fair summary", "confirm that",
+        "have i got that right", "is that a fair summary",
         "looks like this is", "looks like we have",
     ]):
         return 'q_confirm_data'
@@ -302,83 +336,87 @@ def detect_question_type(ai_message):
         'paste it directly', 'share your performance', 'share the data',
         'go ahead and paste', 'can you paste', 'please paste', 'feel free to paste',
         'drop the file', 'drop a file', 'paperclip',
+        'pdf, csv', 'pdf, csv, or excel', 'pdf, csv, excel',
     ]):
         return 'q_data_upload'
 
     # ── JD request (path B) ──────────────────────────────────────────────────
     if any(p in msg for p in [
         'paste your job', 'paste the job', 'paste one or more job',
-        'job description', 'paste the jd', 'share the jd', 'paste a job',
+        'paste the jd', 'share the jd', 'paste a job',
         'job descriptions for', 'roles you want to train',
     ]):
         return 'q_data_jd'
 
-    # ── Constraints / off-table ───────────────────────────────────────────────
+    # ── Q12 Constraints / off-limits ─────────────────────────────────────────
     if any(p in msg for p in [
-        "off the table", "wouldn't land", "approaches that", "topics that",
+        "off the table", "wouldn't land", "topics or approaches",
         "anything we should avoid", "any topics to avoid", "off limits",
-        "already covered", "already done", "not a good fit",
+        "already covered", "not a good fit", "wouldn't land for",
+        "anything that", "approaches that wouldn't",
     ]):
         return 'q_constraints'
 
-    # ── Success metrics ───────────────────────────────────────────────────────
+    # ── Q10 Company values / competencies ────────────────────────────────────
+    if any(p in msg for p in [
+        'company values', 'mission language', 'competency framework',
+        'competencies', 'build this around', 'values, competencies',
+        'core values', 'any values', 'any mission', 'organisational values',
+        'organizational values', 'learning brief',
+    ]):
+        return 'q_values'
+
+    # ── Legacy success metrics (kept for resume) ──────────────────────────────
     if any(p in msg for p in [
         'how would you know this worked', 'how will you know', 'define success',
         'what changes for you', 'what would success look like for this person',
-        'what would tell you', 'measure success', 'how does success look',
-        'what does good look like', 'what changes for the business',
+        'what would tell you', 'measure success', 'what does good look like',
     ]):
         return 'q_success'
 
-    # ── Strengths / build on ─────────────────────────────────────────────────
+    # ── Q9 Strengths / beyond the review ─────────────────────────────────────
     if any(p in msg for p in [
         'what does this person do well', 'what are their strengths',
         "build on rather than replace", 'already doing well',
         'what should we build on', "what's working", 'what are they good at',
+        'beyond what', "beyond the review", "beyond what's in",
         'existing strengths', 'talent they already have',
     ]):
         return 'q_strengths'
 
-    # ── Day-to-day observations ───────────────────────────────────────────────
+    # ── Q7 What are you hearing / observing ──────────────────────────────────
     if any(p in msg for p in [
-        'day to day', 'day-to-day', 'showing up in', 'observing',
+        'what are you hearing', 'hearing from others', 'observing directly',
+        'specific moments', 'shows up', 'where this shows up',
+        'day to day', 'day-to-day', 'showing up in',
         'see it in meetings', 'written updates', 'where is this showing',
-        'where do you see this', 'what are you noticing', 'notice in their work',
-        'see this play out',
+        'where do you see this', 'what are you noticing', 'see this play out',
     ]):
         return 'q_daytoday'
 
-    # ── Specific challenges ───────────────────────────────────────────────────
+    # ── Q6 Specific challenges ────────────────────────────────────────────────
     if any(p in msg for p in [
-        'challenges are they running into', 'running into right now',
-        'what challenges', 'struggles they', 'specific challenge',
+        'challenges are they facing', 'challenges are they running into',
+        'running into right now', 'what challenges', 'specific challenge',
         'challenges right now', 'what are they struggling with',
-        'what problems are they', 'what issues', 'be specific if you can',
+        'what problems are they', 'be as specific', 'be specific if you can',
     ]):
         return 'q_challenges'
 
-    # ── Role and seniority ────────────────────────────────────────────────────
+    # ── Q4 Role and seniority ─────────────────────────────────────────────────
     if any(p in msg for p in [
         'what role are they in', 'seniority ladder', 'seniority level',
         'their role', 'what is their role', "what's their role",
         'where are they on the', 'level are they', 'their position',
-        'what position', 'their title', 'job title', 'role and seniority',
+        'their title', 'job title', 'role and seniority',
     ]):
         return 'q_role'
 
-    # ── Team size follow-up ───────────────────────────────────────────────────
-    if any(p in msg for p in [
-        'how big is the company', 'company size', 'how many people overall',
-        'rough is fine', 'rough number', 'overall headcount',
-        'how large is the company', 'company overall',
-    ]):
-        return 'q_team_size'
-
-    # ── Diagnostic questions ──────────────────────────────────────────────────
+    # ── Diagnostic questions (Path C) ─────────────────────────────────────────
     if any(p in msg for p in [
         'biggest challenge', "team's biggest challenge", 'main challenge',
         'biggest challenge your team', 'team is facing right now',
-        'team facing right now', 'what challenge',
+        'team facing right now',
     ]):
         return 'q_diag_challenge'
 
@@ -389,9 +427,9 @@ def detect_question_type(ai_message):
         return 'q_diag_friction'
 
     if any(p in msg for p in [
-        'confident giving', 'giving direct feedback', 'direct feedback',
-        'managers confident', 'confident when giving', 'comfortable giving feedback',
-        'comfortable giving direct', 'give direct feedback', 'performance falls short',
+        'confident giving', 'giving direct feedback',
+        'managers confident', 'comfortable giving feedback',
+        'give direct feedback', 'performance falls short',
     ]):
         return 'q_diag_feedback'
 
@@ -405,7 +443,7 @@ def detect_question_type(ai_message):
     if any(p in msg for p in [
         'priorities shift', 'when priorities', 'adapt quickly',
         'struggle with change', 'unexpected changes', 'shifting priorities',
-        'adapt quickly or struggle', 'unexpected priority',
+        'adapt quickly or struggle',
     ]):
         return 'q_diag_change'
 
@@ -417,8 +455,8 @@ def detect_question_type(ai_message):
         return 'q_diag_ownership'
 
     if any(p in msg for p in [
-        'collaborate across', 'cross-functional', 'across functions',
-        'across departments', 'across teams', 'collaborate with other',
+        'collaborate across', 'across functions', 'across departments',
+        'across teams', 'collaborate with other',
         'how well does this team collaborate', 'between departments',
     ]):
         return 'q_diag_collab'
@@ -429,27 +467,25 @@ def detect_question_type(ai_message):
     ]):
         return 'q_diag_success'
 
-    # ── Data availability ─────────────────────────────────────────────────────
+    # ── Q8 Data availability ──────────────────────────────────────────────────
     if any(p in msg for p in [
         'performance data', 'performance review', 'review data', 'employee data',
-        'any data', 'data available', 'data you can share', 'share any data',
-        'do you have data', 'access to data', 'have you got data', 'data to share',
-        'what can you share', 'what do you have', 'i can work with',
-    ]) and any(p in msg for p in [
-        'do you', 'is there', 'have you', 'any ', 'could you', 'can you',
-        'would you', 'share', 'available', 'can work with',
+        'any data', 'data available', 'data you can share',
+        'do you have data', 'data to share', 'what can you share',
+        'what do you have', 'i can work with', 'whatever you have',
     ]):
         return 'q_data'
 
-    # ── Timeline ──────────────────────────────────────────────────────────────
+    # ── Q11 Timeline ──────────────────────────────────────────────────────────
     if any(p in msg for p in [
-        'timeline', 'urgency', 'time frame', 'timeframe', 'start date',
-        'kicking off', 'when do you want', 'when do you need', 'any deadlines',
-        'deadline', 'when do you want this to start', 'when to start',
+        'when do you want this to start', 'when do you want',
+        'when do you need', 'any deadlines', 'deadline',
+        'timeline', 'time frame', 'timeframe', 'start date',
+        'kicking off', 'when to start', 'when do you hope',
     ]):
         return 'q_timeline'
 
-    # ── Who is training for (focus type) ─────────────────────────────────────
+    # ── Q3 Who is training for ────────────────────────────────────────────────
     if any(p in msg for p in [
         "who's this training for", "who is this training for", "who is the training for",
         "who are we training", "training for one person", "one person or",
@@ -457,9 +493,9 @@ def detect_question_type(ai_message):
     ]):
         return 'q_focus'
 
-    # ── Training goal ─────────────────────────────────────────────────────────
+    # ── Q5 Training goal ──────────────────────────────────────────────────────
     if any(p in msg for p in [
-        'accomplish with training', 'hoping the training will accomplish',
+        'accomplish for this person', 'hoping the training will accomplish',
         'training will accomplish', 'training goal', 'hoping to achieve',
         'what are you hoping', 'what would you like to achieve', 'goal for this',
         'what are you trying to', 'objective for this', 'what outcome',
@@ -467,13 +503,12 @@ def detect_question_type(ai_message):
     ]):
         return 'q_goal'
 
-    # ── Company intro (broadest — check last) ─────────────────────────────────
+    # ── Q1 Company intro (broadest — check last) ──────────────────────────────
     if any(p in msg for p in [
         'what company', 'company is this for', 'company name', 'which company',
-        'your company', 'team size', 'how many people', 'approximate team',
-        'how big is your team', 'how large', 'what does your team do',
-        'roughly what does', 'tell me about your company', 'what industry',
-        'your industry', 'how many employees', 'name of your company',
+        'your company', 'what does your team do', 'roughly what does',
+        'tell me about your company', 'what industry', 'your industry',
+        'how many employees', 'name of your company', 'to start:',
     ]):
         return 'q_company'
 
@@ -519,459 +554,145 @@ def build_pathways_context():
     return "\n".join(lines)
 
 
-# ── System prompt ──────────────────────────────────────────────────────────────
+# ── Prompt assembly — DB-backed with cache ────────────────────────────────────
 
-def build_system_prompt(run):
-    taxonomy = build_taxonomy_context()
+_PROMPT_CACHE_TTL = 300  # 5 minutes
+
+
+def _get_agent_key(run) -> str:
+    """Route to the correct agent based on run stage."""
+    if run.current_stage <= 2:
+        return 'context_collector'
+    if run.current_stage in (3, 4):
+        return 'analyzer'
+    if run.current_stage == 5 and not run.final_plan_json:
+        return 'plan_generator'
+    return 'general'
+
+
+def _load_prompt_sections(agent_key: str) -> list[str]:
+    """
+    Load assembled prompt sections from cache (or DB).
+    Returns ordered list of section content strings.
+    Shared sections (agent=None) + agent-specific sections, sorted by order.
+    """
+    cache_key = f'bundle_prompt_sections__{agent_key}'
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    try:
+        from .models import PromptSection
+        sections = (
+            PromptSection.objects
+            .filter(is_active=True)
+            .filter(Q(agent__isnull=True) | Q(agent__key=agent_key))
+            .order_by('order', 'key')
+            .values_list('content', flat=True)
+        )
+        result = list(sections)
+    except Exception:
+        result = []
+
+    cache.set(cache_key, result, _PROMPT_CACHE_TTL)
+    return result
+
+
+def _get_agent_params(agent_key: str) -> dict:
+    """Load model/temperature/max_tokens for an agent from DB (with cache)."""
+    cache_key = f'bundle_agent_params__{agent_key}'
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    defaults = {'model': settings.OPENAI_MODEL, 'temperature': 0.7, 'max_tokens': 8000}
+    try:
+        from .models import AgentConfig
+        agent = AgentConfig.objects.get(key=agent_key, is_active=True)
+        result = {
+            'model':       agent.model_name or settings.OPENAI_MODEL,
+            'temperature': agent.temperature,
+            'max_tokens':  agent.max_tokens,
+        }
+    except Exception:
+        result = defaults
+
+    cache.set(cache_key, result, _PROMPT_CACHE_TTL)
+    return result
+
+
+def invalidate_prompt_cache(agent_key: str = None):
+    """
+    Invalidate cached prompts. Called by admin after a PromptSection is saved.
+    Pass agent_key to clear only one agent, or None to clear all.
+    """
+    keys_to_clear = (
+        [agent_key] if agent_key
+        else ['context_collector', 'analyzer', 'plan_generator', 'general']
+    )
+    for k in keys_to_clear:
+        cache.delete(f'bundle_prompt_sections__{k}')
+        cache.delete(f'bundle_agent_params__{k}')
+
+
+def _build_run_state_block(run) -> str:
+    """Dynamic run state injected at the top of every prompt (not stored in DB)."""
+    return (
+        "CURRENT RUN STATE:\n"
+        f"- Company: {run.company_name or 'Not yet collected'}\n"
+        f"- Industry: {run.industry or 'Not yet collected'}\n"
+        f"- Team Size: {run.team_size or 'Not yet collected'}\n"
+        f"- Role Title: {run.role_title or 'Not yet collected'}\n"
+        f"- Seniority Level: {run.seniority_level or 'Not yet collected'}\n"
+        f"- Training Goal: {run.training_goal or 'Not yet collected'}\n"
+        f"- Observed Challenges: {run.observed_challenges or 'Not yet collected'}\n"
+        f"- Success Metrics: {run.success_metrics or 'Not yet collected'}\n"
+        f"- Training Constraints: {run.training_constraints or 'Not yet collected'}\n"
+        f"- Focus Type: {run.focus_type or 'Not yet collected'}\n"
+        f"- Has Performance Data: {run.has_performance_data or 'Not yet collected'}\n"
+        f"- Budget Tier: {run.budget_tier or 'Not yet collected'}\n"
+        f"- Timeline: {run.timeline or 'Not yet collected'}\n"
+        f"- Entry Point: {run.entry_point or 'Not yet determined'}\n"
+        f"- Current Stage: {run.current_stage}"
+    )
+
+
+def build_system_prompt(run, agent_key: str = None) -> str:
+    """
+    Assemble the system prompt for the given agent from DB-stored sections.
+    Order: identity → run state → taxonomy/sessions/pathways → agent sections → shared sections.
+    Falls back to the static emergency prompt if DB is unavailable.
+    """
+    if agent_key is None:
+        agent_key = _get_agent_key(run)
+
+    taxonomy  = build_taxonomy_context()
     sessions  = build_sessions_context()
     pathways  = build_pathways_context()
 
-    return f"""You are the Bundle AI Training Builder — a warm, expert training advisor.
-Your job is to guide HR leaders and executives through a structured conversation,
-understand their company, people, and training goals, then generate a specific, credible
-role-by-role training plan using Bundle's REAL session catalog only.
-
-CURRENT RUN STATE:
-- Company: {run.company_name or 'Not yet collected'}
-- Industry: {run.industry or 'Not yet collected'}
-- Team Size: {run.team_size or 'Not yet collected'}
-- Role Title: {run.role_title or 'Not yet collected'}
-- Seniority Level: {run.seniority_level or 'Not yet collected'}
-- Training Goal: {run.training_goal or 'Not yet collected'}
-- Observed Challenges: {run.observed_challenges or 'Not yet collected'}
-- Success Metrics: {run.success_metrics or 'Not yet collected'}
-- Training Constraints: {run.training_constraints or 'Not yet collected'}
-- Focus Type: {run.focus_type or 'Not yet collected'}
-- Has Performance Data: {run.has_performance_data or 'Not yet collected'}
-- Budget Tier: {run.budget_tier or 'Not yet collected'}
-- Timeline: {run.timeline or 'Not yet collected'}
-- Entry Point: {run.entry_point or 'Not yet determined'}
-- Current Stage: {run.current_stage}
-
-{taxonomy}
-
-{sessions}
-
-{pathways}
-
-=== CRITICAL RULES — NEVER VIOLATE ===
-1. ONLY recommend sessions from the catalog above. Zero exceptions.
-2. NEVER recommend manager-only sessions to Individual Contributors.
-   Manager-only sessions: Systems Leadership, Digital Leadership, Transformational Leadership,
-   Servant Leadership, Leading Other Leaders, Succession Planning I, Succession Planning II.
-3. Session 1 MUST ALWAYS be a relational opener:
-   Effective Communication, Elevate Emotional Intelligence, Empathy and Compassion at Work,
-   Building Strong Team Dynamics, Coaching and Feedback, or Foster Collaboration.
-   NEVER open with: Time Management, Critical Thinking, Strategic Decision-Making,
-   Problem Solving, or Business Acumen.
-4. NEVER show any pricing. Labels only: Start Here / Build Momentum / Full Impact.
-5. NEVER produce generic outputs. Reference the user's actual company, role, stated goal.
-6. Strengths-based language only. NEVER say: weakness, deficiency, problem, failing.
-   Say instead: growth opportunity, area of focus, development priority.
-7. NEVER mention "Bundle's taxonomy" in user-facing text.
-8. Ask ONE question at a time. Never ask multiple questions in one message.
-9. Priority: Managers first, high-potentials second, ICs last.
-10. NEVER skip [SUGGESTIONS:] or [DATA:] tags — both required on every response.
-
-=== DATA SAVING — CRITICAL ===
-After EVERY message where you learn new context, append a [DATA: key=value | key=value] tag.
-This is parsed by the backend and saved to the database automatically.
-
-Valid DATA keys:
-  company_name, industry, team_size,
-  role_title, seniority_level,
-  training_goal, observed_challenges, success_metrics, training_constraints,
-  focus_type (individual|cohort|whole_team),
-  target_type (individual|cohort),
-  has_performance_data (yes|informal|no),
-  entry_point (performance_data|jd_based|diagnostic),
-  budget_tier (start_here|build_momentum|full_impact),
-  timeline, selected_scenario (A|B|C), num_sessions (number only)
-
-Example: [DATA: company_name=Acme Corp | industry=Fintech | team_size=200 | role_title=Operations Manager | seniority_level=mid-level]
-
-Output [DATA:] tag BEFORE [SUGGESTIONS:] tag, both at the very end of your message.
-If no new data to save, still output [DATA:] with the most recently confirmed values.
-
-=== LENGTH AND DEPTH — NON-NEGOTIABLE ===
-Every output must be FULLY written out. NEVER abbreviate, truncate, or summarise with
-"[repeat for other employees]" or "[continued]" or "..." or similar shorthand.
-These are real client deliverables — incompleteness destroys their value.
-
-Specific minimums:
-- Analysis paragraph (Stage 4): minimum 3 sentences with specific evidence
-- Each growth opportunity: minimum 2 sentences with a direct quote or specific reference
-- "If you go all in" paragraph: minimum 3 sentences with named outcomes
-- "If you start small" paragraph: minimum 2 sentences naming specific gaps that remain
-- Sequencing paragraph (Stage 5): minimum 4 sentences explaining the arc
-- "Why this session" per row: minimum 3 sentences, must reference specific data
-- Coaching support paragraph: minimum 3 sentences, specific to this person
-- Delivery method explanations: minimum 2 sentences each, specific to their gaps
-
-When generating Stage 5 plans with multiple employees, write EVERY employee block in full.
-Do not compress or reference earlier blocks. Each block is independent and complete.
-
-=== BRAND TONE ===
-Warm, expert, specific. Like a trusted advisor. Never robotic. Never generic filler.
-Write like someone who actually read the data — not like someone filling in a template.
-
-=== CONVERSATION FLOW — FOLLOW EXACTLY ===
-
-OPENING LINE (first message only):
-"Hi. I'm going to ask you a few things about your team and what you're trying to solve,
-then put together a plan you can react to. There are no wrong answers — the more specific
-you are, the more useful the plan will be.
-
-To start: what company is this for, and roughly what does your team do?"
-
-STAGE 1 — Context Collection (ONE question per message, conversational tone):
-
-Q1: "What company is this for, and roughly what does your team do?"
-    [DATA: company_name=X | industry=X]
-
-Q2: "How big is the company overall? Rough is fine."
-    [DATA: team_size=X]
-
-Q3: "Who's this training for?"
-    (One specific person / A specific cohort / The whole team)
-    [DATA: focus_type=individual|cohort|whole_team]
-
-Q4: "What role are they in, and where are they on the seniority ladder?"
-    (e.g. A mid-level operations manager, A senior IC, A new first-line manager)
-    [DATA: role_title=X | seniority_level=X]
-
-Q5: "What are you hoping the training will accomplish for this person?"
-    [DATA: training_goal=X]
-
-Q6: "What challenges are they running into right now? Be specific if you can."
-    [DATA: observed_challenges=X]
-
-Q7: "What are you observing day to day — is this showing up in meetings, written updates,
-     something else?"
-    [DATA: observed_challenges=updated with this context]
-
-Q8: "What can you share with me about this person? I can work with performance reviews,
-     job descriptions, or just our conversation here — whatever you have."
-    Route based on answer → see Stage 2 below.
-    [DATA: has_performance_data=yes|informal|no]
-
-STAGE 2 — Data Input (route to ONE path based on Q8 answer):
-
-  Path A — Has performance review / document:
-  "Drop the file with the paperclip, or paste the text into the chat.
-   PDF, CSV, Excel or plain text all work. If you have documents for multiple people,
-   upload them one at a time — I'll keep track of each person separately."
-  [DATA: entry_point=performance_data]
-
-  MULTI-PERSON DOCUMENT HANDLING (CRITICAL):
-  - Each time a document is uploaded, identify the person it belongs to from the content.
-  - After each upload, summarise what you found for THAT person specifically and confirm.
-  - Ask: "Got it — that's [Person Name]. I've noted their profile. Do you have another
-    document to add, or shall we move on?"
-  - [SUGGESTIONS: "Add another document" | "That's everyone — let's continue" | "Just this one person"]
-  - Keep a running mental list of every person uploaded. You will generate a separate,
-    fully detailed plan block for EACH person in Stage 5.
-  - NEVER merge or combine people into one block. Every person = their own complete section.
-
-  After the FINAL document (user confirms no more to add), summarise ALL people:
-  "I have documents for [N] people: [Name 1 — role], [Name 2 — role], etc. That right?"
-  [SUGGESTIONS: "Yes, that's accurate" | "Close — let me clarify one thing" | "Not quite"]
-
-  Path B — Has job descriptions / no formal data:
-  "Drop the file with the paperclip, or paste the JD directly into the chat.
-   If you have JDs for multiple roles, add them one at a time."
-  [DATA: entry_point=jd_based]
-  After receiving each JD: identify the role, summarise, ask if there are more.
-
-  Path C — No data — run these questions ONE at a time:
-  [DATA: entry_point=diagnostic]
-  D1: "What's the biggest challenge your team is facing right now?"
-  D2: "Where do you see the most friction — communication, execution, leadership, or morale?"
-  D3: "Are your managers confident giving direct feedback when performance falls short?"
-  D4: "When conflict comes up on the team, how does it typically get handled?"
-  D5: "When priorities shift unexpectedly, do people adapt quickly or does it create real struggle?"
-  D6: "Do people on this team generally take ownership of outcomes, or do they tend to wait for direction?"
-  D7: "How well does this team collaborate across functions or with other departments?"
-  D8: "What does success look like for this team in 6 months?"
-
-AFTER STAGE 2 DATA IS CONFIRMED — ask these follow-up questions ONE at a time:
-
-Q9: "What does this person do well already? Anything you'd want the training to build on
-     rather than replace?"
-     [DATA: — save to the run context for use in the plan]
-
-Q10: "How would you know this worked? What changes for you, this person, or the business?"
-     [DATA: success_metrics=X]
-
-Q11: "How big a program are you imagining?"
-     Show these naturally — no pricing:
-     - Start small — 4 sessions to test the approach
-     - A structured program — 6 sessions
-     - Full programme — 8 sessions for comprehensive development
-     [DATA: budget_tier=start_here|build_momentum|full_impact]
-
-Q12: "When do you want this to start?"
-     [DATA: timeline=X]
-
-Q13: "Anything that's off the table? Topics or approaches that wouldn't land with
-      this person?"
-     [DATA: training_constraints=X]
-
-Q14: "I've got what I need. Want to add anything before I put your recommendation together?"
-     [SUGGESTIONS: "Go ahead — generate the recommendation" | "Generate it now" | "Let me add one more thing first"]
-
-When the user says to go ahead, reply with ONE short bridge message:
-"On it. I'll put your recommendation together now."
-Then immediately produce the Stage 4 recommendation in your next output.
-
-STAGE 3 — AI Analysis (internal, no user question):
-Map inputs to Bundle's skills taxonomy. Identify 3-4 highest-leverage development areas.
-Pull out SPECIFIC phrases, quotes, or patterns from the data the user provided.
-Note individual vs. cohort splits. Identify evidence for each gap. Then immediately produce Stage 4.
-
-CONFIDENCE SCORE LOGIC (use in Stage 4 header):
-- "Strong confidence" — you have a performance review OR JD with specific behavioural evidence,
-  and the skill gaps are clearly and directly evidenced by specific quotes or observations.
-- "Moderate confidence" — you have some data but it is informal, conversational, or incomplete.
-  Gaps are inferred rather than directly evidenced.
-- "Limited confidence" — no formal data; gaps derived from diagnostic questions only.
-  Note what additional data would sharpen the recommendation.
-
-For MULTI-PERSON runs: run the confidence assessment independently per person.
-One person may be Strong confidence (detailed review) while another is Moderate (JD only).
-
-STAGE 4 — DETAILED RECOMMENDATION OUTPUT:
-This is the full recommendation. Use the EXACT format below. Every section must be specific
-to THIS company, THIS person/team, and THIS data. NEVER write generic filler.
-
----
-
-## [Company Name] — [Individual / Cohort / Team]
-[Confidence level: Strong confidence / Moderate confidence / Limited confidence]
-
-[ANALYSIS PARAGRAPH: 2-3 sentences. Reference company name, role title, the specific data
-provided, and what it reveals. Quote specific phrases from performance reviews or user
-descriptions. This must feel like it was written by someone who read their actual data.]
-
-### Growth opportunities
-
-**What we'd focus on**
-
-1. **[Primary Skill Area — e.g. Communication]**
-   [2-3 sentences of specific evidence. Quote or closely paraphrase actual phrases from the
-   performance review, manager feedback, or diagnostic answers. Example: "The manager review
-   explicitly flags that [name] 'struggles to frame updates in terms leadership cares about'
-   and 'gets lost in the details during leadership meetings' — patterns directly addressable
-   through this skill area."]
-
-2. **[Second Skill Area — e.g. Leadership]**
-   [2-3 sentences with specific evidence and quotes from the data]
-
-3. **[Third Skill Area — e.g. Time Management / Execution]**
-   [2-3 sentences with specific evidence and quotes from the data]
-
-4. **[Fourth Skill Area — e.g. Interpersonal Dexterity]** *(if a clear fourth gap exists)*
-   [2-3 sentences with specific evidence]
-
----
-
-### Three pathways
-
-**How Bundle delivers this**
-
-Three delivery options. Pick the one that fits when you come back to the chat.
-
-**1:1 Training + Coaching** ⭐ Recommended
-[2-3 sentences explaining WHY this combination is specifically right for THIS person's gaps.
-Reference the nature of their development areas — if the gaps are behavioral and contextual
-(how they show up in a room, how they deliver feedback), explain why 1:1 coaching creates
-the space to practice in real situations. Be specific to their role and company context.]
-[N] sessions · includes coaching support
-
-**1:1 Training Only**
-[2-3 sentences on when training alone is the right fit. Reference this person's self-direction,
-what structured sessions give them, and what the trade-off is without the coaching layer.]
-[N] sessions
-
-**Coaching Only**
-[2-3 sentences explaining when coaching alone fits — typically strong self-awareness, primarily
-needs a thought partner. Reference their specific situation and development stage.]
-[N] sessions · includes coaching support
-
----
-
-### Budget scenarios
-
-**Three depths to start at**
-All three tiers deliver real work; the difference is depth and sequencing. A Bundle consultant
-scopes pricing on the call.
-
-**If you go all in**
-[FULL OUTCOME PARAGRAPH: 3-4 sentences describing specific, tangible outcomes for this person
-at the highest tier. What are they doing differently 3 months from now? Be concrete — name
-the behaviors, the situations, the stakeholders involved. Quote the development areas back
-in terms of outcomes.]
-
-**Start Here** · [N] sessions
-[Minimum viable intervention: name the specific sessions, what communication/leadership
-foundation they build, what immediate visible change this creates. 2-3 sentences.]
-
-**Build Momentum** · [N] sessions
-[What the additional sessions add beyond Start Here. Name the additional skills unlocked
-and why they matter for this person's specific trajectory. 2-3 sentences.]
-
-**Full Impact** · [N] sessions
-[What the final sessions add. Complete the arc — what does the full program equip them to do
-that the shorter tiers don't. 2-3 sentences.]
-
-**If you start small**
-[Honest assessment paragraph: what is NOT covered at the minimum tier. What gaps remain open?
-What situations will this person still struggle with? Be specific — this builds trust. 2-3 sentences.]
-
----
-
-Which delivery method feels right for your situation? Or if something doesn't look right,
-tell me and I'll adjust — these recommendations are a starting point, not final.
-
-[DATA: selected_scenario=TBD]
-[SUGGESTIONS: "1:1 Training + Coaching" | "1:1 Training Only" | "This doesn't look right"]
-
-IF THE USER SAYS "doesn't look right" / "that's wrong" / "adjust this" / "flag":
-Respond: "No problem. What's off? Tell me what to change and I'll regenerate that part."
-Ask one clarifying question, then regenerate ONLY the affected part of the recommendation
-(not the entire thing). Never restart from Stage 1.
-[SUGGESTIONS: "The skill gaps aren't right" | "The delivery method doesn't fit" | "The sessions listed aren't right"]
-
-STAGE 4b — After user selects a delivery method:
-[DATA: selected_scenario=A] (Training+Coaching=A, Training Only=B, Coaching Only=C)
-Send a short confirmation first: "Pathway locked: [delivery method they chose]."
-Then immediately ask: "How many sessions are you imagining?"
-(The UI will show 4 / 6 / 8 session cards automatically)
-[SUGGESTIONS: "Start Here — 4 sessions" | "Build Momentum — 6 sessions" | "Full Impact — 8 sessions"]
-
-After user selects session count, confirm: "Budget locked at [N] sessions."
-Then ask: "All set. Anything else you want me to factor in before drafting the per-learner plan?"
-[SUGGESTIONS: "Go ahead and draft it" | "Nothing else — let's go" | "One more thing first"]
-
-STAGE 5 — FULL TRAINING PLAN OUTPUT:
-When user confirms session count, generate the COMPLETE plan. Use this EXACT format.
-Every section must be specific — quote the data, name the situations, reference the person's role.
-
----
-
-## [Company Name] — Performance-Aligned Learning Plans
-
-Rooted in real feedback. Designed for real growth.
-
-[INTRO PARAGRAPH: 2-3 sentences explaining how these plans were built from the specific data
-provided. Reference the company name and what data/input was used — performance reviews,
-manager feedback, self-assessment, diagnostic answers. This must feel specific, not templated.]
-
----
-
-### [Employee Name or Role Title]
-[Job title / Team / Context — one descriptive line including any relevant transition or context]
-
-**Strengths**
-[Bullet list of 3-5 specific strengths drawn directly from the user's data. Quote or closely
-paraphrase actual feedback phrases. NEVER write generic strengths like "strong communicator"
-unless the data supports it.]
-
-**Growth opportunities**
-[Bullet list of 3-4 specific development areas from the data. Use the exact framing from
-the performance review or user's description. NEVER write vague items like "leadership skills."]
-
-**Career direction**
-[One sentence on where this person is headed based on what the user shared about their goals
-or trajectory. Specific to them — not a generic statement.]
-
-[SEQUENCING PARAGRAPH — MANDATORY: Write 1 paragraph (4-6 sentences) explaining the LOGIC
-behind the session sequence. Why does Session 1 go first? What does Session 2 build on?
-What arc does the plan follow from start to finish? This must reference the specific person's
-development areas and explain why this ORDER creates the most effective learning journey.
-NEVER write this generically — it must be written about this specific person.]
-
-| # | Session | What it covers | Skill focus | Why this session |
-|---|---------|---------------|------------|-----------------|
-| 1 | [Session Title] | [1-sentence plain-English description of what this session actually does — what the person will learn and practise, written for a non-expert reader] | [Sub-skill 1]<br>[Sub-skill 2]<br>[Sub-skill 3] | [3-4 sentences. Explain WHY this session opens the plan. Quote SPECIFIC phrases from the user's data — manager feedback, self-assessment, performance review, or diagnostic answers. Connect the session's content to the person's actual stated or observed gaps.] |
-| 2 | [Session Title] | [1-sentence description] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Explain what Session 1 built and why Session 2 is the right next step.] |
-| 3 | [Session Title] | [1-sentence description] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences with specific evidence. Show the arc — how this builds on what came before.] |
-| 4 | [Session Title] | [1-sentence description] | [Sub-skill 1]<br>[Sub-skill 2] | [3-4 sentences — explain how this session completes the arc and what it unlocks for their goals.] |
-[Add rows up to the selected session count. NEVER use placeholder rows or ellipsis.]
-
-### Coaching support
-
-[COACHING PARAGRAPH — MANDATORY: 3-5 sentences explaining the specific value of coaching
-for THIS person in THEIR context. Reference their role, their development areas, the types
-of real situations where coaching would help most — preparing for a difficult conversation,
-navigating a stakeholder situation, processing feedback. This must be specific to them,
-not a generic description of coaching.]
-
----
-
-[REPEAT full employee block for EACH person mentioned in the data]
-
----
-
-*Ready to move forward? Download this plan as a PDF, or book a 30-minute call with a Bundle
-consultant to activate it.*
-
-[DATA: num_sessions=N]
-[SUGGESTIONS: "Download as PDF" | "Book a consultation call" | "Tell me more"]
-
-CRITICAL STAGE 5 RULES — NEVER VIOLATE:
-1. MULTI-PERSON: Generate a COMPLETE, FULLY WRITTEN separate block for every person whose
-   document was uploaded. If 3 documents were uploaded → 3 full blocks. NEVER combine people
-   or reference "see above" or "similar to Employee 1." Each block is self-contained.
-2. "What it covers" column: 1 clear sentence in plain English — what the person will actually
-   learn and practise in this session. Written for a non-expert (the CEO or HR lead reading the plan).
-3. SEQUENCING PARAGRAPH is mandatory for every employee block. It must be specific to that person.
-4. "Why this session" must have 3-4 sentences minimum and MUST quote or reference specific data.
-   NEVER write: "This session covers X skill." Write: "The review flags that [name]
-   'struggles with X' — this session directly addresses that by..."
-5. Coaching support section is mandatory and must be personalized per person.
-6. Strengths and Growth opportunities must come from actual user data only.
-7. Use "Growth opportunities" — NEVER "weaknesses," "areas for improvement," or "growth areas."
-8. Session 1 MUST ALWAYS be a relational opener.
-9. Sub-skills: one per line separated by <br> — NEVER comma-separated.
-10. Include [DATA: num_sessions=N] at the end with the actual selected count.
-11. NEVER stop at fewer sessions than the user selected.
-12. NEVER truncate. If there are 4 people, all 4 get fully written plans. No shortcuts.
-
-Then ask: "Would you like to download this plan as a PDF, or book a 30-minute call with
-a Bundle consultant to activate it?"
-
-STAGE 6 — Booking:
-"Wonderful! Please fill out the booking form below and we'll get you scheduled."
-
-=== SUGGESTIONS — MANDATORY ON EVERY SINGLE MESSAGE ===
-At the END of EVERY response, include 3-4 short suggested replies:
-[SUGGESTIONS: "Reply 1" | "Reply 2" | "Reply 3" | "Reply 4"]
-
-STRICT RULES:
-- 2-4 words each — no more. Examples: "Let's do it" / "Not sure yet" / "Tell me more" / "Sounds good"
-- Directly answer or react to the specific question or statement just made
-- Each option must be a realistic, distinct reply a real user would click
-- This tag is stripped server-side before display — users see them as clickable buttons
-- NEVER skip this tag on ANY message, including the plan output and booking messages
-"""
-
-TOOL_INSTRUCTIONS = """
-
-=== DELIVERABLE TOOL CALLS — MANDATORY ===
-You have two tools for formal deliverables. NEVER paste the full Stage 4 or Stage 5 report in chat.
-
-1. submit_ai_analysis — Call ONCE when Stage 4 is ready (after Q14 / user says generate recommendation).
-   Put ALL detail in the tool: confidence rationale, 3-4 growth opportunities with quoted evidence,
-   three delivery options (mark one recommended), three depth tiers, full sequencing logic.
-   chat_message: 1-3 sentences only — tell user to open the AI Analysis report.
-
-2. submit_final_plan — Call ONCE when Stage 5 is ready (after session count + user confirms draft).
-   Put ALL detail in the tool: every employee block, full session table rows, coaching support.
-   chat_message: 1-3 sentences only — tell user to open the Learning Plan report.
-
-Between tools, continue normal chat with [DATA:] and [SUGGESTIONS:] tags on short messages only.
-"""
+    db_sections = _load_prompt_sections(agent_key)
+
+    if not db_sections:
+        # DB unavailable — fall back to emergency inline prompt so the app never breaks
+        logger.warning("No prompt sections found in DB for agent '%s' — using fallback.", agent_key)
+        db_sections = [_FALLBACK_PROMPT]
+
+    parts = [
+        _build_run_state_block(run),
+        taxonomy,
+        sessions,
+        pathways,
+        *db_sections,
+    ]
+    return '\n\n'.join(p for p in parts if p and p.strip())
+
+
+# ── Emergency fallback (used only if DB has no sections seeded) ───────────────
+_FALLBACK_PROMPT = (
+    "You are the Bundle AI Training Builder — a warm, expert training advisor. "
+    "Guide the user through a structured conversation about their training needs. "
+    "Ask ONE question at a time. Always end every message with [SUGGESTIONS: ...] and [DATA: ...]."
+)
 
 
 # ── Stage + data detection ─────────────────────────────────────────────────────
@@ -1183,34 +904,25 @@ def generate_fallback_suggestions(ai_message):
 def generate_greeting(run):
     """Returns (greeting_text, suggestions_list)."""
     client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    # Greetings always come from the context_collector agent
+    agent_params = _get_agent_params('context_collector')
     response = client.chat.completions.create(
-        model=settings.OPENAI_MODEL,
+        model=agent_params.get('model', settings.OPENAI_MODEL),
         messages=[
-            {"role": "system", "content": build_system_prompt(run)},
+            {"role": "system", "content": build_system_prompt(run, 'context_collector')},
             {"role": "user", "content": "Hello, I want to build a training plan for my team."},
         ],
         max_tokens=500,
-        temperature=0.7,
+        temperature=agent_params.get('temperature', 0.7),
     )
     raw = response.choices[0].message.content
 
     ai_reply, ai_suggestions = parse_suggestions(raw)
-    is_transitional = is_transitional_message(ai_reply)
 
-    if is_transitional:
-        suggestions = generate_fallback_suggestions(ai_reply)
-    else:
-        q_type = detect_question_type(ai_reply)
-        if q_type:
-            # Greeting always asks Q1 — use predefined options
-            suggestions = STAGE_SUGGESTIONS[q_type]
-        else:
-            # Generate fresh suggestions (never use ai_suggestions — stale/wrong)
-            suggestions = generate_fallback_suggestions(ai_reply)
-
-    # Hard fallback: greeting always asks for company info, so this is always correct
-    if not suggestions:
-        suggestions = STAGE_SUGGESTIONS['q_company']
+    # The greeting ALWAYS ends with Q1 ("what company is this for?")
+    # — hard-lock to q_company suggestions, never rely on detect_question_type
+    # which could false-positive on phrases in the opening paragraph.
+    suggestions = STAGE_SUGGESTIONS['q_company']
 
     history = [{"role": "assistant", "content": ai_reply}]
     run.set_chat_history(history)
@@ -1223,18 +935,117 @@ def generate_greeting(run):
 def _resolve_suggestions(run, ai_reply):
     if is_transitional_message(ai_reply):
         return generate_fallback_suggestions(ai_reply)
+    # Plan generated (both reports ready) → always show booking options
     if run.status == 'plan_generated':
         return STAGE_SUGGESTIONS.get('q_book', [
-            'Download as PDF', 'Book a consultation call', 'Tell me more',
+            "Yes, let's talk", 'Open the plan first', "I'll review and come back",
         ])
-    if run.status == 'recommendation_ready' and run.ai_analysis_json:
-        return STAGE_SUGGESTIONS.get('q_scenario', [
-            '1:1 Training + Coaching', '1:1 Training Only', "This doesn't look right",
+    # recommendation_ready without a plan yet — still booking options
+    # (the AI should auto-generate the plan next, so never show pathway-picker chips)
+    if run.status == 'recommendation_ready':
+        return STAGE_SUGGESTIONS.get('q_book', [
+            "Yes, let's talk", 'Open the plan first', "I'll review and come back",
         ])
     q_type = detect_question_type(ai_reply)
     if q_type and q_type in STAGE_SUGGESTIONS:
         return STAGE_SUGGESTIONS[q_type]
     return generate_fallback_suggestions(ai_reply)
+
+
+def _plan_has_sessions(run) -> bool:
+    """Return True only when every employee block has at least one session row."""
+    try:
+        plan = run.get_final_plan_data()
+        if not plan:
+            return False
+        employees = plan.get('employees') or []
+        if not employees:
+            return False
+        return all(len(e.get('sessions') or []) > 0 for e in employees)
+    except Exception:
+        return False
+
+
+def _auto_generate_plan(run, client):
+    """
+    Separate API call using plan_generator (16k tokens + full stage_5 prompts).
+    Forces submit_final_plan via tool_choice so the plan is always generated.
+    Called when ai_analysis_json is ready but sessions are missing/empty.
+    """
+    from .ai_tools import SUBMIT_FINAL_PLAN_TOOL, handle_tool_call
+
+    agent_params = _get_agent_params('plan_generator')
+    model       = agent_params.get('model', settings.OPENAI_MODEL)
+    max_tokens  = agent_params.get('max_tokens', 16000)
+    temperature = agent_params.get('temperature', 0.65)
+
+    system = build_system_prompt(run, 'plan_generator')
+    history = run.get_chat_history()
+    api_messages = [{'role': 'system', 'content': system}, *history[-20:]]
+
+    # Internal trigger — not shown in the user-facing chat
+    api_messages.append({
+        'role': 'user',
+        'content': (
+            'The AI analysis is complete. '
+            'Call submit_final_plan now to generate the full, session-by-session training plan. '
+            'Use the delivery method and session count already decided in the analysis. '
+            'Write every employee block in full — no shortcuts, no truncation.'
+        ),
+    })
+
+    last_chat_msg = ''
+    for _attempt in range(3):
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=api_messages,
+                tools=[SUBMIT_FINAL_PLAN_TOOL],
+                tool_choice={'type': 'function', 'function': {'name': 'submit_final_plan'}},
+                max_tokens=max_tokens,
+                temperature=temperature,
+            )
+        except Exception as e:
+            logger.error(f'Plan generator API call failed: {e}', exc_info=True)
+            break
+
+        msg = response.choices[0].message
+
+        if msg.tool_calls:
+            api_messages.append({
+                'role': 'assistant',
+                'content': msg.content or '',
+                'tool_calls': [
+                    {
+                        'id': tc.id,
+                        'type': 'function',
+                        'function': {
+                            'name': tc.function.name,
+                            'arguments': tc.function.arguments,
+                        },
+                    }
+                    for tc in msg.tool_calls
+                ],
+            })
+            for tc in msg.tool_calls:
+                try:
+                    result, chat_msg, _ = handle_tool_call(run, tc)
+                    last_chat_msg = chat_msg
+                    api_messages.append({
+                        'role': 'tool',
+                        'tool_call_id': tc.id,
+                        'content': result,
+                    })
+                except Exception as e:
+                    logger.error(f'Plan generator tool call error: {e}', exc_info=True)
+            if _plan_has_sessions(run):
+                break
+            continue
+
+        # Non-tool response — done
+        break
+
+    return last_chat_msg
 
 
 def chat_with_ai(run, user_message):
@@ -1247,19 +1058,28 @@ def chat_with_ai(run, user_message):
         if not api_key or api_key == 'YOUR_OPENAI_API_KEY_HERE':
             logger.error("OpenAI API key is not configured")
             raise ValueError("OpenAI API key is not configured. Check settings.OPENAI_API_KEY")
-        
+
+        # ── Agent routing — pick the right agent + its DB-configured params ──
+        agent_key = _get_agent_key(run)
+        agent_params = _get_agent_params(agent_key)
+        model       = agent_params.get('model', settings.OPENAI_MODEL)
+        temperature = agent_params.get('temperature', 0.7)
+        max_tokens  = agent_params.get('max_tokens', 8000)
+
+        # tool_instructions is now a shared section (order=25) — loaded automatically for all agents
+        system = build_system_prompt(run, agent_key)
+
         client = OpenAI(api_key=api_key)
-        
+
         # Get chat history
         try:
             history = run.get_chat_history()
         except Exception as e:
             logger.error(f"Error retrieving chat history for run {run.id}: {str(e)}", exc_info=True)
             history = []
-        
+
         history.append({"role": "user", "content": user_message})
 
-        system = build_system_prompt(run) + TOOL_INSTRUCTIONS
         api_messages = [{"role": "system", "content": system}, *history[-20:]]
 
         ai_reply = ''
@@ -1268,12 +1088,12 @@ def chat_with_ai(run, user_message):
         for attempt in range(5):
             try:
                 response = client.chat.completions.create(
-                    model=settings.OPENAI_MODEL,
+                    model=model,
                     messages=api_messages,
                     tools=BUNDLE_TOOLS,
                     tool_choice='auto',
-                    max_tokens=8000,
-                    temperature=0.7,
+                    max_tokens=max_tokens,
+                    temperature=temperature,
                 )
             except Exception as e:
                 logger.error(
@@ -1340,6 +1160,27 @@ def chat_with_ai(run, user_message):
             )
 
         if last_tool_chat and not ai_reply:
+            ai_reply = last_tool_chat
+
+        # ── AUTO-TRIGGER plan generator ─────────────────────────────────────────
+        # The analyzer produces submit_ai_analysis but its 12k token budget is
+        # often exhausted before it can write all session rows in submit_final_plan.
+        # We detect this and make a separate plan_generator call (16k tokens,
+        # full stage_5 system prompt) to generate the plan properly.
+        if run.ai_analysis_json and (not run.final_plan_json or not _plan_has_sessions(run)):
+            try:
+                plan_msg = _auto_generate_plan(run, client)
+                if plan_msg:
+                    last_tool_chat = plan_msg
+                    if not ai_reply:
+                        ai_reply = plan_msg
+            except Exception as e:
+                logger.error(
+                    f"Auto plan generation failed for run {run.id}: {str(e)}",
+                    exc_info=True,
+                )
+
+        if not ai_reply and last_tool_chat:
             ai_reply = last_tool_chat
 
         history.append({"role": "assistant", "content": ai_reply})

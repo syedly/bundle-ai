@@ -1,0 +1,96 @@
+{% extends 'builder/portal/base.html' %}
+
+{% block title %}Prompt Sections{% endblock %}
+{% block nav_prompts %}active{% endblock %}
+{% block header_title %}Prompt Sections{% endblock %}
+{% block header_actions %}
+  <span style="font-size:12px;color:var(--text-muted)">{{ sections|length }} sections</span>
+{% endblock %}
+
+{% block content %}
+<p class="page-sub">Every section is assembled into the AI's system prompt. Edits go live immediately — no restart needed.</p>
+
+<!-- Agent filter tabs -->
+<div class="filter-bar">
+  <a href="{% url 'portal_prompts' %}" class="{% if not agent_filter %}active{% endif %}">All</a>
+  <a href="?agent=shared" class="{% if agent_filter == 'shared' %}active{% endif %}">⚪ Shared</a>
+  {% for agent in agents %}
+  <a href="?agent={{ agent.key }}" class="{% if agent_filter == agent.key %}active{% endif %}">
+    {{ agent.label|truncatechars:28 }}
+  </a>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width:40px">#</th>
+        <th>Section</th>
+        <th>Agent</th>
+        <th>Size</th>
+        <th>Active</th>
+        <th>Last edited</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sections %}
+      <tr>
+        <td style="color:var(--text-muted);font-family:monospace;font-size:12px">{{ s.order }}</td>
+        <td>
+          <div style="font-weight:600;font-size:13px">{{ s.label }}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">{{ s.description|truncatechars:70 }}</div>
+        </td>
+        <td>
+          {% if s.agent %}
+          <span style="display:inline-flex;align-items:center;gap:6px">
+            <span style="width:8px;height:8px;border-radius:50%;background:{% if s.agent.key == 'context_collector' %}#0d6efd{% elif s.agent.key == 'analyzer' %}#198754{% elif s.agent.key == 'plan_generator' %}#fd7e14{% else %}#6f42c1{% endif %}"></span>
+            <span style="font-size:12px">{{ s.agent.label|truncatechars:22 }}</span>
+          </span>
+          {% else %}
+          <span style="font-size:12px;color:var(--text-muted)">⚪ Shared</span>
+          {% endif %}
+        </td>
+        <td>
+          {% with n=s.content|length %}
+          <span style="font-size:12px;font-weight:600;color:{% if n > 5000 %}#e74c3c{% elif n > 2000 %}#e67e22{% else %}var(--teal-accent){% endif %}">
+            {{ n|filesizeformat|cut:" " }}
+          </span>
+          <span style="font-size:11px;color:var(--text-muted)"> {{ n }} chars</span>
+          {% endwith %}
+        </td>
+        <td>
+          {% if s.is_active %}
+          <span style="color:#198754;font-size:16px">✓</span>
+          {% else %}
+          <span style="color:#aaa;font-size:16px">—</span>
+          {% endif %}
+        </td>
+        <td style="font-size:11px;color:var(--text-muted);white-space:nowrap">
+          {% if s.updated_by %}{{ s.updated_by.username }}<br>{% endif %}
+          {{ s.updated_at|date:"d M Y, H:i" }}
+        </td>
+        <td>
+          <a href="{% url 'portal_prompt_edit' s.key %}" class="btn btn-accent btn-sm">Edit</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7">
+          <div class="empty-state">
+            <div class="es-icon">📝</div>
+            <p>No prompt sections found. Run <code>python manage.py seed_prompts</code> to populate.</p>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div style="margin-top:16px;padding:14px 18px;background:var(--mint-pale);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--teal)">
+  <strong>How it works:</strong> Shared sections (⚪) appear in every agent's prompt. Agent-specific sections appear only for that agent.
+  Assembly order is controlled by the # column. Changes take effect instantly — a 5-minute prompt cache is automatically cleared on every save.
+</div>
+{% endblock %}

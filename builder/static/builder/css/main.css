@@ -1214,6 +1214,9 @@ body.page-report {
   margin-bottom: 12px;
   line-height: 1.2;
 }
+.report-confidence-row {
+  margin-bottom: 16px;
+}
 .report-confidence {
   display: inline-block;
   padding: 6px 14px;
@@ -1228,6 +1231,16 @@ body.page-report {
   font-weight: 600;
   color: var(--body-text);
   margin-top: 4px;
+}
+.report-plan-meta {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 700;
 }
 .report-tagline {
   font-size: 15px;
@@ -1453,20 +1466,28 @@ body.page-report {
   color: #374151;
 }
 .report-session-table .col-num {
-  width: 40px;
+  width: 36px;
   font-weight: 700;
   color: var(--teal);
+  text-align: center;
 }
-.report-session-table .col-session strong {
+.report-session-table .col-session-title {
+  width: 160px;
+  min-width: 130px;
+}
+.report-session-table .col-session-title strong {
   display: block;
   color: var(--teal);
-  margin-bottom: 6px;
+  font-size: 14px;
 }
-.session-covers {
-  display: block;
+.report-session-table .col-covers {
+  width: 180px;
   font-size: 13px;
-  color: var(--gray);
-  font-weight: 400;
+  color: #4B5563;
+  line-height: 1.6;
+}
+.report-session-table .col-skills {
+  width: 140px;
 }
 .report-session-table .col-skills ul {
   list-style: none;
@@ -1476,6 +1497,10 @@ body.page-report {
 .report-session-table .col-skills li {
   padding: 2px 0;
   font-size: 13px;
+}
+.report-session-table .col-why {
+  font-size: 14px;
+  line-height: 1.65;
 }
 .report-coaching {
   background: var(--green-xpale);
@@ -1492,6 +1517,424 @@ body.page-report {
   font-size: 15px;
   line-height: 1.75;
   color: #374151;
+}
+
+/* Depth-label replaces h3 in budget scenario full/small boxes */
+.report-depth-label {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 10px;
+}
+
+/* ── Final plan card layout ───────────────────────────────────────────────── */
+
+/* Intro paragraph with left accent bar */
+.report-intro-block {
+  border-left: 4px solid var(--teal-accent);
+  padding: 16px 20px;
+  background: #f8fafa;
+  border-radius: 0 10px 10px 0;
+  margin-bottom: 32px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #374151;
+}
+
+/* Separator between employee blocks */
+.report-plan-employee--sep {
+  border-top: 2px solid var(--mint);
+  padding-top: 36px;
+  margin-top: 36px;
+}
+
+/* Dark teal employee header card */
+.report-learner-card {
+  background: var(--teal);
+  border-radius: 16px;
+  padding: 28px 32px;
+  color: var(--white);
+  margin-bottom: 28px;
+  position: relative;
+}
+.report-learner-card-top {
+  margin-bottom: 10px;
+}
+.report-learner-badge {
+  display: inline-block;
+  background: var(--teal-accent);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+.report-learner-name {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.report-learner-role {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 18px;
+}
+.report-learner-why {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 18px;
+}
+.report-learner-why-label {
+  font-weight: 700;
+  color: var(--white);
+  margin-right: 4px;
+}
+.report-learner-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.report-lchip {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.9);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+/* Sessions section */
+.report-sessions-section { margin-bottom: 32px; }
+.report-sessions-heading {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal-accent);
+  margin-bottom: 14px;
+}
+
+/* Individual session card */
+.report-session-card {
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  background: var(--white);
+}
+.report-session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.report-session-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+.report-session-num {
+  font-size: 28px;
+  font-weight: 800;
+  color: #D1D5DB;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 36px;
+}
+.report-session-title-wrap { flex: 1; min-width: 0; }
+.report-session-title {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.report-session-subskills {
+  font-size: 12px;
+  color: #9CA3AF;
+  line-height: 1.5;
+}
+.report-session-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.report-session-type-badge {
+  display: inline-block;
+  background: var(--teal);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 6px;
+  letter-spacing: 0.04em;
+}
+.report-session-cat-badge {
+  display: inline-block;
+  background: var(--green-xpale);
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+.report-session-rec-because {
+  font-size: 13px;
+  color: #6B7280;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+.report-rec-label {
+  font-weight: 700;
+  color: var(--teal-accent);
+  font-style: normal;
+}
+.report-session-why {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #374151;
+  margin: 0;
+}
+.report-empty-note {
+  font-size: 14px;
+  color: #9CA3AF;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Add-on recommendations */
+.report-addons-section { margin-bottom: 28px; }
+.report-addons-heading {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal-accent);
+  margin-bottom: 14px;
+}
+.report-addons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.report-addon-card {
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 18px 20px;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.report-addon-card--recommended {
+  border-color: var(--teal);
+  background: #f8fffd;
+}
+.report-addon-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.report-addon-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.report-addon-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.report-addon-badge--yes {
+  background: var(--teal);
+  color: var(--white);
+}
+.report-addon-badge--no {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+.report-addon-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6B7280;
+  margin: 0;
+}
+.report-addon-why {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #374151;
+  margin: 0;
+}
+.report-addon-why-label {
+  font-weight: 700;
+  color: var(--teal-accent);
+}
+.report-addon-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal-accent);
+  text-decoration: none;
+  margin-top: auto;
+}
+.report-addon-link:hover { text-decoration: underline; }
+
+/* Coaching support block */
+.report-coaching-block {
+  background: var(--green-xpale);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+}
+.report-coaching-heading {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal-accent);
+  margin-bottom: 10px;
+}
+.report-coaching-block p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: #374151;
+  margin: 0;
+}
+
+/* What this delivers */
+.report-delivers-section { margin-bottom: 28px; }
+.report-delivers-heading {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal-accent);
+  margin-bottom: 12px;
+}
+.report-delivers-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.report-delivers-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #374151;
+  padding: 6px 0;
+  border-bottom: 1px solid #F3F4F6;
+}
+.report-delivers-list li::before {
+  content: '•';
+  color: var(--teal-accent);
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+/* Profile fallback (when what_this_delivers is absent) */
+.report-profile-fallback { margin-bottom: 24px; }
+
+/* Footer CTA */
+.report-footer-cta {
+  border-top: 2px solid var(--mint);
+  margin-top: 40px;
+  padding-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.report-footer-cta-text {
+  font-size: 15px;
+  color: #374151;
+  line-height: 1.6;
+  flex: 1;
+  min-width: 200px;
+}
+
+/* CTA block at bottom of reports */
+.report-cta-block {
+  border-top: 2px solid var(--mint);
+  margin-top: 40px;
+  padding-top: 32px;
+  text-align: center;
+}
+.report-cta-heading {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+.report-cta-sub {
+  font-size: 15px;
+  color: var(--gray);
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 auto 24px;
+}
+.report-cta-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.report-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.report-cta-btn--primary {
+  background: var(--teal);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(0,64,63,0.18);
+}
+.report-cta-btn--primary:hover {
+  background: var(--teal-accent);
+  color: var(--white);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.report-cta-btn--secondary {
+  background: var(--white);
+  color: var(--teal);
+  border: 1.5px solid var(--teal);
+}
+.report-cta-btn--secondary:hover {
+  background: var(--green-xpale);
+  text-decoration: none;
 }
 
 /* Report action buttons in chat */
@@ -1562,4 +2005,11 @@ body.page-report {
   .report-doc { padding: 24px 20px; }
   .report-profile-grid { grid-template-columns: 1fr; }
   .report-actions { padding-left: 0; }
+  .report-session-table .col-covers { display: none; }
+  .report-cta-actions { flex-direction: column; align-items: center; }
+  .report-addons-grid { grid-template-columns: 1fr; }
+  .report-session-header { flex-direction: column; gap: 8px; }
+  .report-session-right { justify-content: flex-start; }
+  .report-learner-card { padding: 22px 20px; }
+  .report-footer-cta { flex-direction: column; text-align: center; }
 }

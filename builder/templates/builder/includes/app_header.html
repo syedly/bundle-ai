@@ -24,6 +24,12 @@
         </svg>
       </button>
       <div class="dashboard-user-dropdown" id="userMenuDropdown" role="menu" hidden>
+        {% if request.user.is_superuser %}
+        <a href="{% url 'portal_dashboard' %}" class="dashboard-user-dropdown-item" role="menuitem" style="color:#00403F;font-weight:600">
+          ⚙️ Control Panel
+        </a>
+        <div style="height:1px;background:#E2E8F0;margin:4px 0"></div>
+        {% endif %}
         <a href="{% url 'logout' %}" class="dashboard-user-dropdown-item" role="menuitem">Log out</a>
       </div>
     </div>

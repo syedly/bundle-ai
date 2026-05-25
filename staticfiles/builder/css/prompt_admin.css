@@ -1,0 +1,101 @@
+/* ── Bundle AI — Prompt Admin Styles ───────────────────────────────────────── */
+
+/* Large monospace textarea for prompt editing */
+.prompt-editor-textarea {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  padding: 14px !important;
+  background: #1e1e2e !important;
+  color: #cdd6f4 !important;
+  border: 1px solid #45475a !important;
+  border-radius: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  resize: vertical !important;
+  tab-size: 2 !important;
+}
+
+.prompt-editor-textarea:focus {
+  outline: none !important;
+  border-color: #89b4fa !important;
+  box-shadow: 0 0 0 2px rgba(137, 180, 250, 0.2) !important;
+}
+
+/* Word count bar below the editor */
+.prompt-wordcount-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 10px;
+  background: #313244;
+  border: 1px solid #45475a;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: 12px;
+  color: #a6adc8;
+  margin-bottom: 8px;
+}
+
+.prompt-wordcount-bar .wc-chars { color: #89b4fa; }
+.prompt-wordcount-bar .wc-words { color: #a6e3a1; }
+.prompt-wordcount-bar .wc-lines { color: #cba6f7; }
+
+/* Caution banner at top of change form */
+.prompt-caution-banner {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: #664d03;
+}
+
+/* Version history inline table tweaks */
+#promptsectionversion_set-group table td,
+#promptsectionversion_set-group table th {
+  font-size: 12px;
+  vertical-align: top;
+  padding: 6px 10px;
+}
+
+#promptsectionversion_set-group .form-row {
+  padding: 4px 0;
+}
+
+/* Agent colour pills in the list view */
+.agent-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Section fieldset headers */
+.module h2 {
+  font-size: 14px !important;
+}
+
+/* Wider content column so the textarea gets maximum space */
+#content-main .module {
+  overflow: visible;
+}
+
+.form-row .field-content {
+  width: 100%;
+}
+
+/* "Save version" notice that appears after edit */
+.save-version-notice {
+  background: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #0c5460;
+  margin-top: 4px;
+}

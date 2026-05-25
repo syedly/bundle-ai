@@ -1,0 +1,449 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Control Panel{% endblock %} — Bundle AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Zilla+Slab:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal:        #00403F;
+      --teal-mid:    #00574F;
+      --teal-accent: #3B9A8D;
+      --coral:       #FF9B7A;
+      --mint:        #BAF0D8;
+      --mint-pale:   #F0FAF7;
+      --bg:          #F5F7F6;
+      --surface:     #FFFFFF;
+      --border:      #E2EAE8;
+      --text:        #1A1A1A;
+      --text-muted:  #6B7E7B;
+      --sidebar-w:   240px;
+      --header-h:    60px;
+      --font:        'Inter', -apple-system, sans-serif;
+      --font-head:   'Zilla Slab', Georgia, serif;
+      --shadow-sm:   0 1px 4px rgba(0,64,63,.08);
+      --shadow-md:   0 4px 20px rgba(0,64,63,.10);
+      --radius:      10px;
+      --radius-sm:   6px;
+    }
+    html, body { height: 100%; font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); }
+    a { color: var(--teal-accent); text-decoration: none; }
+    a:hover { color: var(--teal); }
+
+    /* ── Layout ───────────────────────────────────────────────────── */
+    .portal-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* ── Sidebar ──────────────────────────────────────────────────── */
+    .portal-sidebar {
+      width: var(--sidebar-w);
+      background: var(--teal);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+    .sidebar-brand {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .sidebar-brand-label {
+      font-family: var(--font-head);
+      font-size: 17px;
+      color: #fff;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .sidebar-brand-sub {
+      font-size: 10px;
+      color: rgba(255,255,255,.5);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-top: 2px;
+    }
+
+    .sidebar-nav { flex: 1; padding: 12px 0; }
+    .nav-section-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.4);
+      padding: 14px 20px 6px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      color: rgba(255,255,255,.72);
+      font-size: 13.5px;
+      font-weight: 500;
+      border-radius: 0;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,.12); color: #fff; border-left-color: var(--coral); }
+    .nav-item .nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+    }
+    .sidebar-footer strong { color: rgba(255,255,255,.7); }
+
+    /* ── Main area ────────────────────────────────────────────────── */
+    .portal-main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+    .portal-header {
+      height: var(--header-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .portal-header h1 {
+      font-family: var(--font-head);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--teal);
+      flex: 1;
+    }
+    .header-badge {
+      background: var(--mint);
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .portal-body {
+      flex: 1;
+      padding: 28px;
+    }
+
+    /* ── Toast messages ───────────────────────────────────────────── */
+    .toast-list { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+      background: var(--teal);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      max-width: 380px;
+      animation: toastIn .2s ease;
+    }
+    .toast.toast-error { background: #c0392b; }
+    @keyframes toastIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+    /* ── Cards ────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--teal);
+      flex: 1;
+    }
+    .card-body { padding: 20px; }
+
+    /* ── Stat cards ───────────────────────────────────────────────── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-card .s-label { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); margin-bottom: 6px; }
+    .stat-card .s-value { font-size: 28px; font-weight: 700; color: var(--teal); line-height: 1; }
+    .stat-card .s-sub   { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .stat-card.accent   { background: var(--teal); }
+    .stat-card.accent .s-label, .stat-card.accent .s-sub { color: rgba(255,255,255,.6); }
+    .stat-card.accent .s-value { color: var(--coral); }
+
+    /* ── Tables ───────────────────────────────────────────────────── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: #FAFBFA;
+      white-space: nowrap;
+    }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--mint-pale); }
+
+    /* ── Badges ───────────────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-teal    { background: var(--mint);   color: var(--teal); }
+    .badge-coral   { background: #ffe4d9;        color: #b84000; }
+    .badge-gray    { background: #e9ecef;        color: #555; }
+    .badge-green   { background: #d4edda;        color: #155724; }
+    .badge-orange  { background: #fff3cd;        color: #856404; }
+    .badge-purple  { background: #e2d9f3;        color: #432874; }
+    .badge-blue    { background: #d0e9ff;        color: #004085; }
+
+    /* ── Buttons ──────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: opacity .15s, transform .1s;
+      text-decoration: none;
+    }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn:active { transform: none; opacity: 1; }
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-accent  { background: var(--teal-accent); color: #fff; }
+    .btn-coral   { background: var(--coral); color: var(--teal); }
+    .btn-ghost   { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { background: var(--bg); }
+    .btn-sm      { padding: 5px 12px; font-size: 12px; }
+    .btn-danger  { background: #e74c3c; color: #fff; }
+
+    /* ── Form controls ────────────────────────────────────────────── */
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--teal); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
+    .form-group input[type=text],
+    .form-group input[type=number],
+    .form-group input[type=email],
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--text);
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--teal-accent);
+      box-shadow: 0 0 0 3px rgba(59,154,141,.15);
+    }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+    /* Code / prompt textarea */
+    .code-editor {
+      font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      background: #0d1117;
+      color: #e6edf3;
+      border: 1px solid #30363d;
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      width: 100%;
+      min-height: 480px;
+      resize: vertical;
+      tab-size: 2;
+    }
+    .code-editor:focus { outline: none; border-color: var(--teal-accent); box-shadow: 0 0 0 3px rgba(59,154,141,.2); }
+
+    /* Editor toolbar */
+    .editor-toolbar {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-bottom: none;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: #8b949e;
+      font-family: 'SF Mono', Consolas, monospace;
+    }
+    .editor-toolbar .stat-pill { color: #58a6ff; }
+    .editor-toolbar .stat-words { color: #3fb950; }
+    .editor-toolbar .stat-lines { color: #d2a8ff; }
+    .editor-toolbar + .code-editor { border-radius: 0 0 var(--radius-sm) var(--radius-sm); }
+
+    /* ── Version history sidebar ──────────────────────────────────── */
+    .version-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .1s;
+    }
+    .version-item:hover { background: var(--mint-pale); }
+    .version-item:last-child { border-bottom: none; }
+    .v-date   { font-size: 12px; font-weight: 600; color: var(--teal); }
+    .v-by     { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .v-note   { font-size: 11px; color: var(--teal-accent); margin-top: 3px; font-style: italic; }
+    .v-preview { font-size: 11px; color: #888; margin-top: 4px; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ── Page-specific overrides ──────────────────────────────────── */
+    .page-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; color: var(--teal); margin-bottom: 6px; }
+    .page-sub   { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+    @media (max-width: 1100px) { .two-col { grid-template-columns: 1fr; } }
+
+    .filter-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+    .filter-bar a { font-size: 13px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-muted); background: var(--surface); transition: all .15s; }
+    .filter-bar a:hover, .filter-bar a.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    /* Agent colour dots */
+    .agent-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .agent-dot.cc  { background: #0d6efd; }
+    .agent-dot.an  { background: #198754; }
+    .agent-dot.pg  { background: #fd7e14; }
+    .agent-dot.gen { background: #6f42c1; }
+    .agent-dot.sh  { background: #6c757d; }
+
+    /* Toggle switch */
+    .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+    .toggle {
+      position: relative; width: 40px; height: 22px; flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: #ccc;
+      border-radius: 22px;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 16px; height: 16px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--teal-accent); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+    .empty-state .es-icon { font-size: 36px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="portal-shell">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────────── -->
+  <nav class="portal-sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-label">Bundle AI</div>
+      <div class="sidebar-brand-sub">Control Panel</div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <a href="{% url 'portal_dashboard' %}" class="nav-item {% block nav_dashboard %}{% endblock %}">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="{% url 'portal_runs' %}" class="nav-item {% block nav_runs %}{% endblock %}">
+        <span class="nav-icon">💬</span> All Runs
+      </a>
+
+      <div class="nav-section-label">AI System</div>
+      <a href="{% url 'portal_prompts' %}" class="nav-item {% block nav_prompts %}{% endblock %}">
+        <span class="nav-icon">✏️</span> Prompt Sections
+      </a>
+      <a href="{% url 'portal_agents' %}" class="nav-item {% block nav_agents %}{% endblock %}">
+        <span class="nav-icon">🤖</span> Agent Configs
+      </a>
+
+      <div class="nav-section-label">Site</div>
+      <a href="{% url 'index' %}" class="nav-item">
+        <span class="nav-icon">🏠</span> Back to App
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      Logged in as<br>
+      <strong>{{ request.user.username }}</strong>
+    </div>
+  </nav>
+
+  <!-- ── Main ─────────────────────────────────────────────────────── -->
+  <div class="portal-main">
+    <header class="portal-header">
+      <h1>{% block header_title %}Control Panel{% endblock %}</h1>
+      <span class="header-badge">Superuser</span>
+      {% block header_actions %}{% endblock %}
+    </header>
+
+    <div class="portal-body">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<!-- Toast messages -->
+{% if messages %}
+<div class="toast-list" id="toastList">
+  {% for msg in messages %}
+  <div class="toast {% if msg.tags == 'error' %}toast-error{% endif %}">{{ msg }}</div>
+  {% endfor %}
+</div>
+<script>
+  setTimeout(function() {
+    var el = document.getElementById('toastList');
+    if (el) el.style.transition = 'opacity .4s', el.style.opacity = '0', setTimeout(function(){el.remove()}, 400);
+  }, 4000);
+</script>
+{% endif %}
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

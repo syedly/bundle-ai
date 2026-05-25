@@ -1,10 +1,9 @@
 """
 OpenAI tool definitions and handlers for Bundle deliverable reports.
 
-Flow (see product flowchart):
-  Agents 1–3: intake conversation in chat
-  Tool submit_ai_analysis: Stage 4 detailed recommendation
-  Tool submit_final_plan: Stage 5 performance-aligned learning plan
+Flow:
+  Context collected → submit_ai_analysis (one call, one block per person)
+                    → submit_final_plan  (one call immediately after, one employee block per person)
 """
 import json
 
@@ -12,130 +11,180 @@ from django.utils import timezone
 
 from .models import BuilderRun
 
-# ── Tool schemas (OpenAI function calling) ────────────────────────────────────
+# ── Tool schemas ───────────────────────────────────────────────────────────────
+
+# Per-person sub-schema reused inside the people array
+_PERSON_ANALYSIS_SCHEMA = {
+    'type': 'object',
+    'properties': {
+        'name': {
+            'type': 'string',
+            'description': 'Person name or "Employee 1" if anonymous.',
+        },
+        'role_title': {
+            'type': 'string',
+            'description': 'Their current role / title in one line.',
+        },
+        'confidence': {
+            'type': 'string',
+            'enum': ['Strong confidence', 'Moderate confidence', 'Limited confidence'],
+        },
+        'confidence_rationale': {
+            'type': 'string',
+            'description': (
+                '1-2 sentences. What data was available and why that supports '
+                'this confidence level.'
+            ),
+        },
+        'summary_paragraph': {
+            'type': 'string',
+            'description': (
+                '2-3 sentences. Who this person is, what the data reveals, '
+                'what the plan is designed to fix. Quote a specific pattern from the data.'
+            ),
+        },
+        'growth_opportunities': {
+            'type': 'array',
+            'description': '3-4 skill gaps. Each backed by a direct quote or paraphrase.',
+            'items': {
+                'type': 'object',
+                'properties': {
+                    'skill_area': {
+                        'type': 'string',
+                        'description': 'Gap name, e.g. "Time Management".',
+                    },
+                    'evidence': {
+                        'type': 'string',
+                        'description': (
+                            '2 sentences. Quote or closely paraphrase the actual '
+                            'review/user data that shows this gap.'
+                        ),
+                    },
+                },
+                'required': ['skill_area', 'evidence'],
+            },
+            'minItems': 3,
+            'maxItems': 4,
+        },
+        'recommended_delivery': {
+            'type': 'string',
+            'enum': ['1:1 Training + Coaching', '1:1 Training Only', 'Coaching Only'],
+            'description': 'Delivery method the AI chose for this person based on their gaps.',
+        },
+        'recommended_sessions': {
+            'type': 'integer',
+            'enum': [4, 6, 8],
+            'description': (
+                'Session count chosen by the AI: 4 (Start Here), '
+                '6 (Build Momentum), or 8 (Full Impact).'
+            ),
+        },
+        'delivery_options': {
+            'type': 'array',
+            'description': 'All 3 delivery options. Mark one as recommended.',
+            'items': {
+                'type': 'object',
+                'properties': {
+                    'name': {'type': 'string'},
+                    'recommended': {'type': 'boolean'},
+                    'description': {
+                        'type': 'string',
+                        'description': '2 sentences specific to this person.',
+                    },
+                    'sessions_label': {
+                        'type': 'string',
+                        'description': 'e.g. "6 sessions · includes coaching support"',
+                    },
+                },
+                'required': ['name', 'recommended', 'description', 'sessions_label'],
+            },
+            'minItems': 3,
+            'maxItems': 3,
+        },
+        'depth_options': {
+            'type': 'object',
+            'properties': {
+                'full_outcome_paragraph': {
+                    'type': 'string',
+                    'description': '2-3 sentences on outcomes at full 8-session depth.',
+                },
+                'tiers': {
+                    'type': 'array',
+                    'items': {
+                        'type': 'object',
+                        'properties': {
+                            'name': {'type': 'string'},
+                            'sessions': {'type': 'integer'},
+                            'tagline': {'type': 'string'},
+                            'description': {
+                                'type': 'string',
+                                'description': '1-2 sentences on what this tier covers.',
+                            },
+                        },
+                        'required': ['name', 'sessions', 'tagline', 'description'],
+                    },
+                    'minItems': 3,
+                    'maxItems': 3,
+                },
+                'start_small_paragraph': {
+                    'type': 'string',
+                    'description': '1-2 sentences on what the minimum tier does NOT cover.',
+                },
+            },
+            'required': ['full_outcome_paragraph', 'tiers', 'start_small_paragraph'],
+        },
+        'sequencing_logic': {
+            'type': 'string',
+            'description': (
+                '2-3 paragraphs explaining why the sessions are in this specific order. '
+                'Reference the person\'s gaps, data, and what each session builds on.'
+            ),
+        },
+    },
+    'required': [
+        'name', 'role_title', 'confidence', 'confidence_rationale',
+        'summary_paragraph', 'growth_opportunities',
+        'recommended_delivery', 'recommended_sessions',
+        'delivery_options', 'depth_options', 'sequencing_logic',
+    ],
+}
 
 SUBMIT_AI_ANALYSIS_TOOL = {
     'type': 'function',
     'function': {
         'name': 'submit_ai_analysis',
         'description': (
-            'Submit the complete Stage 4 AI Analysis / Recommendation report. '
-            'Call ONCE when intake data is sufficient. Do NOT paste the full report in chat — '
-            'put all detail in this tool. Include specific quotes and evidence from reviews/data.'
+            'Submit the Stage 4 AI Analysis. '
+            'If multiple documents were uploaded, include ONE block per person in the people array. '
+            'Do NOT paste any of this in chat — put everything in this tool.'
         ),
         'parameters': {
             'type': 'object',
             'properties': {
                 'header_title': {
                     'type': 'string',
-                    'description': 'e.g. "Monticello — Individual"',
+                    'description': 'Company name, e.g. "Monticello".',
                 },
-                'confidence': {
-                    'type': 'string',
-                    'enum': ['Strong confidence', 'Moderate confidence', 'Limited confidence'],
-                },
-                'confidence_rationale': {
-                    'type': 'string',
-                    'description': '2-4 sentences explaining the confidence score with specific evidence.',
-                },
-                'summary_paragraph': {
-                    'type': 'string',
-                    'description': 'Executive summary: 3-5 sentences about the person, context, and plan rationale.',
-                },
-                'growth_opportunities': {
+                'people': {
                     'type': 'array',
-                    'description': '3-4 skill gaps with detailed evidence.',
-                    'items': {
-                        'type': 'object',
-                        'properties': {
-                            'skill_area': {'type': 'string'},
-                            'evidence': {
-                                'type': 'string',
-                                'description': 'Minimum 2 sentences; quote or paraphrase manager/review data.',
-                            },
-                        },
-                        'required': ['skill_area', 'evidence'],
-                    },
-                    'minItems': 3,
-                    'maxItems': 4,
-                },
-                'delivery_options': {
-                    'type': 'array',
-                    'description': 'Three delivery pathways.',
-                    'items': {
-                        'type': 'object',
-                        'properties': {
-                            'name': {'type': 'string'},
-                            'recommended': {'type': 'boolean'},
-                            'description': {
-                                'type': 'string',
-                                'description': '2-4 sentences specific to this learner.',
-                            },
-                            'sessions_label': {
-                                'type': 'string',
-                                'description': 'e.g. "4 sessions · includes coaching support"',
-                            },
-                        },
-                        'required': ['name', 'recommended', 'description', 'sessions_label'],
-                    },
-                    'minItems': 3,
-                    'maxItems': 3,
-                },
-                'depth_options': {
-                    'type': 'object',
-                    'properties': {
-                        'intro': {
-                            'type': 'string',
-                            'description': 'Brief intro to depth tiers.',
-                        },
-                        'full_outcome_paragraph': {
-                            'type': 'string',
-                            'description': '3-5 sentences: outcomes at full 8-session depth.',
-                        },
-                        'tiers': {
-                            'type': 'array',
-                            'items': {
-                                'type': 'object',
-                                'properties': {
-                                    'name': {'type': 'string'},
-                                    'sessions': {'type': 'integer'},
-                                    'tagline': {'type': 'string'},
-                                    'description': {'type': 'string'},
-                                },
-                                'required': ['name', 'sessions', 'tagline', 'description'],
-                            },
-                            'minItems': 3,
-                            'maxItems': 3,
-                        },
-                        'start_small_paragraph': {
-                            'type': 'string',
-                            'description': 'Honest 2-4 sentences on what minimum tier does NOT cover.',
-                        },
-                    },
-                    'required': [
-                        'intro', 'full_outcome_paragraph', 'tiers', 'start_small_paragraph',
-                    ],
-                },
-                'sequencing_logic': {
-                    'type': 'string',
                     'description': (
-                        'Detailed session-by-session sequencing rationale and primary skill audit. '
-                        'Multiple paragraphs; explain why each session order.'
+                        'One analysis block per person. '
+                        '2 documents uploaded → 2 items. '
+                        '1 document → 1 item. NEVER combine multiple people into one block.'
                     ),
+                    'items': _PERSON_ANALYSIS_SCHEMA,
+                    'minItems': 1,
                 },
                 'chat_message': {
                     'type': 'string',
                     'description': (
-                        'Short 1-3 sentence message for the chat UI telling the user '
-                        'the analysis is ready to view (do not repeat the full report).'
+                        '1-2 sentences for the chat. '
+                        'e.g. "Your recommendation is ready — skill gaps, rationale, '
+                        'and the pathway I\'m building your plan around."'
                     ),
                 },
             },
-            'required': [
-                'header_title', 'confidence', 'confidence_rationale', 'summary_paragraph',
-                'growth_opportunities', 'delivery_options', 'depth_options',
-                'sequencing_logic', 'chat_message',
-            ],
+            'required': ['header_title', 'people', 'chat_message'],
         },
     },
 }
@@ -145,103 +194,179 @@ SUBMIT_FINAL_PLAN_TOOL = {
     'function': {
         'name': 'submit_final_plan',
         'description': (
-            'Submit the complete Stage 5 Performance-Aligned Learning Plan. '
-            'Call ONCE after delivery method and session count are confirmed. '
-            'Do NOT paste the full plan in chat — use this tool only. '
-            'Write a FULL block per employee with all sessions and coaching support.'
+            'Submit the Stage 5 Performance-Aligned Learning Plan. '
+            'Call immediately after submit_ai_analysis — no user questions in between. '
+            'One employee block per person — NEVER combine or skip anyone. '
+            'CRITICAL: sessions array must be fully populated. Never leave it empty.'
         ),
         'parameters': {
             'type': 'object',
             'properties': {
                 'plan_title': {
                     'type': 'string',
-                    'description': 'e.g. "Performance-Aligned Learning Plan: Employee 1"',
+                    'description': 'e.g. "Performance-Aligned Learning Plans — Monticello"',
                 },
                 'company_name': {'type': 'string'},
+                'delivery_method': {
+                    'type': 'string',
+                    'description': (
+                        'Delivery method the AI chose, e.g. "1:1 Training + Coaching". '
+                        'Must match what was recommended in submit_ai_analysis.'
+                    ),
+                },
+                'num_sessions': {
+                    'type': 'integer',
+                    'description': (
+                        'Session count chosen: 4, 6, or 8. '
+                        'Must match recommended_sessions from submit_ai_analysis. '
+                        'Must equal the number of session rows written per employee.'
+                    ),
+                },
                 'tagline': {
                     'type': 'string',
-                    'description': 'Default: "Rooted in real feedback. Designed for real growth."',
+                    'description': 'Always: "Rooted in real feedback. Designed for real growth."',
                 },
                 'intro_paragraph': {
                     'type': 'string',
-                    'description': '2-4 sentences on how the plan was built from their data.',
-                },
-                'sequencing_overview': {
-                    'type': 'string',
-                    'description': (
-                        '1 paragraph before employee blocks explaining how sessions build on each other.'
-                    ),
+                    'description': '2 sentences: what data was used and what the plan targets.',
                 },
                 'employees': {
                     'type': 'array',
+                    'description': (
+                        'One COMPLETE block per person. '
+                        'If 2 people → 2 blocks. Each block is fully self-contained.'
+                    ),
                     'items': {
                         'type': 'object',
                         'properties': {
                             'name': {'type': 'string'},
                             'role_context': {
                                 'type': 'string',
-                                'description': 'Job title / team / transition context, one line.',
+                                'description': 'Role / team / transition context, one line.',
                             },
                             'strengths': {
                                 'type': 'array',
                                 'items': {'type': 'string'},
-                                'minItems': 3,
+                                'description': '3-5 specific strengths drawn from the data.',
                             },
                             'growth_opportunities': {
                                 'type': 'array',
                                 'items': {'type': 'string'},
-                                'minItems': 3,
+                                'description': '3-4 development areas from the data.',
                             },
-                            'career_direction': {'type': 'string'},
-                            'sequencing_paragraph': {
+                            'career_direction': {
                                 'type': 'string',
-                                'description': '4-6 sentences on session arc for this person.',
+                                'description': 'One sentence on where this person is headed.',
                             },
                             'sessions': {
                                 'type': 'array',
+                                'description': (
+                                    'ALL session rows for this person. '
+                                    'Must contain exactly num_sessions items. '
+                                    'Generate sessions FIRST before any other long text fields.'
+                                ),
                                 'items': {
                                     'type': 'object',
                                     'properties': {
                                         'number': {'type': 'integer'},
-                                        'title': {'type': 'string'},
-                                        'what_it_covers': {'type': 'string'},
+                                        'title': {
+                                            'type': 'string',
+                                            'description': 'Exact Bundle session title.',
+                                        },
+                                        'skill_categories': {
+                                            'type': 'array',
+                                            'items': {'type': 'string'},
+                                            'maxItems': 2,
+                                            'description': (
+                                                '1-2 main skill category names for the badge. '
+                                                'e.g. ["Communication", "Stakeholder Engagement"].'
+                                            ),
+                                        },
                                         'skill_focus': {
                                             'type': 'array',
                                             'items': {'type': 'string'},
+                                            'description': '2-4 specific sub-skill names.',
+                                        },
+                                        'what_it_covers': {
+                                            'type': 'string',
+                                            'description': (
+                                                '1 short sentence (max 15 words) — plain English '
+                                                'description of what the person will learn.'
+                                            ),
+                                        },
+                                        'recommended_because': {
+                                            'type': 'string',
+                                            'description': (
+                                                '1 sentence direct quote or close paraphrase '
+                                                'from the review/data showing why this session. '
+                                                'Start with: "The review states that..." or '
+                                                '"The self-assessment notes..."'
+                                            ),
                                         },
                                         'why_this_session': {
                                             'type': 'string',
-                                            'description': 'Minimum 3 sentences with specific data quotes.',
+                                            'description': (
+                                                '2-3 sentences explaining WHY this session at '
+                                                'this point in the sequence. What does it build '
+                                                'on? What does it unlock for future sessions?'
+                                            ),
                                         },
                                     },
                                     'required': [
-                                        'number', 'title', 'what_it_covers',
-                                        'skill_focus', 'why_this_session',
+                                        'number', 'title', 'skill_categories', 'skill_focus',
+                                        'what_it_covers', 'recommended_because',
+                                        'why_this_session',
                                     ],
                                 },
                                 'minItems': 1,
                             },
+                            'what_this_delivers': {
+                                'type': 'array',
+                                'items': {'type': 'string'},
+                                'minItems': 4,
+                                'maxItems': 5,
+                                'description': (
+                                    '4-5 specific, measurable outcome statements for this person. '
+                                    'Start each with an action verb and reference their actual gaps. '
+                                    'e.g. "Stakeholder responses consistently within 24-48 hours, '
+                                    'reducing reputational risk flagged in the review."'
+                                ),
+                            },
+                            'sequencing_paragraph': {
+                                'type': 'string',
+                                'description': (
+                                    '2-3 sentences on the overall arc of this person\'s plan. '
+                                    'Why session 1 first? What does the sequence build toward?'
+                                ),
+                            },
                             'coaching_support': {
                                 'type': 'string',
-                                'description': '3-5 sentences personalized coaching value.',
+                                'description': (
+                                    '2-3 sentences on what the coaching layer adds for this '
+                                    'specific person. Reference their real gaps and situation.'
+                                ),
                             },
                         },
                         'required': [
                             'name', 'role_context', 'strengths', 'growth_opportunities',
-                            'career_direction', 'sequencing_paragraph', 'sessions',
-                            'coaching_support',
+                            'career_direction', 'sessions', 'what_this_delivers',
+                            'sequencing_paragraph', 'coaching_support',
                         ],
                     },
                     'minItems': 1,
                 },
                 'chat_message': {
                     'type': 'string',
-                    'description': 'Short message for chat: plan is ready to open and download.',
+                    'description': (
+                        '1-2 sentences. '
+                        'e.g. "Your plan is ready. Want me to set up a quick call with '
+                        'a Bundle consultant to walk through it?"'
+                    ),
                 },
             },
             'required': [
-                'plan_title', 'company_name', 'tagline', 'intro_paragraph',
-                'sequencing_overview', 'employees', 'chat_message',
+                'plan_title', 'company_name', 'delivery_method', 'num_sessions',
+                'tagline', 'intro_paragraph', 'employees', 'chat_message',
             ],
         },
     },
@@ -258,10 +383,6 @@ def _tool_args(tool_call):
 
 
 def handle_tool_call(run, tool_call):
-    """
-    Execute a tool call. Returns (tool_result_content, chat_message, suggestions_hint).
-    suggestions_hint is None — caller still resolves suggestions from chat_message.
-    """
     name = tool_call.function.name
     args = _tool_args(tool_call)
 
@@ -273,15 +394,28 @@ def handle_tool_call(run, tool_call):
 
 
 def _handle_submit_ai_analysis(run, args):
+    people = args.get('people', [])
+
+    # Backwards compatibility: if the AI still sends old flat format,
+    # wrap it in a people array.
+    if not people and args.get('growth_opportunities'):
+        people = [{
+            'name': args.get('header_title', 'Employee'),
+            'role_title': '',
+            'confidence': args.get('confidence', 'Moderate confidence'),
+            'confidence_rationale': args.get('confidence_rationale', ''),
+            'summary_paragraph': args.get('summary_paragraph', ''),
+            'growth_opportunities': args.get('growth_opportunities', []),
+            'recommended_delivery': '1:1 Training + Coaching',
+            'recommended_sessions': 6,
+            'delivery_options': args.get('delivery_options', []),
+            'depth_options': args.get('depth_options', {}),
+            'sequencing_logic': args.get('sequencing_logic', ''),
+        }]
+
     payload = {
         'header_title': args.get('header_title', ''),
-        'confidence': args.get('confidence', 'Moderate confidence'),
-        'confidence_rationale': args.get('confidence_rationale', ''),
-        'summary_paragraph': args.get('summary_paragraph', ''),
-        'growth_opportunities': args.get('growth_opportunities', []),
-        'delivery_options': args.get('delivery_options', []),
-        'depth_options': args.get('depth_options', {}),
-        'sequencing_logic': args.get('sequencing_logic', ''),
+        'people': people,
         'generated_at': timezone.now().isoformat(),
     }
     run.ai_analysis_json = json.dumps(payload)
@@ -291,35 +425,37 @@ def _handle_submit_ai_analysis(run, args):
 
     chat_msg = (args.get('chat_message') or '').strip() or (
         'Your AI analysis and recommendation are ready. '
-        'Open the report to review growth opportunities, delivery options, and depth tiers — '
-        'then come back here to choose a pathway.'
+        'Open the report to review growth opportunities, delivery options, and depth tiers.'
     )
     return json.dumps({'success': True, 'report': 'ai_analysis'}), chat_msg, None
 
 
 def _handle_submit_final_plan(run, args):
+    employees = args.get('employees', [])
+    ai_num_sessions = args.get('num_sessions') or max(
+        (len(e.get('sessions') or []) for e in employees),
+        default=0,
+    )
     payload = {
         'plan_title': args.get('plan_title', ''),
         'company_name': args.get('company_name', run.company_name or ''),
+        'delivery_method': args.get('delivery_method', '1:1 Training + Coaching'),
         'tagline': args.get('tagline', 'Rooted in real feedback. Designed for real growth.'),
         'intro_paragraph': args.get('intro_paragraph', ''),
-        'sequencing_overview': args.get('sequencing_overview', ''),
-        'employees': args.get('employees', []),
-        'num_sessions': max(
-            (len(e.get('sessions') or []) for e in args.get('employees') or []),
-            default=0,
-        ),
+        'employees': employees,
+        'num_sessions': ai_num_sessions,
         'generated_at': timezone.now().isoformat(),
     }
-    if run.num_sessions:
-        payload['num_sessions'] = run.num_sessions
+    if ai_num_sessions:
+        run.num_sessions = ai_num_sessions
 
     run.final_plan_json = json.dumps(payload)
     run.final_plan = _final_plan_to_markdown(payload)
     run.current_stage = 5
     run.status = 'plan_generated'
     run.save(update_fields=[
-        'final_plan_json', 'final_plan', 'current_stage', 'status', 'updated_at',
+        'final_plan_json', 'final_plan', 'num_sessions',
+        'current_stage', 'status', 'updated_at',
     ])
 
     chat_msg = (args.get('chat_message') or '').strip() or (
@@ -330,15 +466,17 @@ def _handle_submit_final_plan(run, args):
 
 
 def _final_plan_to_markdown(payload):
-    """Markdown backup for PDF export and legacy parsers."""
+    """Markdown backup for PDF export."""
+    delivery = payload.get('delivery_method', '')
+    sessions = payload.get('num_sessions', '')
+    meta = f"{delivery} · {sessions} sessions" if delivery and sessions else delivery or ''
     lines = [
         f"## {payload.get('company_name', '')} — Performance-Aligned Learning Plans",
         '',
         payload.get('tagline', ''),
+        meta,
         '',
         payload.get('intro_paragraph', ''),
-        '',
-        payload.get('sequencing_overview', ''),
         '',
     ]
     for emp in payload.get('employees') or []:
@@ -353,7 +491,7 @@ def _final_plan_to_markdown(payload):
         for g in emp.get('growth_opportunities') or []:
             lines.append(f'- {g}')
         lines.append('')
-        lines.append(f"**Career direction**")
+        lines.append('**Career direction**')
         lines.append(emp.get('career_direction', ''))
         lines.append('')
         lines.append(emp.get('sequencing_paragraph', ''))
@@ -361,7 +499,7 @@ def _final_plan_to_markdown(payload):
         lines.append('| # | Session | What it covers | Skill focus | Why this session |')
         lines.append('|---|---------|---------------|------------|-----------------|')
         for sess in emp.get('sessions') or []:
-            skills = '<br>'.join(sess.get('skill_focus') or [])
+            skills = ' / '.join(sess.get('skill_focus') or [])
             lines.append(
                 f"| {sess.get('number')} | {sess.get('title')} | "
                 f"{sess.get('what_it_covers')} | {skills} | {sess.get('why_this_session')} |"
@@ -370,6 +508,8 @@ def _final_plan_to_markdown(payload):
         lines.append('### Coaching support')
         lines.append('')
         lines.append(emp.get('coaching_support', ''))
+        lines.append('')
+        lines.append('---')
         lines.append('')
     return '\n'.join(lines)
 

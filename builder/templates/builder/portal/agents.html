@@ -1,0 +1,85 @@
+{% extends 'builder/portal/base.html' %}
+
+{% block title %}Agent Configs{% endblock %}
+{% block nav_agents %}active{% endblock %}
+{% block header_title %}Agent Configs{% endblock %}
+
+{% block content %}
+<p class="page-sub">Each agent handles a specific stage of the conversation. Tune the model, temperature, and token limit per agent.</p>
+
+{% for agent in agents %}
+<div class="card" style="margin-bottom:20px">
+  <div class="card-header">
+    <span style="width:10px;height:10px;border-radius:50%;flex-shrink:0;background:{% if agent.key == 'context_collector' %}#0d6efd{% elif agent.key == 'analyzer' %}#198754{% elif agent.key == 'plan_generator' %}#fd7e14{% else %}#6f42c1{% endif %}"></span>
+    <span class="card-title">{{ agent.label }}</span>
+    <span class="badge {% if agent.is_active %}badge-green{% else %}badge-gray{% endif %}">
+      {% if agent.is_active %}Active{% else %}Disabled{% endif %}
+    </span>
+    <a href="{% url 'portal_prompts' %}?agent={{ agent.key }}" class="btn btn-ghost btn-sm" style="margin-left:8px">
+      View {{ agent.sections.count }} prompt section{{ agent.sections.count|pluralize }}
+    </a>
+  </div>
+  <div class="card-body">
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px">{{ agent.description }}</p>
+
+    <form method="post" action="{% url 'portal_agent_save' agent.pk %}">
+      {% csrf_token %}
+      <div style="display:grid;grid-template-columns:200px 120px 140px 1fr 80px;gap:14px;align-items:end">
+
+        <div class="form-group" style="margin:0">
+          <label>Model</label>
+          <select name="model_name">
+            <option value="gpt-4o"        {% if agent.model_name == 'gpt-4o' %}selected{% endif %}>gpt-4o</option>
+            <option value="gpt-4o-mini"   {% if agent.model_name == 'gpt-4o-mini' %}selected{% endif %}>gpt-4o-mini</option>
+            <option value="gpt-4-turbo"   {% if agent.model_name == 'gpt-4-turbo' %}selected{% endif %}>gpt-4-turbo</option>
+            <option value="gpt-3.5-turbo" {% if agent.model_name == 'gpt-3.5-turbo' %}selected{% endif %}>gpt-3.5-turbo</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin:0">
+          <label>Temperature</label>
+          <input type="number" name="temperature" value="{{ agent.temperature }}" min="0" max="2" step="0.05">
+          <div class="form-hint">0 = precise, 1 = creative</div>
+        </div>
+
+        <div class="form-group" style="margin:0">
+          <label>Max tokens</label>
+          <input type="number" name="max_tokens" value="{{ agent.max_tokens }}" min="100" max="16000" step="100">
+          <div class="form-hint">Response length limit</div>
+        </div>
+
+        <div class="form-group" style="margin:0">
+          <label>Description</label>
+          <input type="text" name="description" value="{{ agent.description }}" placeholder="What this agent does…" maxlength="300">
+        </div>
+
+        <div class="form-group" style="margin:0">
+          <label>Active</label>
+          <label class="toggle-wrap" style="margin-top:6px">
+            <span class="toggle">
+              <input type="checkbox" name="is_active" {% if agent.is_active %}checked{% endif %}>
+              <span class="toggle-slider"></span>
+            </span>
+          </label>
+        </div>
+
+      </div>
+
+      <div style="margin-top:14px;display:flex;align-items:center;gap:12px">
+        <button type="submit" class="btn btn-primary btn-sm">Save {{ agent.label|truncatechars:20 }}</button>
+        <span style="font-size:11px;color:var(--text-muted)">Last updated {{ agent.updated_at|date:"d M Y, H:i" }}</span>
+      </div>
+    </form>
+  </div>
+</div>
+{% endfor %}
+
+<div style="padding:14px 18px;background:var(--mint-pale);border:1px solid var(--border);border-radius:var(--radius);font-size:12px;color:var(--teal);margin-top:8px">
+  <strong>Routing rules:</strong>
+  Stage 1–2 → Context Collector &nbsp;·&nbsp;
+  Stage 3–4 → Analyzer &nbsp;·&nbsp;
+  Stage 5 → Plan Generator &nbsp;·&nbsp;
+  Stage 6 + fallback → General.
+  Changes take effect on the next API call — no restart needed.
+</div>
+{% endblock %}
