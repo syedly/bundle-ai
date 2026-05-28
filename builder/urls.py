@@ -39,6 +39,18 @@ urlpatterns = [
     # PDF download
     path('api/pdf/<int:run_id>/', views.download_pdf, name='download_pdf'),
 
+    # Session-level actions on the final plan report
+    path(
+        'api/runs/<int:run_id>/employees/<int:emp_idx>/sessions/<int:sess_num>/delete/',
+        views.delete_session,
+        name='delete_session',
+    ),
+    path(
+        'api/runs/<int:run_id>/employees/<int:emp_idx>/sessions/<int:sess_num>/refine/',
+        views.refine_session,
+        name='refine_session',
+    ),
+
     # ── Superuser control portal ──────────────────────────────────────────────
     path('control/',                                    portal_views.portal_dashboard,     name='portal_dashboard'),
     path('control/prompts/',                            portal_views.portal_prompts,       name='portal_prompts'),

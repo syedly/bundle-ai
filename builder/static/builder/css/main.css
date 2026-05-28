@@ -47,13 +47,15 @@ html, body {
   overflow: hidden;
 }
 
-/* Scrollable pages (chat, dashboard, auth) */
+/* Scrollable pages (chat, dashboard, auth, report) */
 html:has(body.page-chat),
 body.page-chat,
 html:has(body.page-dashboard),
 body.page-dashboard,
 html:has(body.page-auth),
-body.page-auth {
+body.page-auth,
+html:has(body.page-report),
+body.page-report {
   height: auto;
   min-height: 100%;
   overflow-x: hidden;
@@ -1247,7 +1249,44 @@ body.page-report {
   color: var(--teal-accent);
   font-weight: 600;
   margin-top: 8px;
+  margin-bottom: 0;
 }
+
+/* Teal divider line below hero tagline */
+.report-hero-divider {
+  border: none;
+  border-top: 2px solid var(--teal-accent);
+  margin: 20px 0 24px;
+  opacity: 0.35;
+}
+
+/* Letterhead logo at top of document */
+.report-letterhead {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #E8ECEB;
+}
+.report-letterhead-logo {
+  height: 32px;
+  display: block;
+}
+.report-letterhead-logo img {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+.report-letterhead-wordmark {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--teal);
+  letter-spacing: -0.02em;
+}
+
 .report-block { margin-bottom: 36px; }
 .report-block:last-child { margin-bottom: 0; }
 .report-lead, .report-body-text {
@@ -1549,21 +1588,25 @@ body.page-report {
   margin-top: 36px;
 }
 
-/* Dark teal employee header card */
+/* Light mint employee header card (matches production UI) */
 .report-learner-card {
-  background: var(--teal);
+  background: #EBF8F3;
   border-radius: 16px;
   padding: 28px 32px;
-  color: var(--white);
+  color: var(--body-text);
   margin-bottom: 28px;
   position: relative;
+  border: 1px solid #BAE8D4;
 }
 .report-learner-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
 }
 .report-learner-badge {
   display: inline-block;
-  background: var(--teal-accent);
+  background: var(--teal);
   color: var(--white);
   font-size: 11px;
   font-weight: 800;
@@ -1572,28 +1615,54 @@ body.page-report {
   padding: 4px 12px;
   border-radius: 999px;
 }
+.report-learner-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #BAE8D4;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.7);
+  cursor: pointer;
+  color: #9CA3AF;
+  padding: 0;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.report-learner-delete-btn:hover {
+  border-color: #F87171;
+  color: #EF4444;
+  background: #fef2f2;
+}
+.report-learner-delete-btn svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+  flex-shrink: 0;
+}
 .report-learner-name {
   font-family: var(--font-heading);
   font-size: 26px;
   font-weight: 700;
-  color: var(--white);
+  color: var(--teal);
   margin-bottom: 4px;
   line-height: 1.2;
 }
 .report-learner-role {
   font-size: 14px;
-  color: rgba(255,255,255,0.7);
+  color: #6B7280;
   margin-bottom: 18px;
 }
 .report-learner-why {
   font-size: 14px;
   line-height: 1.7;
-  color: rgba(255,255,255,0.9);
+  color: #374151;
   margin-bottom: 18px;
 }
 .report-learner-why-label {
   font-weight: 700;
-  color: var(--white);
+  color: var(--teal-accent);
   margin-right: 4px;
 }
 .report-learner-chips {
@@ -1604,13 +1673,28 @@ body.page-report {
 }
 .report-lchip {
   display: inline-block;
-  background: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.9);
+  background: var(--white);
+  color: var(--teal);
   font-size: 12px;
   font-weight: 600;
   padding: 5px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.25);
+  border: 1px solid var(--teal-accent);
+}
+
+/* Plan overview paragraph — sits between learner card and sessions */
+.report-plan-overview {
+  margin-bottom: 24px;
+  padding: 18px 24px;
+  background: #f4f9f9;
+  border-left: 3px solid var(--teal-accent);
+  border-radius: 8px;
+}
+.report-plan-overview p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #374151;
 }
 
 /* Sessions section */
@@ -1678,17 +1762,18 @@ body.page-report {
 }
 .report-session-type-badge {
   display: inline-block;
-  background: var(--teal);
-  color: var(--white);
+  background: #F3F4F6;
+  color: #374151;
   font-size: 11px;
   font-weight: 700;
   padding: 3px 9px;
   border-radius: 6px;
   letter-spacing: 0.04em;
+  border: 1px solid #E5E7EB;
 }
 .report-session-cat-badge {
   display: inline-block;
-  background: var(--green-xpale);
+  background: var(--mint);
   color: var(--teal);
   font-size: 12px;
   font-weight: 600;
@@ -1719,6 +1804,191 @@ body.page-report {
   text-align: center;
   padding: 20px 0;
 }
+
+/* ── Toolbar saved-status centre element ────────────────────────────────────── */
+.report-toolbar-saved {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #9CA3AF;
+  font-weight: 500;
+  pointer-events: none;
+}
+.report-toolbar-saved-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #9CA3AF;
+  flex-shrink: 0;
+}
+
+/* ── Group-level "Refine this group with AI" button (bordered pill) ────────── */
+.report-group-refine-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--teal-accent);
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--white);
+  border: 1.5px solid var(--teal-accent);
+  border-radius: 999px;
+  padding: 7px 18px;
+  margin-bottom: 22px;
+  transition: background 0.15s, color 0.15s;
+}
+.report-group-refine-link:hover {
+  background: var(--teal-accent);
+  color: var(--white);
+  text-decoration: none;
+}
+.report-group-refine-link svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ── Session action buttons (refine + delete) ───────────────────────────────── */
+.report-session-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+/* Button base — clearly visible at rest */
+.report-session-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #D1D5DB;
+  border-radius: 7px;
+  background: #F9FAFB;
+  cursor: pointer;
+  color: #6B7280;          /* readable gray — was #9CA3AF (too light) */
+  padding: 0;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+/* Sparkle button hover */
+.report-session-action-btn.refine-btn:hover {
+  border-color: var(--teal-accent);
+  color: var(--teal-accent);
+  background: #edf8f3;
+}
+/* Trash button hover */
+.report-session-action-btn.delete-btn:hover {
+  border-color: #F87171;
+  color: #EF4444;
+  background: #fef2f2;
+}
+/* Make SVG fill the button correctly */
+.report-session-action-btn svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+/* ── Refine-with-AI inline panel ────────────────────────────────────────────── */
+.report-refine-panel {
+  margin-top: 16px;
+  border: 1.5px solid var(--teal-accent);
+  border-radius: 10px;
+  background: #f5fbf9;
+  overflow: hidden;
+}
+.report-refine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+  border-bottom: 1px solid #c6e8de;
+}
+.report-refine-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal-accent);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.report-refine-title svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: block;
+}
+.report-refine-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6B7280;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 0.15s;
+}
+.report-refine-close:hover { color: var(--teal); }
+.report-refine-textarea {
+  display: block;
+  width: 100%;
+  min-height: 88px;
+  resize: vertical;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #1A1A1A;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #c6e8de;
+  outline: none;
+  font-family: var(--font-body);
+  box-sizing: border-box;
+}
+.report-refine-textarea::placeholder { color: #9CA3AF; }
+.report-refine-textarea:focus { background: #eaf6f0; }
+.report-refine-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 14px;
+}
+.report-refine-cancel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6B7280;
+  padding: 6px 10px;
+  transition: color 0.15s;
+}
+.report-refine-cancel:hover { color: var(--teal); }
+.report-refine-submit {
+  background: var(--teal);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  font-family: var(--font-body);
+}
+.report-refine-submit:hover  { background: #005655; }
+.report-refine-submit:disabled { opacity: 0.55; cursor: default; }
 
 /* Add-on recommendations */
 .report-addons-section { margin-bottom: 28px; }
@@ -1773,8 +2043,13 @@ body.page-report {
   color: var(--white);
 }
 .report-addon-badge--no {
-  background: #F3F4F6;
-  color: #6B7280;
+  background: transparent;
+  color: #9CA3AF;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 0;
+  border-radius: 0;
 }
 .report-addon-desc {
   font-size: 13px;
@@ -1796,10 +2071,11 @@ body.page-report {
   font-size: 13px;
   font-weight: 600;
   color: var(--teal-accent);
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
   margin-top: auto;
 }
-.report-addon-link:hover { text-decoration: underline; }
+.report-addon-link:hover { color: var(--teal); }
 
 /* Coaching support block */
 .report-coaching-block {
@@ -2010,6 +2286,6 @@ body.page-report {
   .report-addons-grid { grid-template-columns: 1fr; }
   .report-session-header { flex-direction: column; gap: 8px; }
   .report-session-right { justify-content: flex-start; }
-  .report-learner-card { padding: 22px 20px; }
+  .report-learner-card { padding: 22px 18px; }
   .report-footer-cta { flex-direction: column; text-align: center; }
 }

@@ -32,20 +32,26 @@ _PERSON_ANALYSIS_SCHEMA = {
         'confidence_rationale': {
             'type': 'string',
             'description': (
-                '1-2 sentences. What data was available and why that supports '
-                'this confidence level.'
+                '3-4 sentences. Explain what data was provided (type, specificity, '
+                'directness of evidence), what patterns are clearly vs. inferred, '
+                'and what additional data would sharpen the recommendation if available. '
+                'Be specific — name the document type and the nature of the evidence.'
             ),
         },
         'summary_paragraph': {
             'type': 'string',
             'description': (
-                '2-3 sentences. Who this person is, what the data reveals, '
-                'what the plan is designed to fix. Quote a specific pattern from the data.'
+                'MINIMUM 4-5 sentences. Open with who this person is and their current '
+                'situation. Identify the 2-3 interconnected gaps the data reveals — '
+                'quote specific language from the review or conversation. Explain what '
+                'the plan is designed to change for this person specifically. '
+                'End with what success looks like in their role after the program. '
+                'Never write generic filler — name the person and their real context.'
             ),
         },
         'growth_opportunities': {
             'type': 'array',
-            'description': '3-4 skill gaps. Each backed by a direct quote or paraphrase.',
+            'description': '3-4 skill gaps. Each backed by direct quotes and full context.',
             'items': {
                 'type': 'object',
                 'properties': {
@@ -56,8 +62,14 @@ _PERSON_ANALYSIS_SCHEMA = {
                     'evidence': {
                         'type': 'string',
                         'description': (
-                            '2 sentences. Quote or closely paraphrase the actual '
-                            'review/user data that shows this gap.'
+                            'MINIMUM 3-4 sentences. (1) Open with a direct quote or '
+                            'close paraphrase from the actual review/data that shows '
+                            'this gap — always start with the source evidence, not a '
+                            'description of it. (2) Explain what this pattern means for '
+                            'this person in their specific role. (3) State the business '
+                            'or performance consequence if left unaddressed. '
+                            'Never write generic evidence — always anchor to actual words '
+                            'from the data the user provided.'
                         ),
                     },
                 },
@@ -89,7 +101,13 @@ _PERSON_ANALYSIS_SCHEMA = {
                     'recommended': {'type': 'boolean'},
                     'description': {
                         'type': 'string',
-                        'description': '2 sentences specific to this person.',
+                        'description': (
+                            '3-4 sentences specific to THIS person and their gaps. '
+                            'Explain why this delivery method fits their situation, '
+                            'what it enables that the others would not, and what the '
+                            'tangible difference would be in their day-to-day role. '
+                            'Never write generic delivery method descriptions.'
+                        ),
                     },
                     'sessions_label': {
                         'type': 'string',
@@ -106,7 +124,15 @@ _PERSON_ANALYSIS_SCHEMA = {
             'properties': {
                 'full_outcome_paragraph': {
                     'type': 'string',
-                    'description': '2-3 sentences on outcomes at full 8-session depth.',
+                    'description': (
+                        '4-5 sentences. Describe what this person looks like after a full '
+                        '8-session program — name specific behavioural changes, measurable '
+                        'outcomes, and how their role or relationships change. '
+                        'Reference their actual gaps from the data. Be concrete: what '
+                        'meetings do they run differently? How do peers and stakeholders '
+                        'experience them differently? What decisions do they make with '
+                        'more confidence? Never write generic "improved leadership" filler.'
+                    ),
                 },
                 'tiers': {
                     'type': 'array',
@@ -118,7 +144,13 @@ _PERSON_ANALYSIS_SCHEMA = {
                             'tagline': {'type': 'string'},
                             'description': {
                                 'type': 'string',
-                                'description': '1-2 sentences on what this tier covers.',
+                                'description': (
+                                    '3-4 sentences. Name the specific sessions this tier '
+                                    'covers, what gaps they address, and what the person '
+                                    'gains from completing this tier. If this is not the '
+                                    'full program, name what is left out and the consequence '
+                                    'of stopping here. Specific to this person — not generic.'
+                                ),
                             },
                         },
                         'required': ['name', 'sessions', 'tagline', 'description'],
@@ -128,7 +160,12 @@ _PERSON_ANALYSIS_SCHEMA = {
                 },
                 'start_small_paragraph': {
                     'type': 'string',
-                    'description': '1-2 sentences on what the minimum tier does NOT cover.',
+                    'description': (
+                        '3-4 sentences. Name the specific gaps and sessions that the '
+                        '4-session Start Here tier does NOT cover. Explain the consequence '
+                        'for this person of leaving those gaps unaddressed. Be direct — '
+                        'what remains at risk in their role if they stop at 4 sessions?'
+                    ),
                 },
             },
             'required': ['full_outcome_paragraph', 'tiers', 'start_small_paragraph'],
@@ -136,8 +173,17 @@ _PERSON_ANALYSIS_SCHEMA = {
         'sequencing_logic': {
             'type': 'string',
             'description': (
-                '2-3 paragraphs explaining why the sessions are in this specific order. '
-                'Reference the person\'s gaps, data, and what each session builds on.'
+                'MINIMUM 4-6 full paragraphs. This is the "Why we built it this way" '
+                'narrative. Paragraph 1: the root cause pattern — what the data shows '
+                'as the deepest underlying gap and why it has to be addressed first. '
+                'Paragraph 2: why the opening session was chosen — what it unlocks. '
+                'Paragraph 3: how sessions 2-4 build on each other — the skill arc. '
+                'Paragraph 4: what the back half of the program targets and why only '
+                'after the foundation is laid. Paragraph 5: how the full sequence '
+                'connects to this person\'s role, their next career stage, and the '
+                'business impact their manager/HR described. '
+                'NEVER write generic "we start with communication because it\'s foundational" — '
+                'name this person, their specific review language, and their exact situation.'
             ),
         },
     },
@@ -228,7 +274,14 @@ SUBMIT_FINAL_PLAN_TOOL = {
                 },
                 'intro_paragraph': {
                     'type': 'string',
-                    'description': '2 sentences: what data was used and what the plan targets.',
+                    'description': (
+                        '3-4 sentences. State what data was provided (type and scope), '
+                        'what the analysis revealed as the primary development themes, '
+                        'and what this plan is specifically designed to achieve for this '
+                        'company and these individuals. Name the company and the people. '
+                        'This is the opening paragraph of a client deliverable — write '
+                        'it with the authority of an expert who read the actual data.'
+                    ),
                 },
                 'employees': {
                     'type': 'array',
@@ -306,9 +359,14 @@ SUBMIT_FINAL_PLAN_TOOL = {
                                         'why_this_session': {
                                             'type': 'string',
                                             'description': (
-                                                '2-3 sentences explaining WHY this session at '
-                                                'this point in the sequence. What does it build '
-                                                'on? What does it unlock for future sessions?'
+                                                'MINIMUM 3 sentences (aim for 4-5). Explain: '
+                                                '(a) WHY this session lands at this point in the '
+                                                'sequence — what earlier sessions enabled it; '
+                                                '(b) what specific gap from the data it addresses '
+                                                '— reference the actual review language; '
+                                                '(c) what capability or session it unlocks next. '
+                                                'Never write generic rationale — name the person '
+                                                'and their specific context.'
                                             ),
                                         },
                                     },
@@ -332,18 +390,68 @@ SUBMIT_FINAL_PLAN_TOOL = {
                                     'reducing reputational risk flagged in the review."'
                                 ),
                             },
+                            'group_rationale': {
+                                'type': 'string',
+                                'description': (
+                                    'MINIMUM 3-4 sentences for the "Why this group first" card. '
+                                    '(1) Name the 2-3 interconnected gaps the data reveals and '
+                                    'how they connect to each other — why they must be addressed '
+                                    'together, not in isolation. (2) Explain why NOW is the right '
+                                    'moment — reference their role, any transition underway, or '
+                                    'the performance context the review describes. (3) State what '
+                                    'becomes possible for this person once these gaps are closed. '
+                                    'Quote or paraphrase the actual review language. Never generic.'
+                                ),
+                            },
+                            'plan_overview': {
+                                'type': 'string',
+                                'description': (
+                                    'MINIMUM 4-5 sentences describing the full arc of the plan. '
+                                    '(1) What problem the opening sessions solve and why that '
+                                    'comes first. (2) What the middle sessions build and why '
+                                    'that sequence matters. (3) What the final sessions deliver '
+                                    'and how they connect to the person\'s role goals. '
+                                    'Write this as a narrative paragraph — no bullets. '
+                                    'Name the specific sessions and link them to the data.'
+                                ),
+                            },
+                            'peer_workshop_note': {
+                                'type': 'string',
+                                'description': (
+                                    '2-3 sentences explaining why peer workshops are NOT the '
+                                    'right format for this specific person at this stage. '
+                                    'Reference the individual nature of their specific gaps, '
+                                    'why 1:1 delivery addresses what group learning cannot, '
+                                    'and when peer workshops might make sense in the future.'
+                                ),
+                            },
                             'sequencing_paragraph': {
                                 'type': 'string',
                                 'description': (
-                                    '2-3 sentences on the overall arc of this person\'s plan. '
-                                    'Why session 1 first? What does the sequence build toward?'
+                                    'MINIMUM 4-6 sentences. Explain the full arc of this '
+                                    'person\'s plan: (1) Why the opening session was chosen — '
+                                    'what gap it directly addresses and what it makes possible; '
+                                    '(2) How the middle sessions build the skill bridge from '
+                                    'where they are to where they need to be; '
+                                    '(3) What the final sessions deliver and how they connect '
+                                    'to the person\'s role evolution and stated goals. '
+                                    'Reference the actual review language. Name the person. '
+                                    'No generic "this builds leadership skills" filler.'
                                 ),
                             },
                             'coaching_support': {
                                 'type': 'string',
                                 'description': (
-                                    '2-3 sentences on what the coaching layer adds for this '
-                                    'specific person. Reference their real gaps and situation.'
+                                    'MINIMUM 4-5 sentences. Explain what the coaching layer '
+                                    'specifically adds for THIS person that training alone '
+                                    'cannot achieve. (1) Name the behavioural gaps that need '
+                                    'real-time reinforcement — reference the review language. '
+                                    '(2) Describe what the coach and learner will work on '
+                                    'together between sessions. (3) Explain how coaching '
+                                    'accelerates the programme for someone in this specific '
+                                    'role and at this specific career stage. '
+                                    'Never write generic coaching benefits — anchor to this '
+                                    'person\'s situation and their data.'
                                 ),
                             },
                         },

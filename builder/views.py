@@ -584,6 +584,77 @@ def confirm(request, run_id):
 
 
 @login_required
+@require_http_methods(["POST"])
+def delete_session(request, run_id, emp_idx, sess_num):
+    """Remove a single session from final_plan_json and renumber the remaining ones."""
+    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+    try:
+        plan_data = run.get_final_plan_data()
+        if not plan_data:
+            return JsonResponse({'error': 'No plan data found.'}, status=404)
+
+        employees = plan_data.get('employees', [])
+        if emp_idx < 0 or emp_idx >= len(employees):
+            return JsonResponse({'error': 'Employee not found.'}, status=404)
+
+        sessions = employees[emp_idx].get('sessions', [])
+        original_count = len(sessions)
+        sessions = [s for s in sessions if s.get('number') != sess_num]
+
+        if len(sessions) == original_count:
+            return JsonResponse({'error': 'Session not found.'}, status=404)
+
+        # Renumber remaining sessions sequentially
+        for i, s in enumerate(sessions, start=1):
+            s['number'] = i
+
+        employees[emp_idx]['sessions'] = sessions
+        plan_data['employees'] = employees
+        run.final_plan_json = json.dumps(plan_data)
+        run.save(update_fields=['final_plan_json'])
+
+        return JsonResponse({'success': True, 'remaining': len(sessions)})
+    except Exception as e:
+        logger.error(f"delete_session error — run {run_id}: {e}", exc_info=True)
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def refine_session(request, run_id, emp_idx, sess_num):
+    """Call the AI to propose a replacement/modification for one session."""
+    run = get_object_or_404(BuilderRun, id=run_id, user=request.user)
+    try:
+        data = json.loads(request.body)
+        change_request = data.get('change_request', '').strip()
+        if not change_request:
+            return JsonResponse({'error': 'Please describe what you would like to change.'}, status=400)
+
+        from .ai_engine import refine_session_with_ai
+        new_session = refine_session_with_ai(run, emp_idx, sess_num, change_request)
+
+        # Persist the updated session back into the plan
+        plan_data = run.get_final_plan_data()
+        employees = plan_data.get('employees', [])
+        sessions  = employees[emp_idx].get('sessions', [])
+        for i, s in enumerate(sessions):
+            if s.get('number') == sess_num:
+                sessions[i] = new_session
+                break
+        employees[emp_idx]['sessions'] = sessions
+        plan_data['employees'] = employees
+        run.final_plan_json = json.dumps(plan_data)
+        run.save(update_fields=['final_plan_json'])
+
+        return JsonResponse({'success': True, 'session': new_session})
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid request format.'}, status=400)
+    except Exception as e:
+        logger.error(f"refine_session error — run {run_id}: {e}", exc_info=True)
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
 def download_pdf(request, run_id):
     try:
         run = get_object_or_404(BuilderRun, id=run_id, user=request.user)

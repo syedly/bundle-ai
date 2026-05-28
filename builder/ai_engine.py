@@ -523,9 +523,15 @@ def build_taxonomy_context():
     for skill in PrimarySkill.objects.prefetch_related('sub_skills').all():
         lines.append(f"PRIMARY SKILL: {skill.name}")
         lines.append(f"  Definition: {skill.definition}")
-        subs = [s.name for s in skill.sub_skills.all()]
+        subs = skill.sub_skills.all()
         if subs:
-            lines.append(f"  Sub-skills: {', '.join(subs)}")
+            sub_parts = []
+            for s in subs:
+                if s.definition:
+                    sub_parts.append(f"{s.name} ({s.definition})")
+                else:
+                    sub_parts.append(s.name)
+            lines.append(f"  Sub-skills: {' | '.join(sub_parts)}")
         lines.append("")
     return "\n".join(lines)
 
@@ -536,6 +542,8 @@ def build_sessions_context():
     for s in Session.objects.all().order_by('session_number'):
         lines.append(f"SESSION {s.session_number}: {s.title}")
         lines.append(f"  Primary Skills: {s.primary_skills_text}")
+        if s.sub_skills_text:
+            lines.append(f"  Sub-skills: {s.sub_skills_text}")
         lines.append(f"  Applicable Roles: {s.role_applicability}")
         lines.append(f"  Manager Only: {'YES — never recommend to ICs' if s.is_manager_only else 'No'}")
         lines.append("")
@@ -685,6 +693,109 @@ def build_system_prompt(run, agent_key: str = None) -> str:
         *db_sections,
     ]
     return '\n\n'.join(p for p in parts if p and p.strip())
+
+
+# ── Session refine — called by the "Refine with AI" button on the plan page ───
+
+def refine_session_with_ai(run, emp_idx: int, sess_num: int, change_request: str) -> dict:
+    """
+    Given a user's change request for one session in the final plan, call the AI
+    to propose a replacement or modification. Returns a fully populated session dict.
+    """
+    import json as _json
+
+    plan_data = run.get_final_plan_data()
+    if not plan_data:
+        raise ValueError("No final plan data found.")
+
+    employees = plan_data.get('employees', [])
+    if emp_idx < 0 or emp_idx >= len(employees):
+        raise ValueError(f"Employee index {emp_idx} is out of range.")
+
+    emp = employees[emp_idx]
+    sessions = emp.get('sessions', [])
+    current_session = next((s for s in sessions if s.get('number') == sess_num), None)
+    if not current_session:
+        raise ValueError(f"Session number {sess_num} not found.")
+
+    # Names of other sessions already in the plan (so AI doesn't suggest a duplicate)
+    other_titles = [s.get('title', '') for s in sessions if s.get('number') != sess_num]
+
+    sessions_catalog = build_sessions_context()
+    taxonomy = build_taxonomy_context()
+
+    emp_context = (
+        f"Employee: {emp.get('name', 'Unknown')}\n"
+        f"Role: {emp.get('role_context', '')}\n"
+        f"Strengths: {', '.join(emp.get('strengths', []))}\n"
+        f"Growth opportunities: {', '.join(emp.get('growth_opportunities', []))}\n"
+        f"Career direction: {emp.get('career_direction', '')}"
+    )
+
+    # Include uploaded performance data so the AI can quote from it
+    performance_context = ""
+    if run.uploaded_data:
+        performance_context = (
+            f"\nPERFORMANCE DATA (source for quotes):\n"
+            f"{run.uploaded_data[:4000]}\n"
+        )
+
+    system_prompt = (
+        "You are the Bundle AI Training Builder. "
+        "A user wants to modify one session in an existing training plan. "
+        "You must propose a replacement or updated session using ONLY sessions from Bundle's catalog.\n\n"
+        f"{taxonomy}\n\n"
+        f"{sessions_catalog}\n\n"
+        "=== CRITICAL RULES ===\n"
+        "1. ONLY use sessions from the catalog above. Never invent sessions.\n"
+        "2. If sess_num == 1, the replacement MUST still be a relational opener "
+        "(Effective Communication, Elevate Emotional Intelligence, Empathy and Compassion at Work, "
+        "Building Strong Team Dynamics, Coaching and Feedback, or Foster Collaboration).\n"
+        f"3. Do NOT suggest sessions already in this plan: {', '.join(other_titles)}.\n"
+        "4. Return ONLY a valid JSON object — no markdown, no explanation, no code blocks.\n\n"
+        "Return exactly this JSON shape:\n"
+        "{\n"
+        f'  "number": {sess_num},\n'
+        '  "title": "Exact session title from catalog",\n'
+        '  "skill_categories": ["Category 1"],\n'
+        '  "skill_focus": ["Sub-skill 1", "Sub-skill 2", "Sub-skill 3"],\n'
+        '  "what_it_covers": "1 sentence, max 15 words",\n'
+        '  "recommended_because": "The review states that... (direct quote from data)",\n'
+        '  "why_this_session": "3-5 sentences: why this replacement fits, what gap it closes, what it unlocks"\n'
+        "}"
+    )
+
+    user_prompt = (
+        f"EMPLOYEE CONTEXT:\n{emp_context}\n"
+        f"{performance_context}\n"
+        f"CURRENT SESSION BEING MODIFIED:\n{_json.dumps(current_session, indent=2)}\n\n"
+        f"CHANGE REQUEST FROM USER:\n\"{change_request}\"\n\n"
+        "Based on the change request, propose the best replacement or modification. "
+        "If they want to swap, find the best alternative from the catalog. "
+        "If they want to refocus, update the descriptions while keeping the session if appropriate. "
+        "Return ONLY the JSON object."
+    )
+
+    client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    response = client.chat.completions.create(
+        model=settings.OPENAI_MODEL,
+        temperature=0.4,
+        max_tokens=1200,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user",   "content": user_prompt},
+        ],
+    )
+
+    raw = response.choices[0].message.content.strip()
+    # Strip markdown code fences if the model wraps the JSON
+    raw = re.sub(r'^```(?:json)?\s*', '', raw, flags=re.MULTILINE)
+    raw = re.sub(r'\s*```$', '', raw, flags=re.MULTILINE)
+
+    result = _json.loads(raw)
+    # Always enforce the correct session number
+    result['number'] = sess_num
+    return result
 
 
 # ── Emergency fallback (used only if DB has no sections seeded) ───────────────

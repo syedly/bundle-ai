@@ -9,12 +9,32 @@
   {% include 'builder/includes/app_header.html' %}
 
   <div class="report-page">
+
+    <!-- ── Toolbar ── -->
     <div class="report-toolbar">
       <a href="{% url 'chat_thread' run.id %}" class="report-back">← Back to chat</a>
-      <a href="{% url 'download_pdf' run.id %}" class="report-btn-secondary" target="_blank" rel="noopener">Download PDF</a>
+
+      <!-- Centre: saved status -->
+      <span class="report-toolbar-saved">
+        <span class="report-toolbar-saved-dot"></span>
+        Saved — no changes yet
+      </span>
+
+      <a href="{% url 'download_pdf' run.id %}" class="report-btn-secondary" target="_blank" rel="noopener">
+        ↓ Download PDF
+      </a>
     </div>
 
     <article class="report-doc report-doc--plan">
+
+      <!-- ── Letterhead ── -->
+      <div class="report-letterhead">
+        <span class="report-letterhead-logo">
+          <img src="{% static 'builder/images/bundle.png' %}" alt="bundle"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='inline';">
+          <span class="report-letterhead-wordmark" style="display:none">bundle</span>
+        </span>
+      </div>
 
       <!-- ── Hero ── -->
       <header class="report-hero">
@@ -22,6 +42,7 @@
         <h1>{{ report.plan_title }}</h1>
         <p class="report-company">{{ report.company_name }}</p>
         <p class="report-tagline">{{ report.tagline }}</p>
+        <hr class="report-hero-divider">
       </header>
 
       <!-- ── Intro paragraph ── -->
@@ -35,34 +56,71 @@
       {% for emp in report.employees %}
       <div class="report-plan-employee{% if not forloop.first %} report-plan-employee--sep{% endif %}">
 
-        <!-- Employee header card (dark teal) -->
+        <!-- Employee header card (light mint) -->
         <div class="report-learner-card">
           <div class="report-learner-card-top">
             <span class="report-learner-badge">Start Here</span>
+            <!-- Trash icon: remove this employee group from plan -->
+            <button class="report-learner-delete-btn" type="button" title="Remove this group from plan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 6h18"/>
+                <path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/>
+                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+              </svg>
+            </button>
           </div>
           <h2 class="report-learner-name">{{ emp.name }}</h2>
           <p class="report-learner-role">{{ emp.role_context }}</p>
 
-          {% if emp.sequencing_paragraph %}
+          {% if emp.group_rationale or emp.sequencing_paragraph %}
           <div class="report-learner-why">
             <span class="report-learner-why-label">Why this group first:</span>
-            <span class="report-learner-why-text">{{ emp.sequencing_paragraph }}</span>
+            <span class="report-learner-why-text">{{ emp.group_rationale|default:emp.sequencing_paragraph }}</span>
           </div>
           {% endif %}
 
           <div class="report-learner-chips">
             {% if report.num_sessions %}<span class="report-lchip">{{ report.num_sessions }}-session program</span>{% endif %}
             {% if report.delivery_method %}<span class="report-lchip">{{ report.delivery_method }}</span>{% endif %}
+            {% if run.timeline %}<span class="report-lchip">Starts {{ run.timeline|lower }}</span>{% endif %}
           </div>
         </div>
+
+        <!-- Plan overview paragraph -->
+        {% if emp.plan_overview %}
+        <div class="report-plan-overview">
+          <p>{{ emp.plan_overview }}</p>
+        </div>
+        {% elif emp.sequencing_paragraph and emp.group_rationale %}
+        <div class="report-plan-overview">
+          <p>{{ emp.sequencing_paragraph }}</p>
+        </div>
+        {% endif %}
+
+        <!-- "Refine this group with AI" pill button (between overview and sessions) -->
+        <button class="report-group-refine-link" type="button" title="Suggest changes to this group's plan">
+          <!-- Heroicons sparkles (solid) -->
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+          </svg>
+          Refine this group with AI
+        </button>
 
         <!-- Sessions -->
         <section class="report-sessions-section">
           <h3 class="report-sessions-heading">Sessions for this group</h3>
 
           {% for sess in emp.sessions %}
-          <div class="report-session-card">
+          <div class="report-session-card"
+               data-run-id="{{ run.id }}"
+               data-emp-idx="{{ forloop.parentloop.counter0 }}"
+               data-sess-num="{{ sess.number }}"
+               data-sess-title="{{ sess.title|escapejs }}">
+
             <div class="report-session-header">
+              <!-- Left: number + title + subskills -->
               <div class="report-session-left">
                 <span class="report-session-num">{{ sess.number|stringformat:"02d" }}</span>
                 <div class="report-session-title-wrap">
@@ -74,8 +132,11 @@
                   {% endif %}
                 </div>
               </div>
+
+              <!-- Right: type badge + category badge + action buttons -->
               <div class="report-session-right">
                 <span class="report-session-type-badge">1:1</span>
+
                 {% if sess.skill_categories %}
                 <span class="report-session-cat-badge">
                   {% for cat in sess.skill_categories %}{{ cat }}{% if not forloop.last %} · {% endif %}{% endfor %}
@@ -83,8 +144,29 @@
                 {% elif sess.skill_focus %}
                 <span class="report-session-cat-badge">{{ sess.skill_focus.0 }}</span>
                 {% endif %}
+
+                <!-- Sparkle (refine) + Trash (delete) buttons -->
+                <div class="report-session-actions">
+                  <button class="report-session-action-btn refine-btn" type="button" title="Refine with AI">
+                    <!-- Heroicons sparkles (solid) — renders at any size -->
+                    <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+                    </svg>
+                  </button>
+
+                  <button class="report-session-action-btn delete-btn" type="button" title="Remove session">
+                    <!-- Heroicons trash (outline) — renders at any size -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 6h18"/>
+                      <path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/>
+                      <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                      <path d="M10 11v6M14 11v6"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
-            </div>
+            </div><!-- /report-session-header -->
 
             {% if sess.recommended_because %}
             <p class="report-session-rec-because">
@@ -95,7 +177,29 @@
             {% if sess.why_this_session %}
             <p class="report-session-why">{{ sess.why_this_session }}</p>
             {% endif %}
-          </div>
+
+            <!-- Refine-with-AI inline panel (hidden until sparkle button clicked) -->
+            <div class="report-refine-panel" style="display:none;" aria-hidden="true">
+              <div class="report-refine-header">
+                <span class="report-refine-title">
+                  <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+                  </svg>
+                  Refine with AI &middot; {{ sess.title }}
+                </span>
+                <button class="report-refine-close" type="button" aria-label="Close">&times;</button>
+              </div>
+              <textarea
+                class="report-refine-textarea"
+                placeholder="What would you like to change about this session? e.g. 'Swap this for something on hiring' or 'Focus more on executive presence'"
+                rows="3"></textarea>
+              <div class="report-refine-footer">
+                <button class="report-refine-cancel" type="button">Cancel</button>
+                <button class="report-refine-submit" type="button">Propose change</button>
+              </div>
+            </div>
+
+          </div><!-- /report-session-card -->
           {% empty %}
           <p class="report-empty-note">Sessions are being generated — refresh to see the full plan.</p>
           {% endfor %}
@@ -118,7 +222,7 @@
                 {{ emp.coaching_support }}
               </p>
               {% endif %}
-              <a href="{% url 'chat_thread' run.id %}" class="report-addon-link">Continue in chat →</a>
+              <a href="{% url 'chat_thread' run.id %}" class="report-addon-link">Remove from plan</a>
             </div>
             <!-- Peer workshops -->
             <div class="report-addon-card">
@@ -129,7 +233,7 @@
               <p class="report-addon-desc">Group learning sessions with peers facing similar challenges.</p>
               <p class="report-addon-why">
                 <span class="report-addon-why-label">Why not for this group:</span>
-                Individual 1:1 delivery is more targeted for the specific gaps identified in this review. Peer workshops may be worth revisiting once the core development areas are addressed.
+                {{ emp.peer_workshop_note|default:"Given the individual nature of the gaps identified in the review, 1:1 delivery is more targeted at this stage. Peer workshops may be worth revisiting once the core development areas are addressed." }}
               </p>
               <a href="{% url 'chat_thread' run.id %}" class="report-addon-link">Add to plan anyway</a>
             </div>
@@ -178,6 +282,167 @@
       </section>
 
     </article>
-  </div>
-</div>
+  </div><!-- /report-page -->
+</div><!-- /app-shell -->
+
+<!-- ── Session delete & refine-with-AI JavaScript ────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  /* CSRF token from cookie */
+  var CSRF = (document.cookie.match(/csrftoken=([^;]+)/) || ['', ''])[1];
+
+  function apiUrl(runId, empIdx, sessNum, action) {
+    return '/api/runs/' + runId + '/employees/' + empIdx + '/sessions/' + sessNum + '/' + action + '/';
+  }
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* Update a session card in-place after a successful refine */
+  function refreshCard(card, session) {
+    var numEl = card.querySelector('.report-session-num');
+    if (numEl) numEl.textContent = String(session.number).padStart(2, '0');
+
+    var titleEl = card.querySelector('.report-session-title');
+    if (titleEl) titleEl.textContent = session.title || '';
+
+    var subEl = card.querySelector('.report-session-subskills');
+    if (subEl && session.skill_focus && session.skill_focus.length)
+      subEl.textContent = session.skill_focus.join(' · ');
+
+    var catEl = card.querySelector('.report-session-cat-badge');
+    if (catEl && session.skill_categories && session.skill_categories.length)
+      catEl.textContent = session.skill_categories.join(' · ');
+
+    var recEl = card.querySelector('.report-session-rec-because');
+    if (recEl && session.recommended_because)
+      recEl.innerHTML = '<span class="report-rec-label">Recommended because</span> ' + escHtml(session.recommended_because);
+
+    var whyEl = card.querySelector('.report-session-why');
+    if (whyEl && session.why_this_session) whyEl.textContent = session.why_this_session;
+
+    card.dataset.sessNum   = session.number;
+    card.dataset.sessTitle = session.title || '';
+
+    /* Update refine panel title text (keep the SVG) */
+    var panelTitle = card.querySelector('.report-refine-title');
+    if (panelTitle && session.title) {
+      var svg = panelTitle.querySelector('svg');
+      panelTitle.innerHTML = '';
+      if (svg) panelTitle.appendChild(svg);
+      panelTitle.appendChild(document.createTextNode(' Refine with AI · ' + session.title));
+    }
+  }
+
+  function bindCard(card) {
+    var runId     = card.dataset.runId;
+    var empIdx    = card.dataset.empIdx;
+    var sessNum   = function() { return card.dataset.sessNum; };
+
+    var refineBtn = card.querySelector('.refine-btn');
+    var deleteBtn = card.querySelector('.delete-btn');
+    var panel     = card.querySelector('.report-refine-panel');
+    var textarea  = card.querySelector('.report-refine-textarea');
+    var cancelBtn = card.querySelector('.report-refine-cancel');
+    var closeBtn  = card.querySelector('.report-refine-close');
+    var submitBtn = card.querySelector('.report-refine-submit');
+
+    /* ── Open / toggle refine panel ── */
+    if (refineBtn && panel) {
+      refineBtn.addEventListener('click', function () {
+        var open = panel.style.display !== 'none';
+        panel.style.display = open ? 'none' : 'block';
+        panel.setAttribute('aria-hidden', open ? 'true' : 'false');
+        if (!open && textarea) textarea.focus();
+      });
+    }
+
+    /* ── Close panel ── */
+    function closePanel() {
+      if (panel) { panel.style.display = 'none'; panel.setAttribute('aria-hidden','true'); }
+      if (textarea) textarea.value = '';
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Propose change'; }
+    }
+    if (cancelBtn) cancelBtn.addEventListener('click', closePanel);
+    if (closeBtn)  closeBtn.addEventListener('click', closePanel);
+
+    /* ── Submit refine ── */
+    if (submitBtn && textarea) {
+      submitBtn.addEventListener('click', async function () {
+        var text = (textarea.value || '').trim();
+        if (!text) {
+          textarea.focus();
+          textarea.style.outline = '2px solid #EF4444';
+          setTimeout(function(){ textarea.style.outline = ''; }, 1400);
+          return;
+        }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Thinking…';
+        try {
+          var resp = await fetch(apiUrl(runId, empIdx, sessNum(), 'refine'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+            body: JSON.stringify({ change_request: text }),
+          });
+          var data = await resp.json();
+          if (!resp.ok || data.error) {
+            alert('Could not apply change: ' + (data.error || 'Unknown error'));
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Propose change';
+            return;
+          }
+          refreshCard(card, data.session);
+          closePanel();
+        } catch(err) {
+          alert('Network error — please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Propose change';
+        }
+      });
+    }
+
+    /* ── Delete session ── */
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', async function () {
+        if (!confirm('Remove this session from the plan?')) return;
+        deleteBtn.disabled = true;
+        try {
+          var resp = await fetch(apiUrl(runId, empIdx, sessNum(), 'delete'), {
+            method: 'POST',
+            headers: { 'X-CSRFToken': CSRF },
+          });
+          var data = await resp.json();
+          if (!resp.ok || data.error) {
+            alert('Could not delete: ' + (data.error || 'Unknown error'));
+            deleteBtn.disabled = false;
+            return;
+          }
+          /* Fade out and remove from DOM */
+          card.style.transition = 'opacity 0.22s ease, max-height 0.28s ease, margin 0.28s ease';
+          card.style.opacity    = '0';
+          card.style.overflow   = 'hidden';
+          card.style.maxHeight  = card.offsetHeight + 'px';
+          requestAnimationFrame(function() {
+            card.style.maxHeight    = '0';
+            card.style.marginBottom = '0';
+            card.style.paddingTop   = '0';
+            card.style.paddingBottom= '0';
+          });
+          setTimeout(function(){ card.remove(); }, 320);
+        } catch(err) {
+          alert('Network error — please try again.');
+          deleteBtn.disabled = false;
+        }
+      });
+    }
+  }
+
+  document.querySelectorAll('.report-session-card').forEach(bindCard);
+})();
+</script>
 {% endblock %}

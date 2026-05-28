@@ -1295,3 +1295,460 @@ INFO 2026-05-25 07:42:29,180 basehttp 45661 6219493376 "GET /chat/24/report/plan
 WARNING 2026-05-25 07:42:29,219 basehttp 45661 6219493376 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
 INFO 2026-05-25 07:42:57,182 basehttp 45661 6202667008 "GET /chat/24/report/analysis/ HTTP/1.1" 200 11561
 WARNING 2026-05-25 07:42:57,221 basehttp 45661 6202667008 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:39:14,931 autoreload 14796 10476 Watching for file changes with StatReloader
+INFO 2026-05-25 21:39:40,063 autoreload 15012 7968 Watching for file changes with StatReloader
+INFO 2026-05-25 21:39:52,105 log 15012 13328 "GET / HTTP/1.1" 200 4253
+WARNING 2026-05-25 21:39:52,189 log 15012 13328 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:39:56,588 log 15012 9952 "GET /control/ HTTP/1.1" 200 19398
+INFO 2026-05-25 21:40:02,427 log 15012 9952 "GET /control/runs/ HTTP/1.1" 200 18623
+INFO 2026-05-25 21:40:09,610 log 15012 9952 "GET /control/agents/ HTTP/1.1" 200 17542
+INFO 2026-05-25 21:40:17,649 log 15012 9952 "GET /control/prompts/ HTTP/1.1" 200 18388
+INFO 2026-05-25 21:40:24,357 log 15012 9952 "GET /control/ HTTP/1.1" 200 19398
+INFO 2026-05-25 21:40:47,785 log 15012 9952 "GET /control/runs/ HTTP/1.1" 200 18623
+INFO 2026-05-25 21:40:52,474 log 15012 9952 "GET / HTTP/1.1" 200 4253
+WARNING 2026-05-25 21:40:52,535 log 15012 9952 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:40:55,225 log 15012 3740 "GET /chat/8/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 21:40:55,292 log 15012 3740 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:40:55,678 log 15012 2072 "GET /static/builder/js/chat.js HTTP/1.1" 200 28388
+INFO 2026-05-25 21:40:55,738 log 15012 2072 "GET /threads/load/8/ HTTP/1.1" 200 6166
+INFO 2026-05-25 21:40:58,216 log 15012 2072 "GET /chat/8/report/plan/ HTTP/1.1" 200 15825
+WARNING 2026-05-25 21:40:58,302 log 15012 2072 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:41:14,120 log 15012 2208 "GET /chat/8/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 21:41:14,186 log 15012 2208 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:41:14,412 log 15012 884 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 21:41:14,533 log 15012 884 "GET /threads/load/8/ HTTP/1.1" 200 6166
+INFO 2026-05-25 21:41:16,720 log 15012 884 "GET /chat/8/report/analysis/ HTTP/1.1" 200 10751
+WARNING 2026-05-25 21:41:16,837 log 15012 884 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:41:32,105 log 15012 12604 "GET /chat/8/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 21:41:32,171 log 15012 12604 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 21:41:32,363 log 15012 6404 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 21:41:32,416 log 15012 6404 "GET /threads/load/8/ HTTP/1.1" 200 6166
+INFO 2026-05-25 22:04:00,553 autoreload 15012 7968 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py changed, reloading.
+INFO 2026-05-25 22:04:05,928 autoreload 1652 13848 Watching for file changes with StatReloader
+INFO 2026-05-25 22:04:08,615 autoreload 1652 13848 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py changed, reloading.
+INFO 2026-05-25 22:04:13,045 autoreload 13296 8436 Watching for file changes with StatReloader
+INFO 2026-05-25 22:10:11,793 autoreload 13052 12080 Watching for file changes with StatReloader
+INFO 2026-05-25 22:10:24,832 log 13052 13948 "GET / HTTP/1.1" 200 4253
+WARNING 2026-05-25 22:10:24,877 log 13052 13948 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 22:10:30,921 log 13052 4596 "GET /control/ HTTP/1.1" 200 19398
+INFO 2026-05-25 22:10:33,217 log 13052 4596 "GET /control/prompts/ HTTP/1.1" 200 18388
+INFO 2026-05-25 22:10:47,812 log 13052 4596 "GET /control/agents/ HTTP/1.1" 200 17542
+INFO 2026-05-25 22:10:50,821 log 13052 4596 "GET /control/ HTTP/1.1" 200 19398
+INFO 2026-05-25 22:10:54,766 log 13052 4596 "GET /control/agents/ HTTP/1.1" 200 17542
+INFO 2026-05-25 22:10:58,675 log 13052 4596 "GET / HTTP/1.1" 200 4253
+WARNING 2026-05-25 22:10:58,728 log 13052 4596 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 22:11:02,048 log 13052 9952 "GET /chat/8/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 22:11:02,136 log 13052 9952 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 22:11:02,284 log 13052 14960 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 22:11:02,314 log 13052 14960 "GET /threads/load/8/ HTTP/1.1" 200 6166
+INFO 2026-05-25 22:26:55,544 autoreload 13052 12080 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 22:26:59,740 autoreload 4508 14316 Watching for file changes with StatReloader
+INFO 2026-05-25 22:35:32,101 autoreload 4508 14316 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 22:35:36,113 autoreload 1232 9928 Watching for file changes with StatReloader
+INFO 2026-05-25 22:40:10,136 autoreload 12452 13908 Watching for file changes with StatReloader
+INFO 2026-05-25 22:40:18,918 log 12452 10360 "GET / HTTP/1.1" 200 4253
+WARNING 2026-05-25 22:40:19,019 log 12452 10360 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 22:41:05,581 log 12452 7776 "GET /control/ HTTP/1.1" 200 22720
+INFO 2026-05-25 22:41:15,579 log 12452 7776 "GET /control/prompts/ HTTP/1.1" 200 35731
+INFO 2026-05-25 22:41:19,659 log 12452 7776 "GET /control/prompts/length_depth_rules/ HTTP/1.1" 200 29995
+INFO 2026-05-25 22:41:46,107 log 12452 7776 "GET /control/prompts/stage_1_flow/ HTTP/1.1" 200 35333
+INFO 2026-05-25 22:41:56,214 log 12452 7776 "GET /control/agents/ HTTP/1.1" 200 29825
+INFO 2026-05-25 22:47:38,715 log 12452 3876 "GET /control/ HTTP/1.1" 200 22720
+INFO 2026-05-25 22:47:40,569 log 12452 3876 "GET /control/runs/ HTTP/1.1" 200 18623
+INFO 2026-05-25 22:50:37,332 log 12452 3876 "GET /control/ HTTP/1.1" 200 22720
+INFO 2026-05-25 22:50:40,929 log 12452 3876 "GET /control/prompts/ HTTP/1.1" 200 35731
+INFO 2026-05-25 22:53:01,433 log 12452 3876 "GET /control/agents/ HTTP/1.1" 200 29825
+INFO 2026-05-25 22:53:40,963 log 12452 3876 "GET / HTTP/1.1" 200 4253
+WARNING 2026-05-25 22:53:41,014 log 12452 3876 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:01:04,562 log 12452 1488 "GET /chat/8/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 23:01:04,618 log 12452 1488 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:01:04,683 log 12452 1652 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 23:01:04,759 log 12452 1652 "GET /threads/load/8/ HTTP/1.1" 200 6166
+INFO 2026-05-25 23:01:07,104 log 12452 1652 "GET /chat/8/report/analysis/ HTTP/1.1" 200 10751
+WARNING 2026-05-25 23:01:07,247 log 12452 1652 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:01:18,993 log 12452 13724 "GET /chat/8/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 23:01:19,054 log 12452 13724 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:01:19,277 log 12452 6320 "GET /threads/load/8/ HTTP/1.1" 200 6166
+INFO 2026-05-25 23:01:21,770 log 12452 6320 "GET /chat/8/report/plan/ HTTP/1.1" 200 15929
+WARNING 2026-05-25 23:01:21,892 log 12452 6320 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+ERROR 2026-05-25 23:01:30,764 views 12452 3332 Error generating PDF for run 8, user 4: 
+paragraph text "<para>| 1 | Effective Communication | Sharpening communication skills to enhance clarity and impact in all interactions. | Communication<br>Clarity<br>Impact | Communication is a foundational skill that underpins all other areas of development. This session will address the specific observation that the individual may 'get lost in the details' during meetings. By focusing on clarity and impact, this session sets the stage for more strategic skills. |</para>" caused exception paraparser: syntax error: No content allowed in br tag
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3218, in parse
+    self.feed(text)
+    ~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\html\parser.py", line 169, in feed
+    self.goahead(0)
+    ~~~~~~~~~~~~^^^
+  File "C:\Python314\Lib\html\parser.py", line 245, in goahead
+    self.handle_data(rawdata[i:j])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3123, in handle_data
+    if data!='': self._syntax_error('No content allowed in %s tag' % frag._selfClosingTag)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 2780, in _syntax_error
+    raise ValueError('paraparser: syntax error: %s' % message)
+ValueError: paraparser: syntax error: No content allowed in br tag
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py", line 595, in download_pdf
+    pdf_bytes = generate_plan_pdf(run)
+  File "C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\pdf_export.py", line 303, in generate_plan_pdf
+    story.append(Paragraph(clean, styles['intro']))
+                 ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paragraph.py", line 1861, in __init__
+    self._setup(text, style, bulletText or getattr(style,'bulletText',None), frags, cleanBlockQuotedText)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paragraph.py", line 1882, in _setup
+    style, frags, bulletTextFrags = _parser.parse(text,style)
+                                    ~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3220, in parse
+    annotateException('\nparagraph text %s caused exception' % ascii(text))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\lib\utils.py", line 1180, in annotateException
+    rl_reraise(t,t(sep.join((_ for _ in (msg,str(v),postMsg) if _))),b)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\lib\utils.py", line 138, in rl_reraise
+    raise v.with_traceback(b)
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3218, in parse
+    self.feed(text)
+    ~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\html\parser.py", line 169, in feed
+    self.goahead(0)
+    ~~~~~~~~~~~~^^^
+  File "C:\Python314\Lib\html\parser.py", line 245, in goahead
+    self.handle_data(rawdata[i:j])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 3123, in handle_data
+    if data!='': self._syntax_error('No content allowed in %s tag' % frag._selfClosingTag)
+                 ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\syed ali\Desktop\bundle\venv\Lib\site-packages\reportlab\platypus\paraparser.py", line 2780, in _syntax_error
+    raise ValueError('paraparser: syntax error: %s' % message)
+ValueError: 
+paragraph text "<para>| 1 | Effective Communication | Sharpening communication skills to enhance clarity and impact in all interactions. | Communication<br>Clarity<br>Impact | Communication is a foundational skill that underpins all other areas of development. This session will address the specific observation that the individual may 'get lost in the details' during meetings. By focusing on clarity and impact, this session sets the stage for more strategic skills. |</para>" caused exception paraparser: syntax error: No content allowed in br tag
+ERROR 2026-05-25 23:01:30,924 log 12452 3332 Internal Server Error: /api/pdf/8/
+ERROR 2026-05-25 23:01:30,926 log 12452 3332 "GET /api/pdf/8/ HTTP/1.1" 500 573
+INFO 2026-05-25 23:01:54,302 autoreload 120 13096 Watching for file changes with StatReloader
+INFO 2026-05-25 23:03:20,148 log 120 12188 "GET / HTTP/1.1" 200 4253
+WARNING 2026-05-25 23:03:20,242 log 120 12188 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:03:23,265 log 120 1600 "GET /chat/new/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 23:03:23,348 log 120 1600 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:03:30,045 log 120 1284 "POST /api/new/ HTTP/1.1" 200 689
+INFO 2026-05-25 23:03:38,834 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 355
+INFO 2026-05-25 23:03:43,978 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 283
+INFO 2026-05-25 23:03:48,529 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 399
+INFO 2026-05-25 23:04:08,132 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 428
+INFO 2026-05-25 23:04:27,786 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 423
+INFO 2026-05-25 23:04:49,120 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 452
+INFO 2026-05-25 23:09:30,098 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 508
+INFO 2026-05-25 23:09:38,310 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 465
+INFO 2026-05-25 23:09:51,716 log 120 1284 "POST /api/upload/9/ HTTP/1.1" 200 1827
+INFO 2026-05-25 23:10:10,655 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 358
+INFO 2026-05-25 23:10:26,729 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 462
+INFO 2026-05-25 23:10:51,166 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 363
+INFO 2026-05-25 23:11:15,574 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 259
+INFO 2026-05-25 23:11:40,373 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 393
+INFO 2026-05-25 23:12:05,273 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 718
+INFO 2026-05-25 23:12:56,224 log 120 1284 "POST /api/chat/ HTTP/1.1" 200 311
+INFO 2026-05-25 23:13:00,004 log 120 1284 "GET /chat/9/report/analysis/ HTTP/1.1" 200 10129
+WARNING 2026-05-25 23:13:00,148 log 120 1284 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:13:22,163 log 120 4032 "GET /chat/9/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 23:13:22,224 log 120 4032 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:13:22,459 log 120 5892 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 23:13:22,556 log 120 5892 "GET /threads/load/9/ HTTP/1.1" 200 14321
+INFO 2026-05-25 23:13:24,929 log 120 5892 "GET /chat/9/report/plan/ HTTP/1.1" 200 10267
+WARNING 2026-05-25 23:13:25,059 log 120 5892 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:13:44,454 log 120 1888 "GET /chat/9/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 23:13:44,517 log 120 1888 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:13:44,758 log 120 12516 "GET /threads/load/9/ HTTP/1.1" 200 14321
+INFO 2026-05-25 23:13:48,195 log 120 12516 "GET /chat/9/report/plan/ HTTP/1.1" 200 10267
+WARNING 2026-05-25 23:13:48,321 log 120 12516 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:20:30,424 autoreload 120 13096 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 23:20:34,867 autoreload 13916 2696 Watching for file changes with StatReloader
+INFO 2026-05-25 23:20:49,662 autoreload 13916 2696 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 23:20:53,576 autoreload 2812 15076 Watching for file changes with StatReloader
+INFO 2026-05-25 23:20:59,606 autoreload 2812 15076 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 23:21:03,731 autoreload 9204 13736 Watching for file changes with StatReloader
+INFO 2026-05-25 23:21:06,208 autoreload 9204 13736 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 23:21:09,985 autoreload 10508 3228 Watching for file changes with StatReloader
+INFO 2026-05-25 23:21:18,206 autoreload 10508 3228 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 23:21:22,147 autoreload 8492 12784 Watching for file changes with StatReloader
+INFO 2026-05-25 23:21:33,125 autoreload 8492 12784 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_tools.py changed, reloading.
+INFO 2026-05-25 23:21:37,004 autoreload 5080 5016 Watching for file changes with StatReloader
+INFO 2026-05-25 23:39:44,806 autoreload 10648 12816 Watching for file changes with StatReloader
+INFO 2026-05-25 23:42:12,179 log 10648 12680 "GET / HTTP/1.1" 200 4566
+WARNING 2026-05-25 23:42:12,220 log 10648 12680 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:42:16,318 log 10648 13128 "GET /chat/new/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 23:42:16,362 log 10648 13128 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:42:16,618 log 10648 14180 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 23:42:21,661 log 10648 14180 "POST /api/new/ HTTP/1.1" 200 690
+INFO 2026-05-25 23:42:31,803 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 356
+INFO 2026-05-25 23:42:35,422 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-25 23:42:42,310 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-25 23:43:04,535 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-25 23:43:26,859 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-25 23:43:48,505 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 453
+INFO 2026-05-25 23:44:10,695 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 509
+INFO 2026-05-25 23:44:32,493 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 466
+INFO 2026-05-25 23:45:05,173 log 10648 14180 "POST /api/upload/10/ HTTP/1.1" 200 1293
+INFO 2026-05-25 23:45:25,548 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 415
+INFO 2026-05-25 23:45:52,342 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 364
+INFO 2026-05-25 23:46:18,028 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 260
+INFO 2026-05-25 23:46:45,962 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 394
+INFO 2026-05-25 23:47:11,639 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 833
+INFO 2026-05-25 23:49:12,515 log 10648 14180 "POST /api/chat/ HTTP/1.1" 200 312
+INFO 2026-05-25 23:49:15,130 log 10648 14180 "GET /chat/10/report/analysis/ HTTP/1.1" 200 12188
+WARNING 2026-05-25 23:49:15,252 log 10648 14180 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:49:39,473 log 10648 4484 "GET /chat/10/report/plan/ HTTP/1.1" 200 19768
+WARNING 2026-05-25 23:49:39,591 log 10648 4484 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:50:03,800 log 10648 2216 "GET /api/pdf/10/ HTTP/1.1" 200 7218
+INFO 2026-05-25 23:51:21,493 log 10648 2216 "GET /api/pdf/10/ HTTP/1.1" 200 7218
+INFO 2026-05-25 23:57:07,231 log 10648 11840 "GET /control/ HTTP/1.1" 200 23869
+INFO 2026-05-25 23:57:13,236 log 10648 11840 "GET /control/runs/ HTTP/1.1" 200 20196
+INFO 2026-05-25 23:57:19,888 log 10648 11840 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-25 23:57:36,411 log 10648 11840 "GET /control/agents/ HTTP/1.1" 200 29825
+INFO 2026-05-25 23:57:55,496 log 10648 11840 "GET /control/ HTTP/1.1" 200 23869
+INFO 2026-05-25 23:58:01,437 log 10648 11840 "GET /control/runs/ HTTP/1.1" 200 20196
+INFO 2026-05-25 23:58:05,649 log 10648 11840 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-25 23:58:05,701 log 10648 11840 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:58:44,848 log 10648 14088 "GET /chat/10/ HTTP/1.1" 200 7111
+WARNING 2026-05-25 23:58:44,905 log 10648 14088 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:58:44,999 log 10648 13436 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-25 23:58:45,037 log 10648 13436 "GET /threads/load/10/ HTTP/1.1" 200 13872
+INFO 2026-05-25 23:58:53,090 log 10648 13436 "GET /chat/10/report/plan/ HTTP/1.1" 200 19768
+WARNING 2026-05-25 23:58:53,223 log 10648 13436 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-25 23:59:03,322 log 10648 14600 "GET /chat/10/report/analysis/ HTTP/1.1" 200 12188
+WARNING 2026-05-25 23:59:03,471 log 10648 14600 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:01:55,625 log 10648 2164 "GET /chat/10/ HTTP/1.1" 200 7111
+WARNING 2026-05-26 00:01:55,708 log 10648 2164 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:01:55,780 log 10648 6924 "GET /threads/load/10/ HTTP/1.1" 200 13872
+INFO 2026-05-26 00:01:57,909 log 10648 6924 "GET /chat/10/report/plan/ HTTP/1.1" 200 19768
+WARNING 2026-05-26 00:01:58,043 log 10648 6924 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:17:57,542 autoreload 10648 12816 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\ai_engine.py changed, reloading.
+INFO 2026-05-26 00:18:03,980 autoreload 10076 12672 Watching for file changes with StatReloader
+INFO 2026-05-26 00:18:11,816 autoreload 10076 12672 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\views.py changed, reloading.
+INFO 2026-05-26 00:18:15,754 autoreload 11252 3224 Watching for file changes with StatReloader
+INFO 2026-05-26 00:18:18,032 autoreload 11252 3224 C:\Users\syed ali\Desktop\bundle\bundle-ai\builder\urls.py changed, reloading.
+INFO 2026-05-26 00:18:21,805 autoreload 14604 14484 Watching for file changes with StatReloader
+INFO 2026-05-26 00:23:33,695 log 14604 8924 "GET /chat/10/report/plan/ HTTP/1.1" 200 42896
+WARNING 2026-05-26 00:23:33,709 log 14604 8924 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:23:57,990 autoreload 12856 12332 Watching for file changes with StatReloader
+INFO 2026-05-26 00:24:04,512 log 12856 7096 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-26 00:24:04,581 log 12856 7096 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:24:10,459 log 12856 11660 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-26 00:24:10,489 log 12856 11660 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-26 00:24:10,648 log 12856 11660 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 200 75506
+INFO 2026-05-26 00:24:12,223 log 12856 11660 "GET /signup/ HTTP/1.1" 200 2910
+INFO 2026-05-26 00:24:25,530 log 12856 11660 "POST /signup/ HTTP/1.1" 302 0
+INFO 2026-05-26 00:24:25,544 log 12856 11660 "GET / HTTP/1.1" 200 3910
+WARNING 2026-05-26 00:24:25,608 log 12856 11660 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:24:30,879 log 12856 10600 "GET /chat/new/ HTTP/1.1" 200 6862
+WARNING 2026-05-26 00:24:30,925 log 12856 10600 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:24:31,174 log 12856 108 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-26 00:24:36,126 log 12856 108 "POST /api/new/ HTTP/1.1" 200 690
+INFO 2026-05-26 00:24:40,444 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 356
+INFO 2026-05-26 00:24:44,300 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 284
+INFO 2026-05-26 00:24:57,327 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 400
+INFO 2026-05-26 00:25:18,597 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 429
+INFO 2026-05-26 00:25:41,043 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 424
+INFO 2026-05-26 00:26:03,597 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 453
+INFO 2026-05-26 00:26:24,882 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 509
+INFO 2026-05-26 00:26:47,240 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 465
+INFO 2026-05-26 00:27:15,606 log 12856 108 "POST /api/upload/11/ HTTP/1.1" 200 1555
+INFO 2026-05-26 00:27:40,492 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 418
+INFO 2026-05-26 00:28:06,846 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 364
+INFO 2026-05-26 00:28:32,686 log 12856 108 "POST /api/chat/ HTTP/1.1" 200 260
+INFO 2026-05-26 00:29:09,370 log 12856 4596 "POST /api/chat/ HTTP/1.1" 200 394
+INFO 2026-05-26 00:29:26,373 log 12856 4596 "POST /api/chat/ HTTP/1.1" 200 830
+INFO 2026-05-26 00:30:56,335 log 12856 4596 "POST /api/chat/ HTTP/1.1" 200 312
+INFO 2026-05-26 00:31:10,311 log 12856 4596 "GET /chat/11/report/analysis/ HTTP/1.1" 200 11628
+WARNING 2026-05-26 00:31:10,463 log 12856 4596 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:31:23,449 log 12856 14316 "GET /chat/11/ HTTP/1.1" 200 6863
+WARNING 2026-05-26 00:31:23,509 log 12856 14316 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:31:23,782 log 12856 5872 "GET /threads/load/11/ HTTP/1.1" 200 13905
+INFO 2026-05-26 00:31:25,903 log 12856 5872 "GET /chat/11/report/plan/ HTTP/1.1" 200 42833
+WARNING 2026-05-26 00:31:26,033 log 12856 5872 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:34:05,236 log 12856 4752 "GET /chat/11/report/plan/ HTTP/1.1" 200 42833
+WARNING 2026-05-26 00:34:05,304 log 12856 4752 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:34:12,739 log 12856 12384 "GET /api/pdf/11/ HTTP/1.1" 200 7427
+INFO 2026-05-26 00:36:19,530 log 12856 12384 "GET /chat/11/ HTTP/1.1" 200 6863
+WARNING 2026-05-26 00:36:19,566 log 12856 12384 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:36:19,842 log 12856 10620 "GET /threads/load/11/ HTTP/1.1" 200 13905
+INFO 2026-05-26 00:36:22,828 log 12856 10620 "GET /chat/11/report/plan/ HTTP/1.1" 200 42833
+WARNING 2026-05-26 00:36:22,975 log 12856 10620 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:36:34,901 log 12856 1972 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-26 00:36:34,909 log 12856 1972 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-26 00:36:45,294 log 12856 1972 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-26 00:36:45,308 log 12856 1972 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-26 00:36:45,370 log 12856 1972 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:36:52,018 log 12856 5628 "GET /control/ HTTP/1.1" 200 24444
+INFO 2026-05-26 00:36:57,547 log 12856 5628 "GET /control/runs/ HTTP/1.1" 200 20988
+INFO 2026-05-26 00:37:12,028 log 12856 5628 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-26 00:37:31,453 log 12856 5628 "GET /control/prompts/?agent=shared HTTP/1.1" 200 25243
+INFO 2026-05-26 00:37:33,749 log 12856 5628 "GET /control/prompts/?agent=analyzer HTTP/1.1" 200 22383
+INFO 2026-05-26 00:37:36,906 log 12856 5628 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-26 00:37:43,203 log 12856 5628 "GET /control/agents/ HTTP/1.1" 200 29825
+INFO 2026-05-26 00:37:50,642 log 12856 5628 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-26 00:37:50,685 log 12856 5628 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:37:53,819 log 12856 12324 "GET /chat/10/ HTTP/1.1" 200 7111
+WARNING 2026-05-26 00:37:53,887 log 12856 12324 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 00:37:53,962 log 12856 6296 "GET /threads/load/10/ HTTP/1.1" 200 13872
+INFO 2026-05-26 00:37:56,382 log 12856 6296 "GET /chat/10/report/plan/ HTTP/1.1" 200 42896
+WARNING 2026-05-26 00:37:56,520 log 12856 6296 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:03:25,271 log 12856 3824 "GET /chat/10/report/plan/ HTTP/1.1" 200 51031
+WARNING 2026-05-26 01:03:25,330 log 12856 3824 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:03:27,662 log 12856 4396 "GET /chat/10/report/plan/ HTTP/1.1" 200 51031
+WARNING 2026-05-26 01:03:27,725 log 12856 4396 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:03:47,161 autoreload 15336 9452 Watching for file changes with StatReloader
+INFO 2026-05-26 01:03:47,733 log 15336 6004 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-26 01:03:47,814 log 15336 6004 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:03:53,919 log 15336 4288 "GET /chat/10/ HTTP/1.1" 200 7111
+WARNING 2026-05-26 01:03:53,956 log 15336 4288 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:03:54,202 log 15336 13128 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:03:54,262 log 15336 13128 "GET /threads/load/10/ HTTP/1.1" 200 13872
+INFO 2026-05-26 01:03:56,660 log 15336 13128 "GET /chat/10/report/plan/ HTTP/1.1" 200 51031
+WARNING 2026-05-26 01:03:56,778 log 15336 13128 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:21:09,929 autoreload 12864 14872 Watching for file changes with StatReloader
+INFO 2026-05-26 01:21:14,197 log 12864 10140 "GET /chat/10/report/plan/ HTTP/1.1" 200 52110
+WARNING 2026-05-26 01:21:14,256 log 12864 10140 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:21:32,033 log 12864 2092 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-26 01:21:32,103 log 12864 2092 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:21:40,137 log 12864 5024 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-26 01:21:40,146 log 12864 5024 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-26 01:21:54,795 log 12864 5024 "POST /login/ HTTP/1.1" 200 2425
+INFO 2026-05-26 01:22:00,274 log 12864 5024 "GET / HTTP/1.1" 302 0
+INFO 2026-05-26 01:22:00,284 log 12864 5024 "GET /login/?next=/ HTTP/1.1" 200 2352
+INFO 2026-05-26 01:22:00,958 log 12864 5024 "GET /admin/ HTTP/1.1" 302 0
+INFO 2026-05-26 01:22:01,168 log 12864 5024 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4085
+INFO 2026-05-26 01:22:01,216 log 12864 5024 "GET /static/admin/css/base.css HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:01,217 log 12864 11760 "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:01,224 log 12864 5024 "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:01,224 log 12864 11760 "GET /static/admin/css/login.css HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:01,229 log 12864 5024 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:01,231 log 12864 11760 "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:01,246 log 12864 11760 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:08,580 log 12864 11760 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2026-05-26 01:22:08,642 log 12864 11760 "GET /admin/ HTTP/1.1" 200 11820
+INFO 2026-05-26 01:22:08,682 log 12864 11760 "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:08,695 log 12864 11760 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:08,697 log 12864 3256 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:08,797 log 12864 5024 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 689
+INFO 2026-05-26 01:22:14,200 log 12864 5024 "GET /admin/auth/user/ HTTP/1.1" 200 15678
+INFO 2026-05-26 01:22:14,255 log 12864 5024 "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,255 log 12864 9720 "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,256 log 12864 8248 "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,256 log 12864 14484 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,256 log 12864 11760 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,266 log 12864 5024 "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,271 log 12864 9720 "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,275 log 12864 8248 "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,280 log 12864 14484 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,313 log 12864 8248 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,313 log 12864 14484 "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,325 log 12864 8248 "GET /static/admin/img/icon-no.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,335 log 12864 8248 "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,353 log 12864 3256 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2026-05-26 01:22:14,394 log 12864 3256 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,394 log 12864 8248 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:14,398 log 12864 8248 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 304 0
+INFO 2026-05-26 01:22:18,223 log 12864 8248 "POST /admin/logout/ HTTP/1.1" 302 0
+INFO 2026-05-26 01:22:18,228 log 12864 8248 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-26 01:22:29,921 log 12864 8248 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-26 01:22:29,938 log 12864 8248 "GET / HTTP/1.1" 200 4011
+WARNING 2026-05-26 01:22:29,990 log 12864 8248 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:22:32,583 log 12864 3256 "GET /chat/11/ HTTP/1.1" 200 6863
+WARNING 2026-05-26 01:22:32,642 log 12864 3256 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:22:32,674 log 12864 14484 "GET /threads/load/11/ HTTP/1.1" 200 13905
+INFO 2026-05-26 01:22:35,532 log 12864 14484 "GET /chat/11/report/plan/ HTTP/1.1" 200 52047
+WARNING 2026-05-26 01:22:35,663 log 12864 14484 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:25:27,485 log 12864 9720 "POST /api/runs/11/employees/0/sessions/6/refine/ HTTP/1.1" 200 894
+INFO 2026-05-26 01:25:47,180 log 12864 9720 "POST /api/runs/11/employees/0/sessions/6/delete/ HTTP/1.1" 200 33
+INFO 2026-05-26 01:25:50,598 log 12864 9720 "GET /chat/11/report/plan/ HTTP/1.1" 200 46468
+WARNING 2026-05-26 01:25:50,645 log 12864 9720 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 01:26:42,686 log 12864 5024 "POST /api/runs/11/employees/0/sessions/5/refine/ HTTP/1.1" 200 818
+INFO 2026-05-26 15:40:55,073 autoreload 4424 6004 Watching for file changes with StatReloader
+INFO 2026-05-26 15:41:04,426 log 4424 9148 "GET / HTTP/1.1" 200 4011
+INFO 2026-05-26 15:41:04,607 log 4424 13068 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 200 80722
+INFO 2026-05-26 15:41:04,616 log 4424 9148 "GET /static/builder/css/main.css HTTP/1.1" 200 69545
+WARNING 2026-05-26 15:41:04,667 log 4424 13068 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:41:04,714 log 4424 9148 "GET /static/builder/js/app.js HTTP/1.1" 200 995
+WARNING 2026-05-26 15:41:06,127 log 4424 9148 "GET /favicon.ico HTTP/1.1" 404 9970
+INFO 2026-05-26 15:41:10,329 log 4424 9148 "GET /chat/11/ HTTP/1.1" 200 6863
+WARNING 2026-05-26 15:41:10,381 log 4424 9148 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:41:10,475 log 4424 11720 "GET /static/builder/js/chat.js HTTP/1.1" 200 28388
+INFO 2026-05-26 15:41:10,507 log 4424 11720 "GET /threads/load/11/ HTTP/1.1" 200 13905
+INFO 2026-05-26 15:41:13,655 log 4424 11720 "GET /chat/11/report/plan/ HTTP/1.1" 200 46428
+WARNING 2026-05-26 15:41:13,736 log 4424 11720 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:42:29,977 log 4424 1284 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-26 15:42:30,056 log 4424 1284 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-26 15:42:30,142 log 4424 1284 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 200 75506
+INFO 2026-05-26 15:42:38,279 log 4424 1284 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-26 15:42:38,309 log 4424 1284 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-26 15:42:38,356 log 4424 1284 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:42:44,068 log 4424 2092 "GET /control/ HTTP/1.1" 200 24444
+INFO 2026-05-26 15:42:51,919 log 4424 2092 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-26 15:42:58,144 log 4424 2092 "GET /control/agents/ HTTP/1.1" 200 29825
+WARNING 2026-05-26 15:43:29,556 log 4424 2092 "GET /chat/11/report/analysis/ HTTP/1.1" 404 4893
+INFO 2026-05-26 15:43:51,364 log 4424 2092 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-26 15:43:51,419 log 4424 2092 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:43:57,944 log 4424 1928 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-26 15:43:57,949 log 4424 1928 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-26 15:45:29,723 log 4424 1928 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-26 15:45:29,742 log 4424 1928 "GET / HTTP/1.1" 200 4011
+WARNING 2026-05-26 15:45:29,798 log 4424 1928 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:45:34,151 log 4424 9872 "GET /chat/11/ HTTP/1.1" 200 6863
+WARNING 2026-05-26 15:45:34,212 log 4424 9872 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:45:34,513 log 4424 13096 "GET /threads/load/11/ HTTP/1.1" 200 13905
+INFO 2026-05-26 15:45:36,762 log 4424 13096 "GET /chat/11/report/analysis/ HTTP/1.1" 200 11628
+WARNING 2026-05-26 15:45:36,854 log 4424 13096 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:45:43,113 log 4424 12040 "GET /chat/11/ HTTP/1.1" 200 6863
+WARNING 2026-05-26 15:45:43,155 log 4424 12040 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:45:43,453 log 4424 8940 "GET /threads/load/11/ HTTP/1.1" 200 13905
+INFO 2026-05-26 15:45:45,482 log 4424 8940 "GET /chat/11/report/plan/ HTTP/1.1" 200 46428
+WARNING 2026-05-26 15:45:45,607 log 4424 8940 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:45:53,583 log 4424 7436 "GET /chat/11/ HTTP/1.1" 200 6863
+WARNING 2026-05-26 15:45:53,626 log 4424 7436 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-26 15:45:53,955 log 4424 8140 "GET /threads/load/11/ HTTP/1.1" 200 13905
+INFO 2026-05-26 15:45:57,115 log 4424 8140 "GET /chat/11/report/plan/ HTTP/1.1" 200 46428
+WARNING 2026-05-26 15:45:57,230 log 4424 8140 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-27 22:07:28,506 log 4424 14264 "GET / HTTP/1.1" 200 4011
+INFO 2026-05-27 22:07:28,560 log 4424 14264 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-27 22:07:28,565 log 4424 14264 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+WARNING 2026-05-27 22:07:28,605 log 4424 14264 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-27 22:07:28,685 log 4424 212 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+INFO 2026-05-27 22:07:32,651 log 4424 212 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-05-27 22:07:32,662 log 4424 212 "GET /login/ HTTP/1.1" 200 2352
+INFO 2026-05-27 22:07:32,702 log 4424 212 "GET /static/builder/images/Logo%20-%20White%20(4).png HTTP/1.1" 304 0
+INFO 2026-05-27 22:07:39,251 log 4424 212 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-05-27 22:07:39,270 log 4424 212 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-27 22:07:39,314 log 4424 212 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-27 22:07:45,593 log 4424 3032 "GET /control/ HTTP/1.1" 200 24444
+INFO 2026-05-27 22:07:49,196 log 4424 3032 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-27 22:07:55,458 log 4424 3032 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-27 22:07:56,272 log 4424 3032 "GET /control/agents/ HTTP/1.1" 200 29825
+INFO 2026-05-27 22:08:00,533 log 4424 3032 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-27 22:08:04,015 log 4424 3032 "GET /control/prompts/stage_2_paths/ HTTP/1.1" 200 31831
+INFO 2026-05-27 22:44:06,323 log 4424 12112 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-27 22:44:06,417 log 4424 12112 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-28 19:11:31,304 autoreload 15204 16772 Watching for file changes with StatReloader
+INFO 2026-05-28 19:11:34,707 log 15204 14468 "GET / HTTP/1.1" 200 4911
+INFO 2026-05-28 19:11:34,718 log 15204 11112 "GET /static/builder/css/main.css HTTP/1.1" 304 0
+INFO 2026-05-28 19:11:34,722 log 15204 15484 "GET /static/builder/images/Logo%20-%20Teal%20-%20PRIMARY%20(1).png HTTP/1.1" 304 0
+INFO 2026-05-28 19:11:34,734 log 15204 11112 "GET /static/builder/js/app.js HTTP/1.1" 304 0
+WARNING 2026-05-28 19:11:34,785 log 15204 14468 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-28 19:11:38,998 log 15204 11112 "GET /control/ HTTP/1.1" 200 24444
+INFO 2026-05-28 19:11:41,575 log 15204 11112 "GET /control/prompts/ HTTP/1.1" 200 35720
+INFO 2026-05-28 19:11:45,914 log 15204 11112 "GET /control/runs/ HTTP/1.1" 200 20988
+INFO 2026-05-28 19:12:12,732 autoreload 10808 1204 Watching for file changes with StatReloader
+INFO 2026-05-28 19:12:13,058 log 10808 12344 "GET / HTTP/1.1" 200 4911
+WARNING 2026-05-28 19:12:13,116 log 10808 12344 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-28 19:12:57,548 log 10808 12508 "GET /chat/10/ HTTP/1.1" 200 7111
+WARNING 2026-05-28 19:12:57,615 log 10808 12508 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-28 19:12:57,617 log 10808 16480 "GET /static/builder/js/chat.js HTTP/1.1" 304 0
+INFO 2026-05-28 19:12:57,669 log 10808 16480 "GET /threads/load/10/ HTTP/1.1" 200 13872
+INFO 2026-05-28 19:13:00,627 log 10808 16480 "GET /chat/10/report/analysis/ HTTP/1.1" 200 12188
+WARNING 2026-05-28 19:13:00,737 log 10808 16480 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
+INFO 2026-05-28 19:13:03,195 log 10808 15012 "GET /chat/10/report/plan/ HTTP/1.1" 200 52110
+WARNING 2026-05-28 19:13:03,260 log 10808 15012 "GET /static/builder/images/bundle.png HTTP/1.1" 404 1889
